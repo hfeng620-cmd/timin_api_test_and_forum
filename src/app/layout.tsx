@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "中转站观察站",
-  description: "一个把中转站价格、倍率、稳定性和社区讨论统一起来的轻量工具站原型。",
+  title: "Timin观察站",
+  description: "社区共建的 AI 中转站观察站，持续整理价格、倍率、稳定性、模型覆盖和真实使用反馈。",
 };
 
 export default function RootLayout({

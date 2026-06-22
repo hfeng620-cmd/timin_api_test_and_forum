@@ -1,16 +1,34 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f6f8f3;
-  --foreground: #111814;
-  --color-bg: #f6f8f3;
-  --color-ink: #111814;
-  --color-muted: #5b675e;
-  --color-line: #dde6dc;
-  --color-soft: #eef5ec;
-  --color-brand: #12c969;
-  --color-brand-deep: #0b8d48;
-  --color-brand-soft: #dff9e8;
+:root,
+:root[data-theme="blue"] {
+  --background: #f6f9fc;
+  --foreground: #0f172a;
+  --color-bg: #f6f9fc;
+  --color-ink: #0f172a;
+  --color-muted: #5b667a;
+  --color-line: #d8e2ee;
+  --color-soft: #eef4fa;
+  --color-brand: #2563eb;
+  --color-brand-deep: #1d4ed8;
+  --color-brand-strong: #1e40af;
+  --color-brand-soft: #eaf2ff;
+  --color-panel-glow: rgba(37, 99, 235, 0.12);
+}
+
+:root[data-theme="green"] {
+  --background: #f6f9fc;
+  --foreground: #0f172a;
+  --color-bg: #f6f9fc;
+  --color-ink: #0f172a;
+  --color-muted: #5b667a;
+  --color-line: #d8e2ee;
+  --color-soft: #eef4fa;
+  --color-brand: #16a34a;
+  --color-brand-deep: #15803d;
+  --color-brand-strong: #166534;
+  --color-brand-soft: #eaf8ef;
+  --color-panel-glow: rgba(22, 163, 74, 0.1);
 }
 
 @theme inline {
@@ -30,8 +48,8 @@ html {
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(18, 201, 105, 0.08), transparent 30%),
-    linear-gradient(180deg, #fbfcf9 0%, #f6f8f3 100%);
+    radial-gradient(circle at top left, var(--color-panel-glow), transparent 30%),
+    linear-gradient(180deg, #fbfdff 0%, var(--color-bg) 100%);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
