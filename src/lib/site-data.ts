@@ -1,8 +1,8 @@
 export const tickerItems = [
   {
-    label: "虎虎填表可拿 3 美刀试用额度",
+    label: "虎虎注册链接：直接走这个链接送额度",
     color: "#3b82f6",
-    href: "https://www.kdocs.cn/l/cj84YbmlJswN",
+    href: "https://huhuai.xyz/register?aff=BCPA5AKW3KHX",
   },
   {
     label: "QQ 群 602190132：补站点、报价格变化、同步试用线索",
@@ -41,13 +41,13 @@ export const guideSteps = [
 
 export const highlightMetrics = [
   { label: "已录入站点", value: "14", note: "已补入五条悟 qiutian.live，并继续扩展可比站点" },
-  { label: "可直接试用入口", value: "2", note: "虎虎试用单和 dazes.cc 新人赠额都已挂到页面" },
+  { label: "可直接试用入口", value: "2", note: "虎虎注册送额度和 dazes.cc 新人赠额都已挂到页面" },
   { label: "特殊价格口径", value: "5+", note: "含多倍率、日卡/周卡/月卡、plus/pro 分组等情况" },
   { label: "共建优先级", value: "高", note: "这批数据最需要群友继续补测和纠错" },
 ];
 
 export const updateBoard = [
-  "虎虎最新整理倍率更新为 0.12x，试用入口仍保留",
+  "虎虎最新整理倍率更新为 0.12x，当前主入口改为注册链接送额度",
   "Aether 最新整理倍率更新为 0.263x",
   "杂货铺已拆成 GPT 0.058x / Claude Max 1.15x 双口径",
 ];
@@ -93,9 +93,9 @@ export const communityPosts = [
   {
     category: "试用提醒",
     meta: "优先入口",
-    title: "虎虎可以先填试用单拿 3 美刀，再进群看有没有额外免费额度",
+    title: "虎虎当前走注册链接送额度，历史填表活动先留档",
     summary:
-      "这类入口型信息适合放在首页明显位置，先让新来的人能低成本试，再决定长期用哪个站。",
+      "当前主入口已改为注册链接送额度；以前群里填表送 3 美刀的记录先保留。",
   },
   {
     category: "避坑",
@@ -144,7 +144,7 @@ export const xDiscussionSeed: XDiscussionPost[] = [
     postedAt: "今天 09:14",
     station: "虎虎",
     body:
-      "虎虎这两天还是挺适合新人的，先填试用单拿 3 美刀，再进群里问一嘴，通常还能拿到一点补充额度。真要说缺点，就是长期价格还得继续盯，别因为第一口试用顺就直接大额冲。",
+      "虎虎这两天还是挺适合新人的，当前走注册链接送额度。以前群里有过填表送 3 美刀，历史入口先留着。真要长期用，还是要继续盯价格和稳定性。",
     tags: ["试用入口", "虎虎", "新手先试"],
     stats: {
       replies: 18,
@@ -392,9 +392,14 @@ export const featuredColumns = [
 
 export const resourceLinks = [
   {
-    title: "虎虎 API 试用单",
+    title: "虎虎注册链接",
+    href: "https://huhuai.xyz/register?aff=BCPA5AKW3KHX",
+    note: "当前建议直接走这个链接注册送额度，适合第一次上手先做低成本验证。",
+  },
+  {
+    title: "虎虎历史填表试用单",
     href: "https://www.kdocs.cn/l/cj84YbmlJswN",
-    note: "填表可获 3 美刀额度，适合第一次上手时先做低成本验证。",
+    note: "以前群里有过填表送 3 美刀额度的活动，先留作历史记录和补充证明。",
   },
   {
     title: "API 中转站集合统计表",
@@ -409,7 +414,7 @@ export const resourceLinks = [
 ];
 
 export const stationLinkMap: Record<string, string> = {
-  虎虎: "https://huhuai.xyz",
+  虎虎: "https://huhuai.xyz/register?aff=BCPA5AKW3KHX",
   Aether: "https://to-aether.com/dashboard",
   杂货铺: "https://api.dstopology.com/keys",
   dasuAPI: "https://dasuapi.com",
@@ -440,7 +445,7 @@ export const homeFeaturedStations: HomeFeaturedStation[] = [
   {
     name: "虎虎",
     badge: "先试用",
-    summary: "填表先拿 3 美刀，进 QQ 群还有机会补充免费额度。",
+    summary: "当前走注册链接送额度，历史填表活动先留档。",
     price: "0.12 倍率",
     multiplier: "0.12x",
     reason: "最适合新来的人先试水，不用一上来就充值。",
@@ -525,7 +530,7 @@ export const faqEntries = [
 export const guideCards = [
   {
     title: "新手先试路线",
-    description: "优先走虎虎试用单、dazes.cc 注册送额、星见雅公益这类低门槛入口，先验证模型和口径，再决定长期用谁。",
+    description: "优先走虎虎注册送额度、dazes.cc 注册送额、星见雅公益这类低门槛入口，先验证模型和口径，再决定长期用谁。",
   },
   {
     title: "多倍率怎么看",
@@ -603,7 +608,7 @@ export const stationComparisonRows = [
     name: "虎虎",
     badge: "可试用",
     group: "huhuai.xyz",
-    entry: "域名入口 + 试用单",
+    entry: "注册送额度入口",
     packageType: "倍率制",
     status: "试用信息清晰",
     models: "主流模型待群补",
@@ -611,9 +616,9 @@ export const stationComparisonRows = [
     multiplier: "0.12x",
     uptime: "缺高峰样本",
     latency: "缺统一样本",
-    source: "试用单 + QQ 群反馈",
+    source: "注册链接 + 历史试用单 + QQ 群反馈",
     verdict: "先试再说",
-    note: "可联系调低倍率，填表先送 3 美刀，进 QQ 群还有额外免费额度。",
+    note: "当前建议直接走注册链接送额度；以前群里有过填表送 3 美刀，历史入口先保留作记录。",
     advantage: "试用入口清晰，适合新用户优先体验。",
     risk: "实际长期价格和稳定性还要继续看群友反馈。",
   },

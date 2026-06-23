@@ -16,10 +16,10 @@ type StationRow = (typeof stationComparisonRows)[number];
 const filters: { id: FilterId; label: string; description: string }[] = [
   { id: "all", label: "全部站点", description: "完整总表" },
   { id: "featured", label: "首屏重点", description: "虎虎 / Aether / 杂货铺 / dasuAPI" },
-  { id: "trial", label: "可先试用", description: "优先找低门槛入口" },
-  { id: "free", label: "免费入口", description: "先看公益或免费" },
-  { id: "lowRate", label: "低倍率", description: "先找 0.15x 及以下" },
-  { id: "pending", label: "待补测", description: "优先共建补数据" },
+  { id: "trial", label: "可先试用", description: "低门槛入口" },
+  { id: "free", label: "免费入口", description: "公益或免费" },
+  { id: "lowRate", label: "低倍率", description: "0.15x 及以下" },
+  { id: "pending", label: "待补测", description: "缺数据" },
 ];
 
 function matchesFilter(filter: FilterId, row: StationRow) {
@@ -109,37 +109,32 @@ export function StationsBoard() {
 
   return (
     <>
-      <section className="mx-auto max-w-[1600px] px-6 py-10 lg:px-10">
+      <section className="mx-auto max-w-[1600px] px-6 py-8 lg:px-10">
         <div className="grid gap-10 xl:grid-cols-[minmax(0,1.48fr)_320px] xl:items-start">
           <div>
-            <div className="border-b border-[var(--color-line)] pb-8">
+            <div className="border-b border-[var(--color-line)] pb-5">
               <div className="flex flex-wrap items-start justify-between gap-6">
                 <div className="max-w-4xl">
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
-                    首屏主榜单
+                    API Relay Index
                   </p>
-                  <h1 className="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-5xl">
-                    一进来先看哪几家最值得比较，
-                    <br />
-                    下面再展开完整总表
+                  <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+                    中转站榜单
                   </h1>
-                  <p className="mt-5 max-w-3xl text-base leading-8 text-[var(--color-muted)]">
-                    这一屏先把虎虎、Aether、杂货铺和 dasuAPI 放在最前面。你要么直接看重点，要么立刻搜索和筛选，不用从头滚到尾。
-                  </p>
                 </div>
 
-                <div className="grid min-w-[240px] gap-3 text-sm">
-                  <div className="border-l-2 border-[var(--color-brand)] pl-4">
-                    <p className="text-[var(--color-muted)]">已收录站点</p>
-                    <p className="mt-1 text-3xl font-black">{stationComparisonRows.length}</p>
+                <div className="grid min-w-[220px] grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p className="text-[var(--color-muted)]">站点</p>
+                    <p className="mt-1 text-2xl font-black">{stationComparisonRows.length}</p>
                   </div>
-                  <div className="border-l-2 border-[var(--color-line)] pl-4">
-                    <p className="text-[var(--color-muted)]">最低已知倍率</p>
-                    <p className="mt-1 text-3xl font-black">0.058x</p>
+                  <div>
+                    <p className="text-[var(--color-muted)]">最低</p>
+                    <p className="mt-1 text-2xl font-black">0.058x</p>
                   </div>
-                  <div className="border-l-2 border-[var(--color-line)] pl-4">
-                    <p className="text-[var(--color-muted)]">可试用 / 免费入口</p>
-                    <p className="mt-1 text-3xl font-black">4+</p>
+                  <div>
+                    <p className="text-[var(--color-muted)]">试用</p>
+                    <p className="mt-1 text-2xl font-black">4+</p>
                   </div>
                 </div>
               </div>
@@ -193,7 +188,7 @@ export function StationsBoard() {
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                     快速查找
                   </p>
-                  <h2 className="mt-2 text-2xl font-black">筛一下就能快速定位</h2>
+                  <h2 className="mt-2 text-2xl font-black">搜索 / 筛选</h2>
                 </div>
                 <p className="text-sm text-[var(--color-muted)]">
                   当前结果 <span className="font-bold text-[var(--color-ink)]">{filteredRows.length}</span> 条
@@ -226,7 +221,7 @@ export function StationsBoard() {
                 ))}
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-3 text-sm text-[var(--color-muted)]">
+              <div className="mt-4 flex flex-wrap gap-2 text-sm text-[var(--color-muted)]">
                 {filters
                   .filter((filter) => filter.id !== "all")
                   .map((filter) => (
@@ -260,9 +255,6 @@ export function StationsBoard() {
                   讨论
                 </Link>
               </div>
-              <p className="pt-5 text-sm leading-7 text-[var(--color-muted)]">
-                这里不塞假论坛卡片。倍率变化、试用失效、模型缩水、高峰稳定性和避坑反馈，统一从社区页继续展开。
-              </p>
             </div>
 
             <div className="mt-6 grid gap-3">
@@ -288,12 +280,20 @@ export function StationsBoard() {
               </p>
               <div className="mt-4 grid gap-3">
                 <a
+                  href="https://huhuai.xyz/register?aff=BCPA5AKW3KHX"
+                  rel="noreferrer"
+                  target="_blank"
+                  className="border-b border-[var(--color-line)] pb-3 text-sm leading-6 transition hover:text-[var(--color-brand-deep)]"
+                >
+                  虎虎注册链接：直接送额度
+                </a>
+                <a
                   href="https://www.kdocs.cn/l/cj84YbmlJswN"
                   rel="noreferrer"
                   target="_blank"
                   className="border-b border-[var(--color-line)] pb-3 text-sm leading-6 transition hover:text-[var(--color-brand-deep)]"
                 >
-                  虎虎 API 试用单：填表可获 3 美刀额度
+                  历史填表记录：以前群里有过填表送额度
                 </a>
                 <a
                   href="https://www.kdocs.cn/l/cr2932V6f6bH"
@@ -308,9 +308,6 @@ export function StationsBoard() {
 
             <div className="mt-6 rounded-[24px] bg-[var(--color-soft)] px-4 py-4 text-sm leading-7 text-[var(--color-muted)]">
               <p className="font-semibold text-[var(--color-ink)]">QQ群 602190132</p>
-              <p className="mt-1">
-                适合先发线索、报价格变化、同步试用活动，再把值得沉淀的内容移到讨论区或 GitHub。
-              </p>
             </div>
           </aside>
         </div>
@@ -406,10 +403,10 @@ export function StationsBoard() {
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--color-line)] px-6 py-5">
-            <p className="text-sm leading-7 text-[var(--color-muted)]">
+              <p className="text-sm leading-7 text-[var(--color-muted)]">
               {filteredRows.length === 0
-                ? "当前筛选没有结果，可以换个关键词或切回全部站点。"
-                : `当前显示 ${visibleRows.length} / ${filteredRows.length} 条结果。你可以继续展开更多，或者直接去论坛补新反馈。`}
+                ? "当前筛选没有结果。"
+                : `当前显示 ${visibleRows.length} / ${filteredRows.length} 条。`}
             </p>
             {!showAllRows && filteredRows.length > visibleRows.length ? (
               <button
