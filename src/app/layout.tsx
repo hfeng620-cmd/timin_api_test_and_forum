@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { FloatingQuickPanel } from "@/components/floating-quick-panel";
 import { MouseGlowLayer } from "@/components/mouse-glow-layer";
 import { SelectionCommentLayer } from "@/components/selection-comment-layer";
+import { SiteFooter } from "@/components/site-footer";
 
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         <MouseGlowLayer />
         <div className="relative z-10 flex min-h-full flex-col">
           {children}
+          <SiteFooter />
           <FloatingQuickPanel />
           <SelectionCommentLayer />
         </div>

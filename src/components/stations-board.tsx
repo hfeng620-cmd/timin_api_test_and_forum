@@ -110,7 +110,7 @@ export function StationsBoard() {
   return (
     <>
       <section className="mx-auto max-w-[1600px] px-6 py-10 lg:px-10">
-        <div className="grid gap-10 xl:grid-cols-[minmax(0,1.42fr)_320px] xl:items-start">
+        <div className="grid gap-10 xl:grid-cols-[minmax(0,1.48fr)_320px] xl:items-start">
           <div>
             <div className="border-b border-[var(--color-line)] pb-8">
               <div className="flex flex-wrap items-start justify-between gap-6">
@@ -152,7 +152,7 @@ export function StationsBoard() {
                   href={stationLinkMap[row.name]}
                   rel="noreferrer"
                   target="_blank"
-                  className="group rounded-[28px] border border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,249,255,0.98))] p-5 shadow-[var(--shadow-card)] transition hover:-translate-y-[2px] hover:border-[var(--color-brand)]"
+                  className="group min-h-[258px] rounded-[28px] border border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,249,255,0.98))] p-5 shadow-[var(--shadow-card)] transition hover:-translate-y-[2px] hover:border-[var(--color-brand)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -187,7 +187,7 @@ export function StationsBoard() {
               ))}
             </div>
 
-            <div className="mt-8 border border-[var(--color-line)] bg-white/92 p-5 shadow-[var(--shadow-card)] backdrop-blur">
+            <div className="mt-8 rounded-[30px] border border-[var(--color-line)] bg-white/92 p-5 shadow-[var(--shadow-card)] backdrop-blur">
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
@@ -255,7 +255,7 @@ export function StationsBoard() {
                   aria-label="打开论坛入口"
                   href="/community"
                   title="打开论坛入口"
-                  className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] px-4 text-sm font-black text-white shadow-[0_10px_28px_var(--color-panel-glow)] transition hover:scale-[1.03] hover:bg-[var(--color-brand-deep)]"
+                  className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] px-5 text-sm font-black text-white shadow-[0_10px_28px_var(--color-panel-glow)] transition hover:scale-[1.03] hover:bg-[var(--color-brand-deep)]"
                 >
                   讨论
                 </Link>
@@ -317,7 +317,7 @@ export function StationsBoard() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pb-14 lg:px-10">
-        <div className="border border-[var(--color-line)] bg-white shadow-[var(--shadow-card)]">
+        <div className="overflow-hidden rounded-[34px] border border-[var(--color-line)] bg-white shadow-[var(--shadow-card)]">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-line)] px-6 py-5">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">

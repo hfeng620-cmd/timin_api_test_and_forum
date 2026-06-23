@@ -1,7 +1,13 @@
 import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
-import { faqEntries, guideCards, resourceLinks } from "@/lib/site-data";
+import {
+  collaborationChannels,
+  faqEntries,
+  guideCards,
+  guideSteps,
+  resourceLinks,
+} from "@/lib/site-data";
 
 export default function GuidesPage() {
   return (
@@ -49,11 +55,33 @@ export default function GuidesPage() {
                 先看这几个
               </p>
               <h1 className="mt-2 text-4xl font-black tracking-tight">
-                先把新手最容易踩坑的点集中讲清楚
+                先把第一次最容易问错的事讲清楚
               </h1>
               <p className="mt-4 text-sm leading-7 text-[var(--color-muted)]">
-                首页只放一两个问题，这里把试用顺序、多倍率理解、免费入口风险和第一次怎么验证这些事情单独展开。
+                首页先负责给你看榜单，这里负责把倍率怎么看、同站不同模型怎么拆、免费入口怎么判断，以及 QQ 群和 GitHub 共建入口分别拿来做什么说清楚。
               </p>
+            </div>
+
+            <div className="rounded-[32px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                先按这个顺序看
+              </p>
+              <div className="mt-5 grid gap-4">
+                {guideSteps.map((step) => (
+                  <article
+                    key={step.index}
+                    className="rounded-[26px] border border-[var(--color-line)] bg-[var(--color-soft)] p-5"
+                  >
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
+                      {step.index}
+                    </p>
+                    <h2 className="mt-2 text-xl font-bold">{step.title}</h2>
+                    <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">
+                      {step.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
             </div>
 
             <div className="rounded-[32px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
@@ -84,16 +112,56 @@ export default function GuidesPage() {
               </p>
               <div className="mt-4 grid gap-3">
                 {resourceLinks.map((item) => (
+                  item.href.startsWith("http") ? (
+                    <a
+                      key={item.title}
+                      className="rounded-2xl border border-[var(--color-line)] bg-white px-4 py-4 transition hover:border-[var(--color-brand)]"
+                      href={item.href}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      <p className="font-bold text-[var(--color-brand-deep)]">
+                        {item.title}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+                        {item.note}
+                      </p>
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.title}
+                      className="rounded-2xl border border-[var(--color-line)] bg-white px-4 py-4 transition hover:border-[var(--color-brand)]"
+                      href={item.href}
+                    >
+                      <p className="font-bold text-[var(--color-brand-deep)]">
+                        {item.title}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+                        {item.note}
+                      </p>
+                    </Link>
+                  )
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[32px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                共建入口
+              </p>
+              <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">
+                这站不是只读榜单。QQ 群负责第一时间发线索，Discussions 负责沉淀经验讨论，Issues 负责提交明确纠错，管理员审核后再把正式口径收进榜单。
+              </p>
+              <div className="mt-4 grid gap-3">
+                {collaborationChannels.map((item) => (
                   <a
                     key={item.title}
-                    className="rounded-2xl border border-[var(--color-line)] bg-white px-4 py-4 transition hover:border-[var(--color-brand)]"
+                    className="rounded-2xl border border-[var(--color-line)] bg-[var(--color-soft)] px-4 py-4 transition hover:border-[var(--color-brand)]"
                     href={item.href}
-                    rel="noreferrer"
-                    target="_blank"
+                    rel={item.href.startsWith("http") ? "noreferrer" : undefined}
+                    target={item.href.startsWith("http") ? "_blank" : undefined}
                   >
-                    <p className="font-bold text-[var(--color-brand-deep)]">
-                      {item.title}
-                    </p>
+                    <p className="font-bold text-[var(--color-brand-deep)]">{item.title}</p>
                     <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
                       {item.note}
                     </p>

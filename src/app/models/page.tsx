@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
-import { modelPreviewRows, tickerItems } from "@/lib/site-data";
+import { modelGuideNotes, modelPreviewRows, tickerItems } from "@/lib/site-data";
 
 export default function ModelsPage() {
   return (
@@ -14,7 +14,7 @@ export default function ModelsPage() {
             </div>
             <div>
               <p className="text-2xl font-black tracking-tight">Timin观察站</p>
-              <p className="text-sm text-[var(--color-muted)]">模型观察与后续扩展</p>
+              <p className="text-sm text-[var(--color-muted)]">模型观察与站点选择</p>
             </div>
           </div>
 
@@ -44,19 +44,33 @@ export default function ModelsPage() {
           <div className="mx-auto flex max-w-7xl items-center gap-5 overflow-x-auto px-6 py-3 text-sm whitespace-nowrap text-[var(--color-muted)] lg:px-10">
             <span className="font-semibold text-[var(--color-ink)]">模型观察</span>
             {tickerItems.slice(0, 3).map((item) => (
-              <a
-                key={item.label}
-                className="flex items-center gap-2 transition hover:text-[var(--color-ink)]"
-                href={item.href}
-                rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                target={item.href.startsWith("http") ? "_blank" : undefined}
-              >
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
-                <span>{item.label}</span>
-              </a>
+              item.href.startsWith("http") ? (
+                <a
+                  key={item.label}
+                  className="flex items-center gap-2 transition hover:text-[var(--color-ink)]"
+                  href={item.href}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span>{item.label}</span>
+                </a>
+              ) : (
+                <Link
+                  key={item.label}
+                  className="flex items-center gap-2 transition hover:text-[var(--color-ink)]"
+                  href={item.href}
+                >
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span>{item.label}</span>
+                </Link>
+              )
             ))}
           </div>
         </div>
@@ -67,22 +81,22 @@ export default function ModelsPage() {
           <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <p className="inline-flex rounded-full bg-[var(--color-brand-soft)] px-3 py-1 text-sm font-bold text-[var(--color-brand-deep)]">
-                后续重点扩展页
+                模型观察页
               </p>
               <h1 className="mt-4 text-5xl font-black tracking-tight sm:text-6xl">
                 不知道先用哪个模型？
               </h1>
               <p className="mt-5 text-lg leading-8 text-[var(--color-muted)]">
-                这个页面会继续往“模型能力排序、使用场景和中转站价格联动”方向补。现在先把观察维度和信息结构放稳，后面再接真实模型排行、价格区间和推荐场景。
+                这一页把“先选模型，还是先选站”这件事拆开讲清楚。你可以先按任务看模型，再回到中转站榜单比价格、倍率、试用入口和社区备注，避免一开始就被站点名带跑。
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-[26px] bg-[var(--color-soft)] px-5 py-4">
-                <p className="text-sm text-[var(--color-muted)]">这一页先做什么</p>
-                <p className="mt-2 text-3xl font-black">定观察维度</p>
+                <p className="text-sm text-[var(--color-muted)]">这页的作用</p>
+                <p className="mt-2 text-3xl font-black">先定模型</p>
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  先把能力、场景和价格联动的结构定下来，方便后面直接接真实数据
+                  先想清楚你主要做什么任务，再回站点页比较真实成本和入口条件
                 </p>
               </div>
               <div className="rounded-[26px] bg-[var(--color-soft)] px-5 py-4">
@@ -97,10 +111,10 @@ export default function ModelsPage() {
 
           <div className="mt-8 inline-flex rounded-full bg-[var(--color-soft)] p-1">
             <span className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-bold text-white shadow-[0_10px_24px_var(--color-panel-glow)]">
-              按能力预览
+              按任务看
             </span>
             <span className="px-4 py-2 text-sm font-semibold text-[var(--color-muted)]">
-              按场景预览
+              回站点页比价
             </span>
           </div>
 
@@ -128,6 +142,20 @@ export default function ModelsPage() {
                 <div className="text-sm leading-6 text-[var(--color-muted)]">
                   {row.stationHint}
                 </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            {modelGuideNotes.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-[26px] border border-[var(--color-line)] bg-[var(--color-soft)] px-5 py-5"
+              >
+                <h2 className="text-xl font-bold">{item.title}</h2>
+                <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">
+                  {item.description}
+                </p>
               </article>
             ))}
           </div>

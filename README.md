@@ -8,6 +8,14 @@
 
 如果你也长期在用各类中转站，欢迎一起把它做成一个真正有用、能长期维护的公共项目。
 
+## 在线访问
+
+- GitHub 仓库：[hfeng620-cmd/api_test_and_forum](https://github.com/hfeng620-cmd/api_test_and_forum)
+- GitHub Discussions：[社区讨论区](https://github.com/hfeng620-cmd/api_test_and_forum/discussions)
+- GitHub Pages 预期地址：`https://hfeng620-cmd.github.io/api_test_and_forum/`
+
+如果第一次推送工作流后还没上线，需要到仓库 `Settings > Pages` 里确认来源为 `GitHub Actions`。
+
 ## 页面预览
 
 ### 首页榜单入口
@@ -51,6 +59,10 @@
   论坛入口页，负责发帖、报料、避坑、讨论和协作引导
 - `/admin`
   管理员审核原型页，支持通过、修改后通过和驳回
+- `/guides`
+  指南页，负责解释倍率、试用路线、共建流程和常见问题
+- `/models`
+  模型页，负责先看模型任务，再回站点页做价格和入口比较
 
 ## 当前已录入的中转站
 
@@ -64,7 +76,7 @@
 - Liary
 - dasuAPI
 - dazes.cc
-- 五条悟api
+- 五条悟 `qiutian.live`
 - xiaoya-api
 - 星见雅公益
 
@@ -72,8 +84,8 @@
 
 - 虎虎 API 试用单
 - API 中转站集合统计表
-- 社区协作入口
-- QQ 群免费额度提醒
+- QQ 群共建入口
+- GitHub Discussions 沉淀入口
 
 ## 加入 QQ 群
 
@@ -93,11 +105,11 @@
 
 ## 推荐协作方式
 
-1. 新线索先进 `Discussions` 或 `Issue`
-2. 需要正式收录时再开 `Issue`
+1. 新线索先进 `QQ 群` 或 `Discussions`
+2. 明确纠错、过期价格和待核验条目走 `Issue`
 3. 真正进入站点内容的改动统一走 `PR`
 
-一句话版本：`讨论先进 Discussions，确定要做再进 Issues，最终入站只认 PR。`
+一句话版本：`QQ群负责线索流，Discussions 负责长讨论，Issues 负责逐条处理，最终入站只认 PR。`
 
 ## 本地运行
 
@@ -108,13 +120,33 @@ npm run dev
 
 打开 `http://localhost:3000`
 
+## GitHub Pages 自动部署
+
+仓库已经补入 GitHub Pages 工作流：
+
+```bash
+npm run build
+```
+
+本地构建会输出静态站点到 `out/`，推送到 `main` 后会通过 GitHub Actions 自动部署到 Pages。
+
+如果仓库第一次启用 Pages，建议检查：
+
+1. `Settings > Pages` 是否已切到 `GitHub Actions`
+2. `Settings > Actions > General` 是否允许工作流运行
+3. 仓库主页的 `Actions` 标签页里是否出现 `部署 GitHub Pages`
+
 ## 当前关键文件
 
 - `src/app/page.tsx`：首页
 - `src/app/stations/page.tsx`：榜单页
 - `src/app/community/page.tsx`：论坛入口页
+- `src/app/guides/page.tsx`：指南页
+- `src/app/models/page.tsx`：模型页
 - `src/app/admin/page.tsx`：审核原型页
 - `src/lib/site-data.ts`：站点数据、资源入口和页面文案
+- `.github/workflows/deploy.yml`：GitHub Pages 自动部署
+- `next.config.ts`：静态导出和 Pages 路径配置
 
 ## 下一步最值得继续补的内容
 

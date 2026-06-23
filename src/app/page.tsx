@@ -61,19 +61,33 @@ export default function Home() {
           <div className="mx-auto flex max-w-7xl items-center gap-5 overflow-x-auto px-6 py-3 text-sm whitespace-nowrap text-[var(--color-muted)] lg:px-10">
             <span className="font-semibold text-[var(--color-ink)]">站点速报</span>
             {tickerItems.map((item) => (
-              <a
-                key={item.label}
-                className="flex items-center gap-2 transition hover:text-[var(--color-ink)]"
-                href={item.href}
-                rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                target={item.href.startsWith("http") ? "_blank" : undefined}
-              >
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
-                <span>{item.label}</span>
-              </a>
+              item.href.startsWith("http") ? (
+                <a
+                  key={item.label}
+                  className="flex items-center gap-2 transition hover:text-[var(--color-ink)]"
+                  href={item.href}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span>{item.label}</span>
+                </a>
+              ) : (
+                <Link
+                  key={item.label}
+                  className="flex items-center gap-2 transition hover:text-[var(--color-ink)]"
+                  href={item.href}
+                >
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span>{item.label}</span>
+                </Link>
+              )
             ))}
           </div>
         </div>
@@ -81,7 +95,7 @@ export default function Home() {
 
       <section className="border-b border-[var(--color-line)]">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="grid gap-12 lg:grid-cols-[1.32fr_0.68fr]">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-brand-deep)]">
                 API Relay Index
@@ -129,7 +143,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid gap-8 border-t border-[var(--color-line)] pt-8 lg:border-t-0 lg:border-l lg:pl-10 lg:pt-0">
+            <div className="grid content-start gap-8 border-t border-[var(--color-line)] pt-8 lg:border-t-0 lg:border-l lg:pl-10 lg:pt-0">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
                   三个入口
@@ -169,95 +183,128 @@ export default function Home() {
                 </p>
                 <div className="mt-4 space-y-4">
                   {resourceLinks.map((link) => (
-                    <a
-                      key={link.title}
-                      className="block border-b border-[var(--color-line)] pb-4 transition hover:border-[var(--color-brand)]"
-                      href={link.href}
-                      rel={link.href.startsWith("http") ? "noreferrer" : undefined}
-                      target={link.href.startsWith("http") ? "_blank" : undefined}
-                    >
-                      <p className="text-lg font-black text-[var(--color-ink)]">{link.title}</p>
-                      <p className="mt-2 max-w-lg text-sm leading-6 text-[var(--color-muted)]">
-                        {link.note}
-                      </p>
-                    </a>
+                    link.href.startsWith("http") ? (
+                      <a
+                        key={link.title}
+                        className="block border-b border-[var(--color-line)] pb-4 transition hover:border-[var(--color-brand)]"
+                        href={link.href}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        <p className="text-lg font-black text-[var(--color-ink)]">{link.title}</p>
+                        <p className="mt-2 max-w-lg text-sm leading-6 text-[var(--color-muted)]">
+                          {link.note}
+                        </p>
+                      </a>
+                    ) : (
+                      <Link
+                        key={link.title}
+                        className="block border-b border-[var(--color-line)] pb-4 transition hover:border-[var(--color-brand)]"
+                        href={link.href}
+                      >
+                        <p className="text-lg font-black text-[var(--color-ink)]">{link.title}</p>
+                        <p className="mt-2 max-w-lg text-sm leading-6 text-[var(--color-muted)]">
+                          {link.note}
+                        </p>
+                      </Link>
+                    )
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-8 lg:px-10 lg:py-10">
-        <div className="flex flex-wrap items-end justify-between gap-6 border-b border-[var(--color-line)] pb-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
-              首页主榜单
-            </p>
-            <h2 className="mt-3 text-4xl font-black tracking-tight">先看这几个中转站</h2>
-          </div>
-          <div className="flex flex-wrap items-center gap-5">
-            <Link
-              href="/stations"
-              className="text-sm font-bold text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
-            >
-              查看完整榜单 →
-            </Link>
-            <Link
-              href="/community"
-              className="text-sm font-semibold text-[var(--color-muted)] transition hover:text-[var(--color-ink)]"
-            >
-              去论坛补反馈
-            </Link>
-          </div>
-        </div>
+          <div className="mt-12 overflow-hidden rounded-[34px] border border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(244,248,255,0.92))] shadow-[var(--shadow-card)]">
+            <div className="grid gap-0 lg:grid-cols-[1.35fr_0.65fr]">
+              <div className="px-6 py-6 lg:px-8 lg:py-7">
+                <div className="grid grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.35fr] border-b border-[var(--color-line)] pb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+                  <span>排名</span>
+                  <span>站点</span>
+                  <span>价格</span>
+                  <span>倍率</span>
+                  <span>一句判断</span>
+                </div>
 
-        <div className="mt-3 overflow-x-auto">
-          <div className="min-w-[980px]">
-            <div className="grid grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.4fr] border-b border-[var(--color-line)] py-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
-              <span>排名</span>
-              <span>站点</span>
-              <span>价格</span>
-              <span>倍率</span>
-              <span>一句判断</span>
-            </div>
+                <div className="mt-1">
+                  {topRows.map((row, index) => (
+                    <article
+                      key={`${row.name}-${index}`}
+                      className="grid grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.35fr] items-start gap-4 border-b border-[var(--color-line)] py-5 transition hover:bg-white/70"
+                    >
+                      <span className="pt-1 text-sm font-bold text-[var(--color-muted)]">
+                        {(index + 1).toString().padStart(2, "0")}
+                      </span>
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-lg font-black">{row.name}</h3>
+                          <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
+                            {row.badge}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
+                      </div>
+                      <div>
+                        <p className="text-base font-black">{row.price}</p>
+                        <a
+                          className="mt-2 inline-flex text-sm leading-6 text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
+                          href={stationLinkMap[row.name]}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          {row.entry}
+                        </a>
+                      </div>
+                      <p className="pt-1 text-base font-black">{row.multiplier}</p>
+                      <div>
+                        <p className="text-base font-black">{row.verdict}</p>
+                        <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.note}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
 
-            {topRows.map((row, index) => (
-              <article
-                key={`${row.name}-${index}`}
-                className="grid grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.4fr] items-start gap-4 border-b border-[var(--color-line)] py-6 transition hover:bg-white/70"
-              >
-                <span className="text-sm font-bold text-[var(--color-muted)]">
-                  {(index + 1).toString().padStart(2, "0")}
-                </span>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-black">{row.name}</h3>
-                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
-                      {row.badge}
-                    </span>
+              <aside className="border-t border-[var(--color-line)] bg-white/72 px-6 py-6 lg:border-t-0 lg:border-l lg:px-8 lg:py-7">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
+                  首屏入口
+                </p>
+                <div className="mt-4 space-y-5">
+                  <div className="border-b border-[var(--color-line)] pb-5">
+                    <p className="text-sm text-[var(--color-muted)]">推荐路径</p>
+                    <p className="mt-1 text-2xl font-black">先看榜单，再进社区，再进群协作。</p>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
+                  <div className="border-b border-[var(--color-line)] pb-5">
+                    <p className="text-sm text-[var(--color-muted)]">群协作</p>
+                    <p className="mt-1 text-base font-black">QQ群 602190132</p>
+                    <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+                      实时线索、试用活动、站点失效和高峰表现先在群里同步。
+                    </p>
+                  </div>
+                  <div className="border-b border-[var(--color-line)] pb-5">
+                    <p className="text-sm text-[var(--color-muted)]">长讨论沉淀</p>
+                    <a
+                      className="mt-1 inline-flex text-base font-black text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
+                      href="https://github.com/hfeng620-cmd/api_test_and_forum/discussions"
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      打开 GitHub Discussions
+                    </a>
+                    <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+                      适合把群里的高质量结论整理成长帖和公开共识。
+                    </p>
+                  </div>
+                  <div>
+                    <Link
+                      href="/stations"
+                      className="inline-flex rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--color-brand-deep)]"
+                    >
+                      查看完整榜单
+                    </Link>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-base font-black">{row.price}</p>
-                  <a
-                    className="mt-2 inline-flex text-sm leading-6 text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
-                    href={stationLinkMap[row.name]}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {row.entry}
-                  </a>
-                </div>
-                <p className="text-base font-black">{row.multiplier}</p>
-                <div>
-                  <p className="text-base font-black">{row.verdict}</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.note}</p>
-                </div>
-              </article>
-            ))}
+              </aside>
+            </div>
           </div>
         </div>
       </section>
