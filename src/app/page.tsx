@@ -125,7 +125,7 @@ export default function Home() {
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-deep)]">
                 中转站榜单
               </p>
-              <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+              <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
                 中转站榜单
               </h1>
             </div>

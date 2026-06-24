@@ -386,7 +386,7 @@ export function DiscussionFeed({
           const comments = commentsMap[post.issueNumber];
 
           return (
-            <article id={post.issueNumber} key={post.issueNumber} className="card-lift px-5 py-5 transition hover:bg-[var(--color-hover)] sm:px-6">
+            <article id={post.issueNumber} key={post.issueNumber} className="card-lift border-l-2 border-l-transparent px-5 py-5 transition hover:border-l-[var(--color-brand)] hover:bg-[var(--color-hover)] sm:px-6">
               <div className="flex items-start justify-between gap-3 sm:gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -402,7 +402,7 @@ export function DiscussionFeed({
                   </div>
                   {post.body.length > 500 ? (
                     <>
-                      <p className="mt-3 max-w-4xl text-[15px] leading-7 text-[var(--color-ink)]">
+                      <p className="mt-3 max-w-4xl text-[15px] leading-8 text-[var(--color-ink)]">
                         {expandedBodies.has(post.issueNumber)
                           ? post.body
                           : `${post.body.slice(0, 500)}...`}
@@ -426,7 +426,7 @@ export function DiscussionFeed({
                       </button>
                     </>
                   ) : (
-                    <p className="mt-3 max-w-4xl text-[15px] leading-7 text-[var(--color-ink)]">{post.body}</p>
+                    <p className="mt-3 max-w-4xl text-[15px] leading-8 text-[var(--color-ink)]">{post.body}</p>
                   )}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {post.tags.map((tag) => (

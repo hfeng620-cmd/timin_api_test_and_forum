@@ -75,8 +75,8 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-line)] pb-3">
         <div>
-          <h2 className="text-lg font-black tracking-tight">发帖子</h2>
-          <p className="mt-1 text-xs text-[var(--color-muted)]">价格、稳定性、模型口径都可以先发这里。</p>
+          <h2 className="text-xl font-black tracking-tight mb-2">发帖子</h2>
+          <p className="text-xs text-[var(--color-muted)]">价格、稳定性、模型口径都可以先发这里。</p>
         </div>
         <a
           className="rounded-full border border-[var(--color-line)] px-3 py-2 text-xs font-bold text-[var(--color-muted)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"

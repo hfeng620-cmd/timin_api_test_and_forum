@@ -862,7 +862,7 @@ export function StationsBoard() {
                     key={filter.id}
                     className={`rounded-full px-4 py-2.5 text-sm font-semibold transition ${
                       activeFilter === filter.id
-                        ? "bg-[var(--color-brand)] text-[var(--color-on-brand)] shadow-[0_10px_24px_var(--color-panel-glow)]"
+                        ? "bg-[var(--color-brand)] text-[var(--color-on-brand)] shadow-[0_10px_24px_var(--color-panel-glow)] pill-pulse"
                         : "border border-[var(--color-line)] bg-[var(--color-panel)] text-[var(--color-muted)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
                     }`}
                     onClick={() => setActiveFilter(filter.id)}
@@ -1013,7 +1013,7 @@ export function StationsBoard() {
           <div className="overflow-x-auto">
             <div className="min-w-[1180px]">
               {/* Column headers */}
-              <div className="grid grid-cols-[0.8fr_1.05fr_1fr_0.92fr_0.9fr_0.8fr_1.3fr] bg-[var(--color-soft)] px-6 py-4 text-sm font-bold text-[var(--color-muted)]">
+              <div className="grid grid-cols-[0.8fr_1.05fr_1fr_0.92fr_0.9fr_0.8fr_1.3fr] bg-[var(--color-soft)] px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                 <span>排序</span>
                 <span>站点</span>
                 <span>入口 / 地址</span>
@@ -1046,7 +1046,7 @@ export function StationsBoard() {
                 return (
                   <div key={station.id}>
                     <article
-                      className="grid grid-cols-[0.8fr_1.05fr_1fr_0.92fr_0.9fr_0.8fr_1.3fr] items-start px-6 py-5 transition-all duration-300 hover:bg-[var(--color-hover)]"
+                      className="grid grid-cols-[0.8fr_1.05fr_1fr_0.92fr_0.9fr_0.8fr_1.3fr] items-start border-l-2 border-l-transparent px-6 py-5 transition-all duration-300 hover:border-l-[var(--color-brand)] hover:bg-[var(--color-hover)]"
                     >
                       {/* 排序 */}
                       <div className="font-bold text-[var(--color-muted)]">
