@@ -44,7 +44,7 @@
 - 首页聚焦主入口，先看榜单，再进讨论和指南
 - 榜单页支持首屏重点站点、搜索、筛选、更多中转站展开和补充提交
 - 已补入提交补充流程，方便后续由管理员审核
-- 论坛入口页已接入 GitHub Issues 提交/审核；站内展示已通过讨论，并保留 GitHub Discussions 分流
+- 论坛入口页已接入 Supabase 邮箱登录、待审核发帖、回复和点赞；管理员通过后所有访客可见，并保留 GitHub Discussions 分流
 
 ## 项目想解决什么问题
 
@@ -153,6 +153,43 @@ Start-ScheduledTask -TaskName "TiminObserveDevTunnel"
 
 注意：Quick Tunnel 地址不是固定入口。它适合短期给别人看本机开发版；正式入口仍然使用 GitHub Pages。
 
+## Cloudflare named tunnel 固定公网入口
+
+如果已经有 Cloudflare 账号和可用域名，可以用 named tunnel 绑定一个长期固定的 Cloudflare 地址。固定入口仍然依赖这台电脑上的 Next 和 `cloudflared` 进程在线。
+
+首次配置示例：
+
+```powershell
+winget install --id Cloudflare.cloudflared
+cloudflared tunnel login
+cloudflared tunnel create timin-observe
+cloudflared tunnel route dns timin-observe observe.example.com
+```
+
+在 `C:\Users\<你的用户名>\.cloudflared\config.yml` 写入或确认配置，`credentials-file` 路径以 `cloudflared tunnel create` 输出为准：
+
+```yaml
+tunnel: timin-observe
+credentials-file: C:\Users\<你的用户名>\.cloudflared\<TunnelID>.json
+
+ingress:
+  - hostname: observe.example.com
+    service: http://localhost:3001
+  - service: http_status:404
+```
+
+启动固定入口，可以直接调用脚本，也可以使用 npm start 脚本：
+
+```powershell
+npm run start:named-tunnel -- -Port 3001 -TunnelName "timin-observe" -Hostname "observe.example.com" -ConfigPath "$env:USERPROFILE\.cloudflared\config.yml"
+```
+
+```powershell
+.\scripts\start-timin-named-tunnel.ps1 -Port 3001 -TunnelName "timin-observe" -Hostname "observe.example.com" -ConfigPath "$env:USERPROFILE\.cloudflared\config.yml"
+```
+
+脚本会先启动本地 Next，再执行 `cloudflared tunnel run` 运行 named tunnel，并把固定入口写入 `%LOCALAPPDATA%\TiminObserve\latest-url.txt`。日志仍放在 `%LOCALAPPDATA%\TiminObserve\logs`。
+
 ## GitHub Pages 自动部署
 
 仓库已经补入 GitHub Pages 工作流：
@@ -187,5 +224,7 @@ npm run build
 - 模型分组和真实可用性
 - 部分待补价格站已确认可调用 GPT-5.5 / GPT-5.4，价格倍率和稳定性仍待样本确认
 - 更多试用入口与注册送额信息
-- 后续可把站内发帖从 GitHub Token 临时方案升级为 GitHub App、Supabase 或服务端代理
+- 站内发帖已升级为 Supabase 邮箱登录与待审核发布；后续可继续补管理员工作台和通知邮件
 - 打开 GitHub Discussions 后把群里高质量讨论慢慢沉淀进来
+
+

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
+import { ForumAuthModal } from "@/components/forum-auth-modal";
 import { createDiscussionPost } from "@/lib/discussion-storage";
-import { useGithubAuth } from "@/lib/github-auth";
-import { GithubAuthModal } from "@/components/github-auth-modal";
+import { useForumAuth } from "@/lib/forum-auth";
 
 type CommunityPostPanelProps = {
   onPostCreated?: () => void;
@@ -18,10 +18,10 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const { token, isConnected } = useGithubAuth();
+  const { isConnected } = useForumAuth();
 
   async function handleSubmit() {
-    if (!isConnected || !token) {
+    if (!isConnected) {
       setAuthModalOpen(true);
       return;
     }
@@ -40,7 +40,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
 
     setSubmitting(true);
     try {
-      await createDiscussionPost(token, {
+      await createDiscussionPost({
         author: "群友补充",
         handle: "@group_note",
         body: body.trim(),
@@ -54,7 +54,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
       setStatus("已提交，等待管理员审核后显示。");
       onPostCreated?.();
     } catch {
-      setStatus("发布失败，请重试。");
+      setStatus("发布失败，请检查网络后重试。");
     } finally {
       setSubmitting(false);
     }
@@ -97,7 +97,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
           >
             {isConnected
               ? "写站点反馈、试用活动、价格变化或避坑记录..."
-              : "连接 GitHub 后发帖..."}
+              : "登录后发帖..."}
           </button>
           <div className="flex flex-wrap items-center gap-3 sm:justify-end">
             <button
@@ -149,7 +149,11 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
         </div>
       )}
 
-      <GithubAuthModal key={authModalOpen ? "open" : "closed"} open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+      <ForumAuthModal
+        key={authModalOpen ? "open" : "closed"}
+        open={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </div>
   );
 }

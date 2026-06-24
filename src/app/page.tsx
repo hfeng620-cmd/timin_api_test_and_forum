@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { QqGroupModalButton } from "@/components/qq-group-modal-button";
+import { StationRowLink } from "@/components/station-row-link";
 import {
   prioritizedStationNames,
   resourceLinks,
@@ -132,9 +133,10 @@ export default function Home() {
 
                 <div className="mt-1">
                   {topRows.map((row, index) => (
-                    <article
+                    <StationRowLink
                       key={`${row.name}-${index}`}
-                      className="stagger-in grid gap-4 border-b border-[var(--color-line)] py-5 transition hover:bg-[var(--color-hover)] md:grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.35fr] md:items-start"
+                      href={stationLinkMap[row.name]}
+                      className="stagger-in grid cursor-pointer gap-4 border-b border-[var(--color-line)] py-5 transition hover:bg-[var(--color-hover)] md:grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.35fr] md:items-start"
                     >
                       <div className="flex items-center justify-between gap-3 md:block">
                         <span className="text-sm font-bold text-[var(--color-muted)] md:pt-1">
@@ -155,21 +157,14 @@ export default function Home() {
                       </div>
                       <div>
                         <p className="text-base font-black">{row.price}</p>
-                        <a
-                          className="mt-2 inline-flex text-sm leading-6 text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
-                          href={stationLinkMap[row.name]}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          {row.entry}
-                        </a>
+                        <span className="mt-2 inline-flex text-sm leading-6 text-[var(--color-brand-deep)]">`r`n                          {row.entry}`r`n                        </span>
                       </div>
                       <p className="pt-1 text-base font-black">{row.multiplier}</p>
                       <div>
                         <p className="text-base font-black">{row.verdict}</p>
                         <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.note}</p>
                       </div>
-                    </article>
+                    </StationRowLink>
                   ))}
                 </div>
               </div>
@@ -274,3 +269,6 @@ export default function Home() {
     </main>
   );
 }
+
+
+
