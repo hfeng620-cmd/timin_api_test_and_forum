@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { GithubIssueReviewPanel } from "@/components/github-issue-review-panel";
+
 import {
   clearFeaturedStationDrafts,
   loadFeaturedStationDrafts,
@@ -146,7 +148,7 @@ export default function AdminPage() {
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                   首页精选站文案
                 </p>
-                <h1 className="mt-2 text-3xl font-black">把虎虎、Aether、杂货铺、dasuAPI 放在最上面</h1>
+                <h1 className="mt-2 text-3xl font-black">把虎虎、Aether、杂货铺、秋天中转站放在最上面</h1>
               </div>
               <div className="flex flex-wrap gap-3">
                 <button
@@ -223,6 +225,8 @@ export default function AdminPage() {
           </div>
 
           <div className="space-y-6">
+            <GithubIssueReviewPanel />
+
             <div className="rounded-[34px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                 当前状态

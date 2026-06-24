@@ -102,16 +102,16 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/community"
+                href="/stations"
                 className="rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_12px_28px_var(--color-panel-glow)] transition hover:bg-[var(--color-brand-deep)]"
               >
-                进入社区讨论 / 发帖反馈
+                查看完整榜单
               </Link>
               <Link
-                href="/stations"
+                href="/community"
                 className="rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-3 text-sm font-bold text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
               >
-                查看完整榜单
+                进入社区讨论
               </Link>
               <div className="lg:hidden">
                 <QqGroupModalButton />
@@ -181,7 +181,7 @@ export default function Home() {
                 <div className="mt-4 space-y-5">
                   <div className="border-b border-[var(--color-line)] pb-5">
                     <p className="text-sm text-[var(--color-muted)]">站内讨论</p>
-                    <p className="mt-1 text-2xl font-black">发帖、回复、点赞、收藏。</p>
+                    <p className="mt-1 text-2xl font-black">站点反馈、价格变化、试用线索</p>
                     <Link
                       href="/community"
                       className="mt-4 inline-flex rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-black text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"

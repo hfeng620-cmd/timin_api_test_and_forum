@@ -1,15 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  bookmarkDiscussionPost,
   createDiscussionPost,
   likeDiscussionPost,
   loadDiscussionPosts,
+  loadComments,
   replyDiscussionPost,
   type DiscussionPost,
+  type DiscussionReply,
 } from "@/lib/discussion-storage";
+import { useGithubAuth } from "@/lib/github-auth";
+import { GithubAuthModal } from "@/components/github-auth-modal";
 
 type DiscussionFeedProps = {
   compact?: boolean;
@@ -31,11 +34,7 @@ function formatCount(value: number) {
   return `${value}`;
 }
 
-function ActionIcon({
-  kind,
-}: {
-  kind: "comment" | "like" | "bookmark";
-}) {
+function ActionIcon({ kind }: { kind: "comment" | "like" }) {
   if (kind === "comment") {
     return (
       <svg
@@ -55,25 +54,6 @@ function ActionIcon({
     );
   }
 
-  if (kind === "like") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-[18px] w-[18px]"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <path
-          d="M12 20.4s-7-4.355-7-9.24A4.16 4.16 0 0 1 9.2 7a4.62 4.62 0 0 1 2.8 1.1A4.62 4.62 0 0 1 14.8 7A4.16 4.16 0 0 1 19 11.16c0 4.885-7 9.24-7 9.24Z"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="1.8"
-        />
-      </svg>
-    );
-  }
-
   return (
     <svg
       aria-hidden="true"
@@ -82,7 +62,7 @@ function ActionIcon({
       viewBox="0 0 24 24"
     >
       <path
-        d="M7 4.5h10a1 1 0 0 1 1 1v14l-6-3.6-6 3.6v-14a1 1 0 0 1 1-1Z"
+        d="M12 20.4s-7-4.355-7-9.24A4.16 4.16 0 0 1 9.2 7a4.62 4.62 0 0 1 2.8 1.1A4.62 4.62 0 0 1 14.8 7A4.16 4.16 0 0 1 19 11.16c0 4.885-7 9.24-7 9.24Z"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -98,7 +78,7 @@ function ActionButton({
   onClick,
 }: {
   count: number;
-  icon: "comment" | "like" | "bookmark";
+  icon: "comment" | "like";
   onClick?: () => void;
 }) {
   const content = (
@@ -133,20 +113,76 @@ export function DiscussionFeed({
   hideComposer = false,
   limit,
 }: DiscussionFeedProps) {
-  const [posts, setPosts] = useState<DiscussionPost[]>(() => loadDiscussionPosts());
+  const { token, isConnected } = useGithubAuth();
+
+  const [posts, setPosts] = useState<DiscussionPost[]>([]);
+  const [commentsMap, setCommentsMap] = useState<
+    Record<number, DiscussionReply[]>
+  >({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [body, setBody] = useState("");
   const [station, setStation] = useState("");
-  const [expandedPostId, setExpandedPostId] = useState<string | null>(posts[0]?.id ?? null);
-  const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
-  const [replyTargets, setReplyTargets] = useState<Record<string, string>>({});
+  const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
+  const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
+  const [replyTargets, setReplyTargets] = useState<Record<number, string>>(
+    {},
+  );
   const [status, setStatus] = useState("发帖讨论。");
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const loadPosts = useCallback(
+    async (setLoadingState: boolean) => {
+      if (setLoadingState) {
+        setLoading(true);
+      }
+      setError(null);
+      try {
+        const data = await loadDiscussionPosts(token ?? undefined);
+        setPosts(data);
+        if (setLoadingState) {
+          setLoading(false);
+        }
+      } catch {
+        setError("加载失败");
+        if (setLoadingState) {
+          setLoading(false);
+        }
+      }
+    },
+    [token],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    loadDiscussionPosts(token ?? undefined)
+      .then((data) => {
+        if (cancelled) return;
+        setPosts(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError("加载失败");
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
 
   const visiblePosts = useMemo(() => {
     const base = compact ? posts.slice(0, 4) : posts;
     return typeof limit === "number" ? base.slice(0, limit) : base;
   }, [compact, limit, posts]);
 
-  function handleSubmitPost() {
+  async function handleSubmitPost() {
+    if (!isConnected || !token) {
+      setAuthModalOpen(true);
+      return;
+    }
+
     if (!body.trim()) {
       setStatus("先写点内容再发帖。");
       return;
@@ -156,45 +192,143 @@ export function DiscussionFeed({
       .split(/[，,\s]+/)
       .map((item) => item.trim())
       .filter(Boolean);
-    const updated = createDiscussionPost({
-      body,
-      station,
-      tags,
-    });
 
-    setPosts(updated);
-    setBody("");
-    setStation("");
-    setExpandedPostId(updated[0]?.id ?? null);
-    setStatus("已发布。");
+    setStatus("发布中...");
+    try {
+      await createDiscussionPost(token, {
+        author: "群友补充",
+        handle: "@group_note",
+        body,
+        station,
+        tags,
+      });
+      await loadPosts(false);
+      setBody("");
+      setStation("");
+      setStatus("已提交，等待审核。");
+    } catch {
+      setStatus("发布失败，请重试。");
+    }
   }
 
-  function handleLike(id: string) {
-    setPosts(likeDiscussionPost(id));
+  async function handleLike(issueNumber: number) {
+    if (!isConnected || !token) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    const currentPost = posts.find((p) => p.issueNumber === issueNumber);
+    if (!currentPost) return;
+
+    const updatedLikes = currentPost.likes + 1;
+    setPosts((current) =>
+      current.map((p) =>
+        p.issueNumber === issueNumber
+          ? { ...p, likes: updatedLikes }
+          : p,
+      ),
+    );
+
+    try {
+      const confirmedLikes = await likeDiscussionPost(token, issueNumber, currentPost.likes);
+      setPosts((current) =>
+        current.map((p) =>
+          p.issueNumber === issueNumber ? { ...p, likes: confirmedLikes } : p,
+        ),
+      );
+    } catch {
+      setPosts((current) =>
+        current.map((p) =>
+          p.issueNumber === issueNumber ? { ...p, likes: currentPost.likes } : p,
+        ),
+      );
+    }
   }
 
-  function handleBookmark(id: string) {
-    setPosts(bookmarkDiscussionPost(id));
+  async function loadPostComments(issueNumber: number) {
+    if (commentsMap[issueNumber] !== undefined) return;
+
+    const comments = await loadComments(token ?? undefined, issueNumber);
+    setCommentsMap((current) => ({
+      ...current,
+      [issueNumber]: comments,
+    }));
   }
 
-  function openReplyBox(postId: string, target = "楼主") {
-    setExpandedPostId(postId);
-    setReplyTargets((current) => ({ ...current, [postId]: target }));
+  function togglePost(issueNumber: number, expanded: boolean) {
+    setExpandedPostId(expanded ? null : issueNumber);
+    if (!expanded) {
+      void loadPostComments(issueNumber);
+    }
   }
 
-  function handleReply(id: string) {
-    const draft = replyDrafts[id]?.trim();
+  function openReplyBox(issueNumber: number, target = "楼主") {
+    setExpandedPostId(issueNumber);
+    setReplyTargets((current) => ({ ...current, [issueNumber]: target }));
+    void loadPostComments(issueNumber);
+  }
+
+  async function handleReply(issueNumber: number) {
+    if (!isConnected || !token) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    const draft = replyDrafts[issueNumber]?.trim();
     if (!draft) {
       setStatus("先写一点回复内容。");
       return;
     }
 
-    const updated = replyDiscussionPost(id, { body: draft });
-    setPosts(updated);
-    setReplyDrafts((current) => ({ ...current, [id]: "" }));
-    setReplyTargets((current) => ({ ...current, [id]: "楼主" }));
-    setExpandedPostId(id);
-    setStatus("已回复。");
+    setStatus("回复中...");
+    try {
+      await replyDiscussionPost(token, issueNumber, draft);
+      const newComments = await loadComments(token ?? undefined, issueNumber);
+      setCommentsMap((current) => ({
+        ...current,
+        [issueNumber]: newComments,
+      }));
+      setPosts((current) =>
+        current.map((p) =>
+          p.issueNumber === issueNumber
+            ? { ...p, replyCount: newComments.length }
+            : p,
+        ),
+      );
+      setReplyDrafts((current) => ({ ...current, [issueNumber]: "" }));
+      setReplyTargets((current) => ({ ...current, [issueNumber]: "楼主" }));
+      setExpandedPostId(issueNumber);
+      setStatus("已回复。");
+    } catch {
+      setStatus("回复失败，请重试。");
+    }
+  }
+
+  if (loading) {
+    return (
+      <section className="overflow-hidden rounded-[8px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[var(--shadow-card)]">
+        <div className="px-5 py-10 text-center">
+          <p className="text-base text-[var(--color-muted)]">加载中...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="overflow-hidden rounded-[8px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[var(--shadow-card)]">
+        <div className="px-5 py-10 text-center">
+          <p className="text-base text-[var(--color-muted)]">{error}</p>
+          <button
+            className="mt-3 rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
+            onClick={() => loadPosts(true)}
+            type="button"
+          >
+            重试
+          </button>
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -205,7 +339,9 @@ export function DiscussionFeed({
       <div className="border-b border-[var(--color-line)] px-5 py-4">
         <div className="flex items-center justify-between gap-4">
           <h1 className="text-2xl font-black tracking-tight">{title}</h1>
-          <span className="text-sm text-[var(--color-muted)]">{visiblePosts.length} 条</span>
+          <span className="text-sm text-[var(--color-muted)]">
+            {visiblePosts.length} 条
+          </span>
         </div>
       </div>
 
@@ -226,7 +362,9 @@ export function DiscussionFeed({
                   placeholder="带一个站点名或标签，例如 虎虎 / Aether"
                   value={station}
                 />
-                <span className="text-xs text-[var(--color-muted)]">{status}</span>
+                <span className="text-xs text-[var(--color-muted)]">
+                  {status}
+                </span>
               </div>
               <button
                 className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
@@ -243,7 +381,9 @@ export function DiscussionFeed({
       <div className="divide-y divide-[var(--color-line)]">
         {visiblePosts.length === 0 ? (
           <div className="px-5 py-10 text-center sm:px-6">
-            <p className="text-base font-bold text-[var(--color-ink)]">还没有讨论。</p>
+            <p className="text-base font-bold text-[var(--color-ink)]">
+              还没有讨论。
+            </p>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
               在上面发第一条帖子，站点反馈会直接出现在这里。
             </p>
@@ -251,20 +391,27 @@ export function DiscussionFeed({
         ) : null}
 
         {visiblePosts.map((post) => {
-          const expanded = expandedPostId === post.id;
+          const expanded = expandedPostId === post.issueNumber;
+          const comments = commentsMap[post.issueNumber];
 
           return (
             <article
-              key={post.id}
+              key={String(post.issueNumber)}
               className="px-5 py-5 transition hover:bg-[var(--color-hover)] sm:px-6"
             >
               <div className="flex items-start justify-between gap-3 sm:gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-black">{post.author}</h3>
-                    <span className="text-sm text-[var(--color-muted)]">{post.handle}</span>
-                    <span className="text-sm text-[var(--color-muted)]">·</span>
-                    <span className="text-sm text-[var(--color-muted)]">{post.postedAt}</span>
+                    <span className="text-sm text-[var(--color-muted)]">
+                      {post.handle}
+                    </span>
+                    <span className="text-sm text-[var(--color-muted)]">
+                      ·
+                    </span>
+                    <span className="text-sm text-[var(--color-muted)]">
+                      {post.postedAt}
+                    </span>
                     {post.station ? (
                       <span className="rounded-full bg-[var(--color-soft)] px-2.5 py-1 text-xs font-bold text-[var(--color-brand-deep)]">
                         {post.station}
@@ -277,7 +424,7 @@ export function DiscussionFeed({
                   <div className="mt-3 flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
                       <span
-                        key={`${post.id}-${tag}`}
+                        key={`${post.issueNumber}-${tag}`}
                         className="text-xs font-semibold text-[var(--color-muted)]"
                       >
                         #{tag}
@@ -288,7 +435,7 @@ export function DiscussionFeed({
 
                 <button
                   className="text-xs font-bold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
-                  onClick={() => setExpandedPostId(expanded ? null : post.id)}
+                  onClick={() => togglePost(post.issueNumber, expanded)}
                   type="button"
                 >
                   {expanded ? "收起" : "展开"}
@@ -297,45 +444,56 @@ export function DiscussionFeed({
 
               <div className="mt-4 flex flex-wrap items-center gap-7">
                 <ActionButton
-                  count={post.stats.replies}
+                  count={post.replyCount}
                   icon="comment"
-                  onClick={() => openReplyBox(post.id)}
+                  onClick={() => openReplyBox(post.issueNumber)}
                 />
                 <ActionButton
-                  count={post.stats.likes}
+                  count={post.likes}
                   icon="like"
-                  onClick={() => handleLike(post.id)}
-                />
-                <ActionButton
-                  count={post.stats.bookmarks}
-                  icon="bookmark"
-                  onClick={() => handleBookmark(post.id)}
+                  onClick={() => handleLike(post.issueNumber)}
                 />
               </div>
 
               {expanded ? (
                 <div className="mt-4 border-l-2 border-[var(--color-line)] pl-4">
                   <div className="space-y-4">
-                    {(post.replies ?? []).length === 0 ? (
-                      <p className="text-sm text-[var(--color-muted)]">暂无回复。</p>
+                    {comments === undefined ? (
+                      <p className="text-sm text-[var(--color-muted)]">
+                        加载中...
+                      </p>
+                    ) : comments.length === 0 ? (
+                      <p className="text-sm text-[var(--color-muted)]">
+                        暂无回复。
+                      </p>
                     ) : (
-                      (post.replies ?? []).map((reply, index) => (
+                      comments.map((reply, index) => (
                         <div
-                          key={`${post.id}-reply-${index}`}
+                          key={`${post.issueNumber}-reply-${index}`}
                           className="group"
                         >
                           <div className="flex flex-wrap items-center gap-2 text-sm">
-                            <span className="font-bold text-[var(--color-ink)]">{reply.author}</span>
-                            <span className="text-[var(--color-muted)]">{reply.handle}</span>
-                            <span className="text-[var(--color-muted)]">·</span>
-                            <span className="text-[var(--color-muted)]">{reply.postedAt}</span>
+                            <span className="font-bold text-[var(--color-ink)]">
+                              {reply.author}
+                            </span>
+                            <span className="text-[var(--color-muted)]">
+                              ·
+                            </span>
+                            <span className="text-[var(--color-muted)]">
+                              {reply.postedAt}
+                            </span>
                           </div>
                           <p className="mt-1 text-sm leading-7 text-[var(--color-ink)]">
                             {reply.body}
                           </p>
                           <button
                             className="mt-1 text-xs font-semibold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
-                            onClick={() => openReplyBox(post.id, reply.author)}
+                            onClick={() =>
+                              openReplyBox(
+                                post.issueNumber,
+                                reply.author,
+                              )
+                            }
                             type="button"
                           >
                             回复
@@ -351,15 +509,15 @@ export function DiscussionFeed({
                       onChange={(event) =>
                         setReplyDrafts((current) => ({
                           ...current,
-                          [post.id]: event.target.value,
+                          [post.issueNumber]: event.target.value,
                         }))
                       }
-                      placeholder={`回复 ${replyTargets[post.id] ?? "楼主"}`}
-                      value={replyDrafts[post.id] ?? ""}
+                      placeholder={`回复 ${replyTargets[post.issueNumber] ?? "楼主"}`}
+                      value={replyDrafts[post.issueNumber] ?? ""}
                     />
                     <button
                       className="rounded-full bg-[var(--color-brand)] px-4 py-3 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)] sm:w-auto"
-                      onClick={() => handleReply(post.id)}
+                      onClick={() => handleReply(post.issueNumber)}
                       type="button"
                     >
                       发送
@@ -371,6 +529,12 @@ export function DiscussionFeed({
           );
         })}
       </div>
+
+      <GithubAuthModal
+        key={authModalOpen ? "open" : "closed"}
+        open={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </section>
   );
 }

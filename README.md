@@ -16,6 +16,14 @@
 
 如果第一次推送工作流后还没上线，需要到仓库 `Settings > Pages` 里确认来源为 `GitHub Actions`。
 
+### 访问地址怎么选
+
+- 正式给别人访问，优先使用 GitHub Pages 地址，地址稳定，不依赖本机开机。
+- `http://127.0.0.1:3001` 只代表当前这台电脑，适合本机调试。
+- 同一局域网内访问，可以启动 `npm run dev -- -H 0.0.0.0 -p 3001`，再让对方打开 `http://本机IP:3001`。
+- `trycloudflare.com` 可以作为临时公网预览入口，只要本机和 `cloudflared` 进程在线就能用；电脑重启或隧道重连后，地址可能变化。
+- 如果希望 Cloudflare 地址长期固定，需要使用 Cloudflare 账号创建 named tunnel，并绑定固定 hostname 或自定义域名。
+
 ## 页面预览
 
 ### 首页榜单入口
@@ -36,7 +44,7 @@
 - 首页聚焦主入口，先看榜单，再进讨论和指南
 - 榜单页支持首屏重点站点、搜索、筛选、更多中转站展开和补充提交
 - 已补入提交补充流程，方便后续由管理员审核
-- 论坛入口页支持站内发帖、回复、点赞、收藏与 GitHub Discussions 分流
+- 论坛入口页已接入 GitHub Issues 提交/审核；站内展示已通过讨论，并保留 GitHub Discussions 分流
 
 ## 项目想解决什么问题
 
@@ -76,7 +84,7 @@
 - Liary
 - dasuAPI
 - dazes.cc
-- 五条悟 `qiutian.live`
+- 秋天中转站 `qiutian.live`
 - xiaoya-api
 - 星见雅公益
 
@@ -115,10 +123,35 @@
 
 ```bash
 npm install
-npm run dev
+npm run dev -- -p 3001
 ```
 
-打开 `http://localhost:3000`
+打开 `http://127.0.0.1:3001`。如果要让同一局域网设备访问，使用：
+
+```bash
+npm run dev -- -H 0.0.0.0 -p 3001
+```
+
+## 开机自启动临时公网预览
+
+如果暂时希望 Windows 登录后自动启动本地预览和 Cloudflare 临时公网入口，可以使用 `cloudflared tunnel --url http://localhost:3001`。
+
+项目已提供脚本。首次使用前需要先安装依赖，并确保 `cloudflared` 已安装且在 PATH 中：
+
+```powershell
+npm install
+winget install --id Cloudflare.cloudflared
+.\scripts\install-timin-public-preview-startup.ps1
+Start-ScheduledTask -TaskName "TiminObserveDevTunnel"
+```
+
+日志放在 `%LOCALAPPDATA%\TiminObserve\logs`，最新状态写入 `%LOCALAPPDATA%\TiminObserve\latest-url.txt`。计划任务只在安装脚本执行后生效，触发时间是当前用户登录 Windows 后；如果还没有安装，`Start-ScheduledTask` 会找不到任务。卸载自启动任务：
+
+```powershell
+.\scripts\uninstall-timin-public-preview-startup.ps1
+```
+
+注意：Quick Tunnel 地址不是固定入口。它适合短期给别人看本机开发版；正式入口仍然使用 GitHub Pages。
 
 ## GitHub Pages 自动部署
 
@@ -152,6 +185,7 @@ npm run build
 
 - 各站高峰期稳定性反馈
 - 模型分组和真实可用性
+- 部分待补价格站已确认可调用 GPT-5.5 / GPT-5.4，价格倍率和稳定性仍待样本确认
 - 更多试用入口与注册送额信息
-- 管理员审核接入真正可共享的后台
+- 后续可把站内发帖从 GitHub Token 临时方案升级为 GitHub App、Supabase 或服务端代理
 - 打开 GitHub Discussions 后把群里高质量讨论慢慢沉淀进来

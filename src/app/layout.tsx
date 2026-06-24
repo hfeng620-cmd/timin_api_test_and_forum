@@ -6,6 +6,7 @@ import { MobileDock } from "@/components/mobile-dock";
 import { MouseGlowLayer } from "@/components/mouse-glow-layer";
 import { SelectionCommentLayer } from "@/components/selection-comment-layer";
 import { SiteFooter } from "@/components/site-footer";
+import { GithubAuthProvider } from "@/lib/github-auth";
 
 import "./globals.css";
 
@@ -37,14 +38,16 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <MouseGlowLayer />
-        <div className="relative z-10 flex min-h-full flex-col">
-          {children}
-          <SiteFooter />
-          <FloatingQuickPanel />
-          <MobileDock />
-          <SelectionCommentLayer />
-        </div>
+        <GithubAuthProvider>
+          <MouseGlowLayer />
+          <div className="relative z-10 flex min-h-full flex-col">
+            {children}
+            <SiteFooter />
+            <FloatingQuickPanel />
+            <MobileDock />
+            <SelectionCommentLayer />
+          </div>
+        </GithubAuthProvider>
       </body>
     </html>
   );

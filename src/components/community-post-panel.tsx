@@ -3,6 +3,8 @@
 import { useState } from "react";
 
 import { createDiscussionPost } from "@/lib/discussion-storage";
+import { useGithubAuth } from "@/lib/github-auth";
+import { GithubAuthModal } from "@/components/github-auth-modal";
 
 type CommunityPostPanelProps = {
   onPostCreated?: () => void;
@@ -12,9 +14,20 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
   const [open, setOpen] = useState(false);
   const [station, setStation] = useState("");
   const [body, setBody] = useState("");
-  const [status, setStatus] = useState("发布后会显示在下面。");
+  const [status, setStatus] = useState("提交后需管理员审核。");
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit() {
+  const { token, isConnected } = useGithubAuth();
+
+  async function handleSubmit() {
+    if (!isConnected || !token) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    if (submitting) return;
+
     if (!body.trim()) {
       setStatus("先写一点正文，再发布。");
       return;
@@ -25,17 +38,34 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
       .map((item) => item.trim())
       .filter(Boolean);
 
-    createDiscussionPost({
-      body: body.trim(),
-      station: station.trim(),
-      tags,
-    });
+    setSubmitting(true);
+    try {
+      await createDiscussionPost(token, {
+        author: "群友补充",
+        handle: "@group_note",
+        body: body.trim(),
+        station: station.trim(),
+        tags,
+      });
 
-    setBody("");
-    setStation("");
-    setOpen(false);
-    setStatus("已发布。");
-    onPostCreated?.();
+      setBody("");
+      setStation("");
+      setOpen(false);
+      setStatus("已提交，等待管理员审核后显示。");
+      onPostCreated?.();
+    } catch {
+      setStatus("发布失败，请重试。");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function handlePlaceholderClick() {
+    if (!isConnected) {
+      setAuthModalOpen(true);
+      return;
+    }
+    setOpen(true);
   }
 
   return (
@@ -62,15 +92,17 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
         <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
           <button
             className="min-h-12 rounded-[8px] border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 text-left text-sm text-[var(--color-muted)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-ink)]"
-            onClick={() => setOpen(true)}
+            onClick={handlePlaceholderClick}
             type="button"
           >
-            写站点反馈、试用活动、价格变化或避坑记录...
+            {isConnected
+              ? "写站点反馈、试用活动、价格变化或避坑记录..."
+              : "连接 GitHub 后发帖..."}
           </button>
           <div className="flex flex-wrap items-center gap-3 sm:justify-end">
             <button
               className="rounded-full bg-[var(--color-brand)] px-6 py-3 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
-              onClick={() => setOpen(true)}
+              onClick={handlePlaceholderClick}
               type="button"
             >
               发布帖子
@@ -104,17 +136,20 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
             </button>
 
             <button
-              className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
+              className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)] disabled:opacity-60"
+              disabled={submitting}
               onClick={handleSubmit}
               type="button"
             >
-              发布帖子
+              {submitting ? "发布中..." : "发布帖子"}
             </button>
           </div>
 
           <p className="mt-3 text-xs leading-6 text-[var(--color-muted)]">{status}</p>
         </div>
       )}
+
+      <GithubAuthModal key={authModalOpen ? "open" : "closed"} open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </div>
   );
 }

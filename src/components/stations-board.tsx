@@ -15,7 +15,7 @@ type StationRow = (typeof stationComparisonRows)[number];
 
 const filters: { id: FilterId; label: string; description: string }[] = [
   { id: "all", label: "全部站点", description: "完整总表" },
-  { id: "featured", label: "首屏重点", description: "虎虎 / Aether / 杂货铺 / dasuAPI" },
+  { id: "featured", label: "首页重点", description: "虎虎 / Aether / 杂货铺 / 秋天中转站" },
   { id: "trial", label: "可先试用", description: "低门槛入口" },
   { id: "free", label: "免费入口", description: "公益或免费" },
   { id: "lowRate", label: "低倍率", description: "0.15x 及以下" },
