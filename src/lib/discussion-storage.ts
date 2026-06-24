@@ -260,3 +260,29 @@ export async function rejectDiscussionPost(postId: string): Promise<void> {
 
   if (error) throw error;
 }
+
+export async function updatePostBody(
+  postId: string,
+  newBody: string,
+): Promise<void> {
+  assertConfigured();
+  const { error } = await getSupabaseClient()
+    .from("forum_posts")
+    .update({ body: newBody.trim() })
+    .eq("id", postId);
+
+  if (error) throw error;
+}
+
+export async function updateAndApprovePost(
+  postId: string,
+  newBody: string,
+): Promise<void> {
+  assertConfigured();
+  const { error } = await getSupabaseClient()
+    .from("forum_posts")
+    .update({ body: newBody.trim(), is_hidden: false })
+    .eq("id", postId);
+
+  if (error) throw error;
+}

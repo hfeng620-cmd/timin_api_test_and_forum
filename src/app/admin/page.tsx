@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { GithubIssueReviewPanel } from "@/components/github-issue-review-panel";
+import { useForumAuth } from "@/lib/forum-auth";
+import { getSupabaseClient } from "@/lib/supabase";
 
 import {
   clearFeaturedStationDrafts,
@@ -19,6 +21,7 @@ import {
 } from "@/lib/submission-storage";
 
 export default function AdminPage() {
+  const { isConnected } = useForumAuth();
   const [stations, setStations] = useState<HomeFeaturedStation[]>(
     () => loadFeaturedStationDrafts() ?? homeFeaturedStations,
   );
@@ -29,6 +32,38 @@ export default function AdminPage() {
   const [submissions, setSubmissions] = useState<StationSubmission[]>(() =>
     loadStationSubmissions(),
   );
+  const [forumHistory, setForumHistory] = useState<{ id: string; body: string; status: "approved" | "rejected"; time: string }[]>([]);
+  const [forumHistoryLoaded, setForumHistoryLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!isConnected || forumHistoryLoaded) return;
+
+    let cancelled = false;
+    getSupabaseClient()
+      .from("forum_posts")
+      .select("id, body, created_at")
+      .eq("is_hidden", false)
+      .order("created_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        if (cancelled) return;
+        if (data) {
+          setForumHistory(
+            (data as { id: string; body: string; created_at: string }[]).map((row) => ({
+              id: row.id,
+              body: row.body,
+              status: "approved" as const,
+              time: row.created_at,
+            })),
+          );
+        }
+        setForumHistoryLoaded(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isConnected, forumHistoryLoaded]);
 
   function updateStation(index: number, field: keyof HomeFeaturedStation, value: string) {
     setStations((current) =>
@@ -226,6 +261,55 @@ export default function AdminPage() {
 
           <div className="space-y-6">
             <GithubIssueReviewPanel />
+
+            <div className="rounded-[34px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                  已审核论坛帖子
+                </p>
+                <button
+                  className="rounded-full bg-[var(--color-soft)] px-4 py-2 text-sm font-bold text-[var(--color-brand-deep)] transition hover:bg-[var(--color-brand-soft)]"
+                  onClick={() => { setForumHistory([]); setForumHistoryLoaded(false); }}
+                  type="button"
+                >
+                  刷新
+                </button>
+              </div>
+              <div className="mt-5 space-y-3">
+                {!isConnected ? (
+                  <div className="rounded-[24px] bg-[var(--color-soft)] px-4 py-5 text-sm leading-7 text-[var(--color-muted)]">
+                    管理员登录后可查看已审核论坛帖子
+                  </div>
+                ) : !forumHistoryLoaded ? (
+                  <div className="rounded-[24px] bg-[var(--color-soft)] px-4 py-5 text-sm leading-7 text-[var(--color-muted)]">
+                    加载中...
+                  </div>
+                ) : forumHistory.length === 0 ? (
+                  <div className="rounded-[24px] bg-[var(--color-soft)] px-4 py-5 text-sm leading-7 text-[var(--color-muted)]">
+                    暂无已审核论坛帖子
+                  </div>
+                ) : (
+                  forumHistory.map((item) => (
+                    <article
+                      key={item.id}
+                      className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-soft)] p-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="text-sm leading-6 text-[var(--color-muted)] line-clamp-2">
+                          {item.body.length > 120 ? item.body.slice(0, 120) + "..." : item.body}
+                        </p>
+                        <span className="shrink-0 rounded-full bg-[#ecfdf3] px-3 py-1 text-xs font-bold text-[#15803d]">
+                          已通过
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-[var(--color-muted)]">
+                        {new Date(item.time).toLocaleString("zh-CN")}
+                      </p>
+                    </article>
+                  ))
+                )}
+              </div>
+            </div>
 
             <div className="rounded-[34px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">

@@ -7,6 +7,7 @@ import {
   approveDiscussionPost,
   loadPendingDiscussionPosts,
   rejectDiscussionPost,
+  updateAndApprovePost,
   type DiscussionPost,
 } from "@/lib/discussion-storage";
 import { useForumAuth } from "@/lib/forum-auth";
@@ -17,6 +18,8 @@ export function GithubIssueReviewPanel() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("登录管理员邮箱后可审核站内待发布讨论。");
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editedBody, setEditedBody] = useState("");
 
   const loadPending = useCallback(async () => {
     if (!isConnected) {
@@ -56,6 +59,34 @@ export function GithubIssueReviewPanel() {
       await loadPending();
     } catch {
       setStatus("操作失败，请确认管理员权限或稍后重试。");
+    }
+  }
+
+  async function updateAndApprove(postId: string) {
+    if (!isConnected) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    setStatus("正在保存改动并通过...");
+    try {
+      await updateAndApprovePost(postId, editedBody);
+      setStatus("已保存改动并通过，帖子会进入站内讨论列表。");
+      setEditingId(null);
+      setEditedBody("");
+      await loadPending();
+    } catch {
+      setStatus("操作失败，请确认管理员权限或稍后重试。");
+    }
+  }
+
+  function toggleEdit(post: DiscussionPost) {
+    if (editingId === post.issueNumber) {
+      setEditingId(null);
+      setEditedBody("");
+    } else {
+      setEditingId(post.issueNumber);
+      setEditedBody(post.body);
     }
   }
 
@@ -120,9 +151,27 @@ export function GithubIssueReviewPanel() {
               <span className="text-xs font-bold text-[var(--color-muted)]">待审核</span>
             </div>
 
-            <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-[var(--color-ink)]">
-              {post.body}
-            </p>
+            {editingId === post.issueNumber ? (
+              <textarea
+                className="mt-4 w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 text-sm leading-7 text-[var(--color-ink)]"
+                onChange={(e) => setEditedBody(e.target.value)}
+                rows={6}
+                value={editedBody}
+              />
+            ) : (
+              <div className="mt-4 flex items-start gap-2">
+                <p className="flex-1 whitespace-pre-wrap text-sm leading-7 text-[var(--color-ink)]">
+                  {post.body}
+                </p>
+                <button
+                  className="shrink-0 rounded-full border border-[var(--color-line)] bg-white px-3 py-1 text-xs font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)]"
+                  onClick={() => toggleEdit(post)}
+                  type="button"
+                >
+                  编辑
+                </button>
+              </div>
+            )}
 
             {post.tags.length > 0 ? (
               <div className="mt-3 flex flex-wrap gap-2">
@@ -135,13 +184,32 @@ export function GithubIssueReviewPanel() {
             ) : null}
 
             <div className="mt-5 flex flex-wrap gap-3">
-              <button
-                className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[var(--color-brand-deep)]"
-                onClick={() => void review(post.issueNumber, "approve")}
-                type="button"
-              >
-                通过
-              </button>
+              {editingId === post.issueNumber ? (
+                <button
+                  className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[var(--color-brand-deep)]"
+                  onClick={() => void updateAndApprove(post.issueNumber)}
+                  type="button"
+                >
+                  保存改动并通过
+                </button>
+              ) : (
+                <button
+                  className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[var(--color-brand-deep)]"
+                  onClick={() => void review(post.issueNumber, "approve")}
+                  type="button"
+                >
+                  直接通过
+                </button>
+              )}
+              {editingId === post.issueNumber ? (
+                <button
+                  className="rounded-full border border-[var(--color-line)] bg-white px-5 py-2.5 text-sm font-bold text-[var(--color-ink)] transition hover:bg-[var(--color-soft)]"
+                  onClick={() => toggleEdit(post)}
+                  type="button"
+                >
+                  取消编辑
+                </button>
+              ) : null}
               <button
                 className="rounded-full bg-[#fff1f2] px-5 py-2.5 text-sm font-bold text-[#be123c] transition hover:bg-[#ffe4e6]"
                 onClick={() => void review(post.issueNumber, "reject")}

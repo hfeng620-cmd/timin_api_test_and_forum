@@ -141,13 +141,22 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
               <h2 className="text-lg font-bold text-[var(--color-ink)]">
                 {needsPassword ? "设置登录密码" : "已登录"}
               </h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-                {signedInEmail ?? "当前邮箱"}
-              </p>
+              {needsPassword ? (
+                <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+                  设置密码完成注册
+                </p>
+              ) : (
+                <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+                  已登录：{signedInEmail ?? "当前邮箱"}
+                </p>
+              )}
             </div>
 
             {needsPassword ? (
               <div className="space-y-3">
+                <p className="text-sm text-[var(--color-muted)]">
+                  请设置密码以便下次直接登录。
+                </p>
                 <input
                   className="w-full rounded-[8px] border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 text-sm outline-none transition focus:border-[var(--color-brand)]"
                   onChange={(event) => {
@@ -178,21 +187,26 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
-                <button
-                  className="w-full rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
-                  onClick={onClose}
-                  type="button"
-                >
-                  继续浏览
-                </button>
-                <button
-                  className="w-full rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-2.5 text-sm font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
-                  onClick={() => void signOut()}
-                  type="button"
-                >
-                  退出登录
-                </button>
+              <div className="space-y-3">
+                <p className="text-sm text-[var(--color-muted)]">
+                  已登录为 <span className="font-semibold text-[var(--color-ink)]">{signedInEmail}</span>
+                </p>
+                <div className="flex flex-col gap-3">
+                  <button
+                    className="w-full rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
+                    onClick={onClose}
+                    type="button"
+                  >
+                    继续浏览
+                  </button>
+                  <button
+                    className="w-full rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-2.5 text-sm font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
+                    onClick={() => void signOut()}
+                    type="button"
+                  >
+                    退出登录
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -202,9 +216,15 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
               <h2 className="text-lg font-bold text-[var(--color-ink)]">
                 论坛登录
               </h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-                新用户先用邮箱验证码完成验证，验证后设置密码；之后可直接用邮箱和密码登录。
-              </p>
+              {mode === "password" ? (
+                <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+                  输入邮箱和密码登录
+                </p>
+              ) : (
+                <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+                  ① 输入邮箱 → ② 验证邮箱 → ③ 设密码
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 rounded-full bg-[var(--color-soft)] p-1">
@@ -253,17 +273,50 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
               />
 
               {mode === "password" ? (
-                <input
-                  className="w-full rounded-[8px] border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 text-sm outline-none transition focus:border-[var(--color-brand)]"
-                  onChange={(event) => {
-                    setPasswordValue(event.target.value);
-                    setError("");
-                  }}
-                  placeholder="密码"
-                  type="password"
-                  value={password}
-                />
-              ) : null}
+                <>
+                  <input
+                    className="w-full rounded-[8px] border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 text-sm outline-none transition focus:border-[var(--color-brand)]"
+                    onChange={(event) => {
+                      setPasswordValue(event.target.value);
+                      setError("");
+                    }}
+                    placeholder="密码"
+                    type="password"
+                    value={password}
+                  />
+                  <p className="text-xs text-[var(--color-muted)]">
+                    首次使用？点击{" "}
+                    <button
+                      className="text-[var(--color-brand)] underline"
+                      onClick={() => {
+                        setMode("code");
+                        setError("");
+                        setNotice("");
+                      }}
+                      type="button"
+                    >
+                      邮箱验证码注册
+                    </button>{" "}
+                    先注册账号
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-[var(--color-muted)]">
+                  已注册过？点击{" "}
+                  <button
+                    className="text-[var(--color-brand)] underline"
+                    onClick={() => {
+                      setMode("password");
+                      setError("");
+                      setNotice("");
+                    }}
+                    type="button"
+                  >
+                    密码登录
+                  </button>{" "}
+                  直接登录
+                </p>
+              )}
             </div>
 
             {error ? <p className="text-sm font-semibold text-red-500">{error}</p> : null}

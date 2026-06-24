@@ -227,4 +227,26 @@ npm run build
 - 站内发帖已升级为 Supabase 邮箱登录与待审核发布；后续可继续补管理员工作台和通知邮件
 - 打开 GitHub Discussions 后把群里高质量讨论慢慢沉淀进来
 
+## 管理员引导
+
+1. **注册管理员账号**：打开站点的 `/community` 页面，点击"登录邮箱"，用你的邮箱注册并完成邮箱验证，然后设置密码。
+2. **获取你的用户 ID**：登录后，打开浏览器开发者工具（F12），在 Console 里输入：
+   ```js
+   (await (await import('/_next/static/chunks/...')).getSupabaseClient?.() ?? window.__supabase)?.auth?.getUser()
+   ```
+   或者更简单的方式：到 Supabase Dashboard → Authentication → Users 页面，找到你的邮箱对应的 UUID。
+3. **执行管理员 Bootstrap SQL**：打开 Supabase Dashboard → SQL Editor，新建查询，粘贴执行：
+   ```sql
+   insert into public.forum_admins (user_id)
+   select id from auth.users where lower(email) = lower('你的邮箱@example.com')
+   on conflict (user_id) do nothing;
+   ```
+   把 `你的邮箱@example.com` 换成你实际注册的邮箱。
+4. **验证**：回到站点 `/admin` 页面，点击"登录邮箱"，用你的管理员邮箱登录后点"刷新"，应该能看到待审核帖子列表。
+
+## Supabase 配置说明
+
+- 需要在 Supabase 项目中开启 Email 认证（Authentication → Providers → Email）
+- 需要在 SQL Editor 中执行 `supabase/forum-schema.sql` 创建表和 RLS 策略
+- `.env.local` 中需要配置 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 

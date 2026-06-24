@@ -231,6 +231,26 @@ grant select on public.forum_posts_public to anon, authenticated;
 grant select on public.forum_public_posts to anon, authenticated;
 grant select on public.forum_public_replies to anon, authenticated;
 
+-- Auto-create profile on new user signup
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.forum_profiles (id, display_name)
+  values (new.id, coalesce(new.raw_user_meta_data->>'full_name', '群友补充'))
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute function public.handle_new_user();
+
 -- Admin email bootstrap:
 -- 1. Create or invite the first admin user in Supabase Auth.
 -- 2. Replace admin@example.com below with that user's email address.
