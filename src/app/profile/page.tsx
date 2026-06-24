@@ -42,15 +42,16 @@ export default function ProfilePage() {
   // Load avatar from forum_profiles
   useEffect(() => {
     if (!isConnected || !user) return;
-    getSupabaseClient()
-      .from("forum_profiles")
-      .select("avatar_url")
-      .eq("id", user.id)
-      .single()
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await getSupabaseClient()
+          .from("forum_profiles")
+          .select("avatar_url")
+          .eq("id", user.id)
+          .single();
         if (data?.avatar_url) setAvatarUrl(data.avatar_url);
-      })
-      .catch(() => {});
+      } catch { /* ignore */ }
+    })();
   }, [isConnected, user]);
 
   async function handleAvatarUpload(file: File) {
