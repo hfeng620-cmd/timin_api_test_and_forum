@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AuthButton } from "@/components/auth-button";
+import { NotificationBell } from "@/components/notification-bell";
 import { QqGroupModalButton } from "@/components/qq-group-modal-button";
 import { StationRowLink } from "@/components/station-row-link";
 import {
@@ -78,6 +79,7 @@ export default function Home() {
                 更多指南
               </Link>
             </nav>
+            <NotificationBell />
             <AuthButton />
           </div>
         </div>
@@ -267,30 +269,54 @@ export default function Home() {
             </Link>
           </div>
           <div className="mt-3">
-            {moreRows.map((row, index) => (
-              <article
-                key={`${row.name}-extended-${index}`}
-                className="stagger-in card-lift grid gap-3 border-b border-[var(--color-line)] py-5 transition hover:bg-[var(--color-hover)] md:grid-cols-[0.9fr_0.9fr_0.6fr_1.4fr]"
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-black">{row.name}</h3>
-                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
-                      {row.badge}
-                    </span>
+            {moreRows.map((row, index) => {
+              const url = stationLinkMap[row.name];
+              const baseClasses =
+                "stagger-in card-lift grid gap-3 border-b border-[var(--color-line)] py-5 transition md:grid-cols-[0.9fr_0.9fr_0.6fr_1.4fr]";
+              const linkClasses = `${baseClasses} cursor-pointer hover:bg-[var(--color-hover)]`;
+              const plainClasses = `${baseClasses} hover:bg-[var(--color-hover)]`;
+
+              const content = (
+                <>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-black">{row.name}</h3>
+                      <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
+                        {row.badge}
+                      </span>
+                    </div>
+                    <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
                   </div>
-                  <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate font-black">{row.price}</p>
-                  <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">
-                    {row.packageType}
-                  </p>
-                </div>
-                <p className="min-w-0 truncate font-black">{row.multiplier}</p>
-                <p className="min-w-0 text-sm leading-6 text-[var(--color-muted)] line-clamp-2">{row.note}</p>
-              </article>
-            ))}
+                  <div className="min-w-0">
+                    <p className="truncate font-black">{row.price}</p>
+                    <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">
+                      {row.packageType}
+                    </p>
+                  </div>
+                  <p className="min-w-0 truncate font-black">{row.multiplier}</p>
+                  <p className="min-w-0 text-sm leading-6 text-[var(--color-muted)] line-clamp-2">{row.note}</p>
+                </>
+              );
+
+              return url ? (
+                <a
+                  key={`${row.name}-extended-${index}`}
+                  className={linkClasses}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {content}
+                </a>
+              ) : (
+                <article
+                  key={`${row.name}-extended-${index}`}
+                  className={plainClasses}
+                >
+                  {content}
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>

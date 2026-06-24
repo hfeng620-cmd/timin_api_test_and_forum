@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NotificationBell } from "@/components/notification-bell";
 import { modelGuideNotes, modelPreviewRows, tickerItems } from "@/lib/site-data";
 
 export default function ModelsPage() {
@@ -35,6 +36,7 @@ export default function ModelsPage() {
                 模型择优
               </span>
             </nav>
+            <NotificationBell />
           </div>
         </div>
 
@@ -111,9 +113,9 @@ export default function ModelsPage() {
             <span className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-bold text-[var(--color-on-brand)] shadow-[0_10px_24px_var(--color-panel-glow)]">
               按任务看
             </span>
-            <span className="px-4 py-2 text-sm font-semibold text-[var(--color-muted)]">
+            <Link href="/stations" className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)]">
               回站点页比价
-            </span>
+            </Link>
           </div>
 
           <div className="mt-6 overflow-hidden rounded-[28px] border border-[var(--color-line)]">

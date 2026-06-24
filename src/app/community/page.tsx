@@ -4,14 +4,17 @@ import Link from "next/link";
 import { useCallback, useState } from "react";
 
 import { AuthButton } from "@/components/auth-button";
+import { NotificationBell } from "@/components/notification-bell";
 import { CommunityPostPanel } from "@/components/community-post-panel";
 import { DiscussionFeed } from "@/components/discussion-feed";
 import { QqGroupModalButton } from "@/components/qq-group-modal-button";
 import HotTopicsPanel from "@/components/hot-topics-panel";
 import UserRankPanel from "@/components/user-rank-panel";
+import { useForumAuth } from "@/lib/forum-auth";
 import { siteLinks } from "@/lib/site-links";
 
 export default function CommunityPage() {
+  const { isAdmin } = useForumAuth();
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
 
   const handleTopicClick = useCallback((postId: string) => {
@@ -55,8 +58,17 @@ export default function CommunityPage() {
               <span className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-semibold text-[var(--color-on-brand)] shadow-[0_10px_24px_var(--color-panel-glow)]">
                 论坛入口
               </span>
+              {isAdmin ? (
+                <Link
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
+                  href="/admin"
+                >
+                  管理面板
+                </Link>
+              ) : null}
             </nav>
 
+            <NotificationBell />
             <AuthButton />
           </div>
         </div>

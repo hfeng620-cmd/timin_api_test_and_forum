@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
@@ -28,6 +29,8 @@ interface ForumAuthState {
   isConfigured: boolean;
   isLoading: boolean;
   needsPassword: boolean;
+  isAdmin: boolean;
+  adminUserIds: Set<string>;
   authModalOpen: boolean;
   showAuthModal: () => void;
   hideAuthModal: () => void;
@@ -48,6 +51,8 @@ const defaultState: ForumAuthState = {
   isConfigured: false,
   isLoading: true,
   needsPassword: false,
+  isAdmin: false,
+  adminUserIds: new Set(),
   authModalOpen: false,
   showAuthModal: () => {},
   hideAuthModal: () => {},
@@ -91,7 +96,11 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(configured);
   const [displayName, setDisplayNameState] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminUserIds, setAdminUserIds] = useState<Set<string>>(new Set());
   const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const adminLoadedRef = useRef(false);
 
   const showAuthModal = useCallback(() => setAuthModalOpen(true), []);
   const hideAuthModal = useCallback(() => setAuthModalOpen(false), []);
@@ -111,6 +120,35 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function loadAdminInfo(userId: string) {
+    if (adminLoadedRef.current) return;
+    adminLoadedRef.current = true;
+
+    try {
+      // Check if current user is admin via security-definer RPC
+      const { data: isAdminResult } = await getSupabaseClient()
+        .rpc("is_forum_admin", { check_user_id: userId });
+      const admin = Boolean(isAdminResult);
+      setIsAdmin(admin);
+
+      // Load all admin user IDs (only succeeds for admins due to RLS)
+      if (admin) {
+        try {
+          const { data: rows } = await getSupabaseClient()
+            .from("forum_admins")
+            .select("user_id");
+          if (rows) {
+            setAdminUserIds(new Set((rows as { user_id: string }[]).map((r) => r.user_id)));
+          }
+        } catch {
+          // Non-admin users hit RLS and get an error here — expected
+        }
+      }
+    } catch {
+      // is_forum_admin RPC failed — user is not an admin
+    }
+  }
+
   useEffect(() => {
     if (!configured) return;
 
@@ -123,6 +161,7 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
         setSession(data.session);
         if (data.session?.user?.id) {
           loadDisplayName(data.session.user.id);
+          loadAdminInfo(data.session.user.id);
         }
         setIsLoading(false);
       })
@@ -137,8 +176,12 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
         setSession(nextSession);
         if (nextSession?.user?.id) {
           loadDisplayName(nextSession.user.id);
+          loadAdminInfo(nextSession.user.id);
         } else {
           setDisplayNameState(null);
+          setIsAdmin(false);
+          setAdminUserIds(new Set());
+          adminLoadedRef.current = false;
         }
         setIsLoading(false);
       },
@@ -271,6 +314,8 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
       isConfigured: configured,
       isLoading,
       needsPassword: userNeedsPassword(user),
+      isAdmin,
+      adminUserIds,
       authModalOpen,
       showAuthModal,
       hideAuthModal,
@@ -280,7 +325,7 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
       setDisplayName,
       signOut,
     };
-  }, [configured, displayName, isLoading, sendEmailCode, session, setDisplayName, setPassword, signInWithPassword, signOut, authModalOpen, showAuthModal, hideAuthModal]);
+  }, [configured, displayName, isLoading, isAdmin, adminUserIds, sendEmailCode, session, setDisplayName, setPassword, signInWithPassword, signOut, authModalOpen, showAuthModal, hideAuthModal]);
 
   return (
     <ForumAuthContext.Provider value={value}>

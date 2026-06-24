@@ -34,6 +34,29 @@ function formatCount(value: number) {
   return `${value}`;
 }
 
+function formatRelativeTime(postedAt: string): string {
+  if (postedAt === "刚刚") return "刚刚";
+
+  const match = postedAt.match(/^(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})$/);
+  if (!match) return postedAt;
+
+  const [, month, day, hour, minute] = match;
+  const now = new Date();
+  const date = new Date(now.getFullYear(), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
+
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "刚刚";
+  if (diffMins < 60) return `${diffMins}分钟前`;
+  if (diffHours < 24) return `${diffHours}小时前`;
+  if (diffDays === 1) return "昨天";
+  if (diffDays < 7) return `${diffDays}天前`;
+  return postedAt;
+}
+
 function ActionIcon({ kind }: { kind: "comment" | "like" }) {
   if (kind === "comment") {
     return (
@@ -99,7 +122,7 @@ export function DiscussionFeed({
   hideComposer = false,
   limit,
 }: DiscussionFeedProps) {
-  const { isConnected, displayName, showAuthModal } = useForumAuth();
+  const { isConnected, displayName, adminUserIds, showAuthModal } = useForumAuth();
 
   const [posts, setPosts] = useState<DiscussionPost[]>([]);
   const [commentsMap, setCommentsMap] = useState<Record<string, DiscussionReply[]>>({});
@@ -387,22 +410,39 @@ export function DiscussionFeed({
 
           return (
             <article id={post.issueNumber} key={post.issueNumber} className="card-lift border-l-2 border-l-transparent px-5 py-5 transition hover:border-l-[var(--color-brand)] hover:bg-[var(--color-hover)] sm:px-6">
-              <div className="flex items-start justify-between gap-3 sm:gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
+                {post.authorAvatarUrl ? (
+                  <img
+                    alt={post.author}
+                    className="h-9 w-9 shrink-0 rounded-full object-cover"
+                    src={post.authorAvatarUrl}
+                  />
+                ) : (
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-soft)] text-sm font-bold text-[var(--color-muted)]">
+                    {post.author.charAt(0)}
+                  </div>
+                )}
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-black">{post.author}</h3>
+                    {post.authorId && adminUserIds.has(post.authorId) ? (
+                      <span className="rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-bold text-[#b45309] ring-1 ring-[#f59e0b]/30">
+                        管理员
+                      </span>
+                    ) : null}
                     <span className="text-sm text-[var(--color-muted)]">{post.handle}</span>
                     <span className="text-sm text-[var(--color-muted)]">·</span>
-                    <span className="text-sm text-[var(--color-muted)]">{post.postedAt}</span>
+                    <span className="text-sm text-[var(--color-muted)]">{formatRelativeTime(post.postedAt)}</span>
                     {post.station ? (
                       <span className="rounded-full bg-[var(--color-soft)] px-2.5 py-1 text-xs font-bold text-[var(--color-brand-deep)]">
                         {post.station}
                       </span>
                     ) : null}
                   </div>
+                  <hr className="mt-2 border-t border-[var(--color-line)]" />
                   {post.body.length > 500 ? (
                     <>
-                      <p className="mt-3 max-w-4xl text-[15px] leading-8 text-[var(--color-ink)]">
+                      <p className="mt-3 max-w-4xl text-base leading-8 text-[var(--color-ink)]">
                         {expandedBodies.has(post.issueNumber)
                           ? post.body
                           : `${post.body.slice(0, 500)}...`}
@@ -426,7 +466,7 @@ export function DiscussionFeed({
                       </button>
                     </>
                   ) : (
-                    <p className="mt-3 max-w-4xl text-[15px] leading-8 text-[var(--color-ink)]">{post.body}</p>
+                    <p className="mt-3 max-w-4xl text-base leading-8 text-[var(--color-ink)]">{post.body}</p>
                   )}
                   <div className="mt-3 flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
@@ -435,20 +475,18 @@ export function DiscussionFeed({
                       </span>
                     ))}
                   </div>
+                  <div className="mt-4 flex flex-wrap items-center gap-7">
+                    <ActionButton count={post.replyCount} icon="comment" onClick={() => openReplyBox(post.issueNumber)} />
+                    <ActionButton count={post.likes} icon="like" onClick={() => handleLike(post.issueNumber)} />
+                    <button
+                      className="text-xs font-bold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
+                      onClick={() => togglePost(post.issueNumber, expanded)}
+                      type="button"
+                    >
+                      {expanded ? "收起" : "展开"}
+                    </button>
+                  </div>
                 </div>
-
-                <button
-                  className="text-xs font-bold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
-                  onClick={() => togglePost(post.issueNumber, expanded)}
-                  type="button"
-                >
-                  {expanded ? "收起" : "展开"}
-                </button>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center gap-7">
-                <ActionButton count={post.replyCount} icon="comment" onClick={() => openReplyBox(post.issueNumber)} />
-                <ActionButton count={post.likes} icon="like" onClick={() => handleLike(post.issueNumber)} />
               </div>
 
               {expanded ? (
@@ -461,19 +499,39 @@ export function DiscussionFeed({
                     ) : (
                       comments.map((reply) => (
                         <div key={reply.id} className="group">
-                          <div className="flex flex-wrap items-center gap-2 text-sm">
-                            <span className="font-bold text-[var(--color-ink)]">{reply.author}</span>
-                            <span className="text-[var(--color-muted)]">·</span>
-                            <span className="text-[var(--color-muted)]">{reply.postedAt}</span>
+                          <div className="flex items-start gap-2">
+                            {reply.avatar ? (
+                              <img
+                                alt={reply.author}
+                                className="h-9 w-9 shrink-0 rounded-full object-cover"
+                                src={reply.avatar}
+                              />
+                            ) : (
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-soft)] text-sm font-bold text-[var(--color-muted)]">
+                                {reply.author.charAt(0)}
+                              </div>
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-2 text-sm">
+                                <span className="font-bold text-[var(--color-ink)]">{reply.author}</span>
+                                {reply.authorId && adminUserIds.has(reply.authorId) ? (
+                                  <span className="rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-bold text-[#b45309] ring-1 ring-[#f59e0b]/30">
+                                    管理员
+                                  </span>
+                                ) : null}
+                                <span className="text-[var(--color-muted)]">·</span>
+                                <span className="text-[var(--color-muted)]">{formatRelativeTime(reply.postedAt)}</span>
+                              </div>
+                              <p className="mt-1 text-sm leading-7 text-[var(--color-ink)]">{reply.body}</p>
+                              <button
+                                className="mt-1 text-xs font-semibold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
+                                onClick={() => openReplyBox(post.issueNumber, reply.author)}
+                                type="button"
+                              >
+                                回复
+                              </button>
+                            </div>
                           </div>
-                          <p className="mt-1 text-sm leading-7 text-[var(--color-ink)]">{reply.body}</p>
-                          <button
-                            className="mt-1 text-xs font-semibold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
-                            onClick={() => openReplyBox(post.issueNumber, reply.author)}
-                            type="button"
-                          >
-                            回复
-                          </button>
                         </div>
                       ))
                     )}

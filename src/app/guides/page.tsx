@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NotificationBell } from "@/components/notification-bell";
 import {
   collaborationChannels,
   faqEntries,
@@ -41,6 +42,7 @@ export default function GuidesPage() {
                 更多指南
               </span>
             </nav>
+            <NotificationBell />
           </div>
         </div>
       </section>

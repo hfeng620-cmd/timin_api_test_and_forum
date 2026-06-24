@@ -1006,7 +1006,167 @@ export function StationsBoard() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* ---- Mobile card layout (below lg) ---- */}
+          <div className="lg:hidden space-y-4">
+            {visibleRows.length === 0 ? (
+              <div className="rounded-[20px] shadow-[var(--shadow-card)] bg-[var(--color-panel)] px-6 py-16 text-center">
+                {stations.length === 0 ? (
+                  <>
+                    <p className="text-lg font-bold text-[var(--color-muted)]">暂无站点数据</p>
+                    <p className="mt-2 text-sm text-[var(--color-muted)]">
+                      站点数据需要通过 Supabase 初始化。详见 README 的 Supabase 配置说明。
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg font-bold text-[var(--color-muted)]">没有匹配的站点</p>
+                    <p className="mt-2 text-sm text-[var(--color-muted)]">
+                      试试调整搜索关键词或切换筛选标签
+                    </p>
+                    <button
+                      className="mt-4 rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-2.5 text-sm font-bold text-[var(--color-brand-deep)] transition hover:border-[var(--color-brand)]"
+                      onClick={() => { setQuery(""); setDebouncedQuery(""); setActiveFilter("all"); }}
+                      type="button"
+                    >
+                      清除所有筛选
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              visibleRows.map((station, index) => {
+                const isEditing = editingId === station.id;
+                const isShowingHistory = historyStationId === station.id;
+
+                return (
+                  <div key={station.id}>
+                    <div className="rounded-[20px] shadow-[var(--shadow-card)] bg-[var(--color-panel)] p-5">
+                      {/* Header row: rank + name + badge */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                            {rankingBadge(index)}
+                          </p>
+                          <button
+                            className="mt-1 cursor-pointer text-xl font-black transition hover:text-[var(--color-brand)] break-words text-left"
+                            onClick={() => setDetailStation(station)}
+                            type="button"
+                          >
+                            {station.name}
+                          </button>
+                          {(() => {
+                            const fi = freshnessInfo(station.lastEditAt);
+                            if (!fi) return null;
+                            return (
+                              <span
+                                className={`ml-2 inline-flex items-center gap-1 text-[11px] ${
+                                  fi.isRecent
+                                    ? "text-[var(--color-brand-deep)]"
+                                    : "text-[var(--color-muted)]"
+                                }`}
+                              >
+                                <span
+                                  className={`inline-block h-1.5 w-1.5 rounded-full ${
+                                    fi.isRecent ? "bg-green-500" : "bg-[var(--color-muted)]"
+                                  }`}
+                                />
+                                {fi.label}
+                              </span>
+                            );
+                          })()}
+                        </div>
+                        <span className="shrink-0 rounded-full bg-[var(--color-brand-soft)] px-2.5 py-1 text-xs font-bold text-[var(--color-brand-deep)]">
+                          {station.badge}
+                        </span>
+                      </div>
+
+                      {/* Price + Multiplier */}
+                      <div className="mt-4 grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs text-[var(--color-muted)]">标称价格</p>
+                          <p className="mt-1 font-bold">{station.price}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-[var(--color-muted)]">倍率</p>
+                          <p className="mt-1 font-bold">{station.multiplier}</p>
+                        </div>
+                      </div>
+
+                      {/* Status + Note */}
+                      <div className="mt-3">
+                        <p className="text-xs text-[var(--color-muted)]">状态</p>
+                        <p className="mt-1 font-bold">{station.status}</p>
+                        {station.note && (
+                          <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">
+                            {station.note}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="mt-4 flex items-center gap-4 border-t border-[var(--color-line)] pt-3">
+                        {station.url ? (
+                          <a
+                            href={station.url}
+                            rel="noreferrer"
+                            target="_blank"
+                            className="text-sm font-semibold text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
+                          >
+                            打开站点 →
+                          </a>
+                        ) : (
+                          <span className="text-sm text-[var(--color-muted)]">
+                            {station.entry || station.groupName || "待补"}
+                          </span>
+                        )}
+                        <div className="ml-auto flex items-center gap-3">
+                          {isConnected && (
+                            <button
+                              className="text-sm text-[var(--color-muted)] hover:text-[var(--color-brand-deep)] transition"
+                              onClick={() => startEdit(station)}
+                              title="编辑此站点"
+                              type="button"
+                            >
+                              编辑
+                            </button>
+                          )}
+                          <button
+                            className="text-sm text-[var(--color-muted)] hover:text-[var(--color-brand-deep)] transition underline underline-offset-2"
+                            onClick={() => toggleHistory(station.id)}
+                            type="button"
+                          >
+                            {isShowingHistory ? "收起历史" : "历史"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Edit panel */}
+                    {isEditing && renderEditPanel()}
+
+                    {/* History panel */}
+                    {isShowingHistory && renderHistoryPanel(station)}
+                  </div>
+                );
+              })
+            )}
+
+            {/* Add-new button */}
+            {isConnected && !addingNew && (
+              <button
+                className="w-full rounded-full border border-dashed border-[var(--color-brand-soft)] bg-[var(--color-soft)] px-5 py-3 text-sm font-bold text-[var(--color-brand-deep)] transition hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-soft)]"
+                onClick={startAdd}
+                type="button"
+              >
+                + 添加新站点
+              </button>
+            )}
+
+            {/* Create panel */}
+            {addingNew && renderCreatePanel()}
+          </div>
+
+          <div className="hidden overflow-x-auto lg:block">
             <div className="min-w-[1180px]">
               {/* Column headers */}
               <div className="grid grid-cols-[0.8fr_1.05fr_1fr_0.92fr_0.9fr_0.8fr_1.3fr] bg-[var(--color-soft)] px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-muted)]">

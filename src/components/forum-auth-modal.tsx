@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { uploadAvatar, updateProfileAvatar } from "@/lib/discussion-storage";
+import { getSupabaseClient } from "@/lib/supabase";
 import { useForumAuth } from "@/lib/forum-auth";
 
 type ForumAuthModalProps = {
@@ -18,6 +20,7 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     isConfigured,
     isLoading,
     needsPassword,
+    isAdmin,
     displayName,
     sendEmailCode,
     signInWithPassword,
@@ -34,15 +37,36 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
+  const avatarFileRef = useRef<HTMLInputElement | null>(null);
   const normalizedEmail = useMemo(() => email.trim().toLowerCase(), [email]);
+
+  // Load avatar URL when modal opens and user is connected
+  useEffect(() => {
+    if (!open || !isConnected || !isConfigured) return;
+    const supabase = getSupabaseClient();
+    supabase.auth.getUser()
+      .then(({ data }) => {
+        if (!data.user) return;
+        return supabase.from("forum_profiles")
+          .select("avatar_url")
+          .eq("id", data.user.id)
+          .single();
+      })
+      .then((res) => {
+        if (res?.data?.avatar_url) setAvatarUrl(res.data.avatar_url);
+      })
+      .catch(() => {});
+  }, [open, isConnected, isConfigured]);
 
   useEffect(() => {
     if (!open) return;
 
     const FOCUSABLE =
-      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      `button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])`;
 
     function getFocusable(): HTMLElement[] {
       const el = panelRef.current;
@@ -92,16 +116,34 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
   }, [open, onClose]);
 
 
-  // Pre-fill nickname from email username when setting password for first time
+  // Pre-fill display name when setting password for the first time.
+  // Priority: name from registration tab (sessionStorage) > email username fallback.
   useEffect(() => {
-    if (isConnected && needsPassword && !displayName && signedInEmail) {
-      const at = signedInEmail.indexOf("@");
-      if (at > 0) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setDisplayNameInput(signedInEmail.slice(0, at));
+    if (isConnected && needsPassword && !displayName) {
+      let restored = "";
+      try {
+        restored = sessionStorage.getItem("forum-reg-display-name") ?? "";
+      } catch {
+        /* unavailable */
+      }
+
+      if (restored) {
+        setDisplayNameInput(restored);
+        // Auto-save the display name so it persists even if they skip password setup
+        setDisplayName(restored).catch(() => {});
+        try {
+          sessionStorage.removeItem("forum-reg-display-name");
+        } catch {
+          /* unavailable */
+        }
+      } else if (signedInEmail) {
+        const at = signedInEmail.indexOf("@");
+        if (at > 0) {
+          setDisplayNameInput(signedInEmail.slice(0, at));
+        }
       }
     }
-  }, [isConnected, needsPassword, displayName, signedInEmail]);
+  }, [isConnected, needsPassword, displayName, signedInEmail, setDisplayName]);
 
   if (!open) return null;
 
@@ -109,6 +151,15 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     setLoading(true);
     setError("");
     setNotice("");
+
+    // Persist display name across the email verification round-trip
+    if (displayNameInput.trim()) {
+      try {
+        sessionStorage.setItem("forum-reg-display-name", displayNameInput.trim());
+      } catch {
+        /* sessionStorage may be unavailable */
+      }
+    }
 
     const result = await sendEmailCode(normalizedEmail);
     setLoading(false);
@@ -118,7 +169,9 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
       return;
     }
 
-    setNotice("验证邮件已发送，请打开邮箱里的登录链接。验证成功后回到这里设置密码。");
+    setNotice(
+      "验证邮件已发送！请查收邮箱（别忘了检查垃圾邮件箱），点击邮件中的链接即可完成注册。注册成功后回到本页面设置密码。",
+    );
   }
 
   async function handlePasswordLogin() {
@@ -159,6 +212,31 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     setConfirmPassword("");
     setDisplayNameInput("");
     setNotice("✓ 密码已设置完成！下次可以直接用邮箱和密码登录。");
+  }
+
+  async function handleAvatarChange(file: File) {
+    if (!file.type.startsWith("image/")) {
+      setError("请选择图片文件。");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setError("头像图片不能超过 2MB。");
+      return;
+    }
+
+    setAvatarUploading(true);
+    setError("");
+    try {
+      const url = await uploadAvatar(file);
+      await updateProfileAvatar(url);
+      setAvatarUrl(url);
+      setNotice("头像已更新。");
+    } catch {
+      setError("头像上传失败，请稍后重试。");
+    } finally {
+      setAvatarUploading(false);
+      if (avatarFileRef.current) avatarFileRef.current.value = "";
+    }
   }
 
   return (
@@ -255,6 +333,78 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
               </div>
             ) : (
               <div className="space-y-3">
+                {/* Avatar upload */}
+                <div className="flex items-center gap-4">
+                  <input
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) handleAvatarChange(file);
+                    }}
+                    ref={avatarFileRef}
+                    type="file"
+                  />
+                  <button
+                    className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-[var(--color-line)] bg-[var(--color-soft)] transition hover:border-[var(--color-brand)] disabled:opacity-60"
+                    disabled={avatarUploading}
+                    onClick={() => avatarFileRef.current?.click()}
+                    title="点击上传头像"
+                    type="button"
+                  >
+                    {avatarUploading ? (
+                      <svg
+                        className="h-5 w-5 animate-spin text-[var(--color-muted)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
+                      </svg>
+                    ) : avatarUrl ? (
+                      <img
+                        alt="头像"
+                        className="h-full w-full object-cover"
+                        src={avatarUrl}
+                      />
+                    ) : (
+                      <svg
+                        aria-hidden="true"
+                        className="h-5 w-5 text-[var(--color-muted)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c-5.333 0-8 2.667-8 4v2h16v-2c0-1.333-2.667-4-8-4z"
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.8"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[var(--color-ink)] truncate">
+                      {displayName || signedInEmail}
+                    </p>
+                    <p className="text-xs text-[var(--color-muted)]">
+                      {avatarUploading ? "上传中..." : avatarUrl ? "点击更换头像" : "点击上传头像"}
+                    </p>
+                  </div>
+                </div>
+
                 <p className="text-sm text-[var(--color-muted)]">
                   已登录为 <span className="font-semibold text-[var(--color-ink)]">{signedInEmail}</span>
                 </p>
@@ -453,4 +603,3 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     </div>
   );
 }
-

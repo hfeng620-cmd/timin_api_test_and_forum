@@ -3,7 +3,7 @@
 import { useForumAuth } from "@/lib/forum-auth";
 
 export function AuthButton() {
-  const { isConnected, displayName, email, needsPassword, signOut, showAuthModal } = useForumAuth();
+  const { isConnected, isAdmin, displayName, email, needsPassword, signOut, showAuthModal } = useForumAuth();
 
   if (isConnected) {
     const label = displayName || email?.split("@")[0] || "我";
@@ -28,6 +28,11 @@ export function AuthButton() {
             {label.slice(0, 4)}
           </button>
         )}
+        {isAdmin ? (
+          <span className="rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-bold text-[#b45309] ring-1 ring-[#f59e0b]/30" title="管理员">
+            管理员
+          </span>
+        ) : null}
         <button
           aria-label="退出登录"
           className="hidden min-h-11 min-w-11 items-center justify-center rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] text-xs font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)] sm:flex"

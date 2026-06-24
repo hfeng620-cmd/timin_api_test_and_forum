@@ -5,6 +5,8 @@ import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 export type DiscussionPost = {
   issueNumber: string;
   author: string;
+  authorId?: string;
+  authorAvatarUrl?: string;
   handle: string;
   postedAt: string;
   body: string;
@@ -17,6 +19,7 @@ export type DiscussionPost = {
 export type DiscussionReply = {
   id: string;
   author: string;
+  authorId?: string;
   avatar: string;
   postedAt: string;
   body: string;
@@ -49,6 +52,7 @@ type ForumPostRow = {
 type ForumReplyRow = {
   id: string;
   post_id: string;
+  author_id?: string;
   author_display_name?: string | null;
   author_avatar_url?: string | null;
   body: string;
@@ -80,6 +84,8 @@ function postFromRow(row: ForumPostRow): DiscussionPost {
   return {
     issueNumber: row.id,
     author: row.author_display_name || "群友补充",
+    authorId: row.author_id || undefined,
+    authorAvatarUrl: row.author_avatar_url || undefined,
     handle: "@forum",
     postedAt: formatDate(row.posted_at ?? row.created_at),
     body: row.body,
@@ -94,6 +100,7 @@ function replyFromRow(row: ForumReplyRow): DiscussionReply {
   return {
     id: row.id,
     author: row.author_display_name || "群友补充",
+    authorId: row.author_id || undefined,
     avatar: row.author_avatar_url || "",
     postedAt: formatDate(row.created_at),
     body: row.body,
@@ -290,6 +297,38 @@ export async function uploadForumImage(file: File): Promise<string> {
 
   const { data: urlData } = supabase.storage.from("forum-images").getPublicUrl(fileName);
   return urlData.publicUrl;
+}
+
+export async function uploadAvatar(file: File): Promise<string> {
+  assertConfigured();
+  const supabase = getSupabaseClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) throw new Error("请先登录。");
+
+  const ext = file.name.split(".").pop() ?? "png";
+  const fileName = `${userData.user.id}/avatar.${ext}`;
+
+  const { error } = await supabase.storage
+    .from("forum-avatars")
+    .upload(fileName, file, { upsert: true, contentType: file.type });
+
+  if (error) throw error;
+
+  const { data: urlData } = supabase.storage.from("forum-avatars").getPublicUrl(fileName);
+  return urlData.publicUrl;
+}
+
+export async function updateProfileAvatar(avatarUrl: string): Promise<void> {
+  assertConfigured();
+  const supabase = getSupabaseClient();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user) throw new Error("请先登录。");
+
+  const { error } = await supabase
+    .from("forum_profiles")
+    .upsert({ id: userData.user.id, avatar_url: avatarUrl }, { onConflict: "id" });
+
+  if (error) throw error;
 }
 
 export async function updatePostBody(
