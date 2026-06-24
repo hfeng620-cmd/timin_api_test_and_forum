@@ -64,7 +64,6 @@ export default function RootLayout({
         <ForumAuthProvider>
           <ToastProvider>
             <MouseGlowLayer />
-            <FloatingQuickPanel />
             <MobileDock />
             <main id="main-content" className="page-enter relative z-10 flex min-h-full flex-col">
               <ErrorBoundary>{children}</ErrorBoundary>
@@ -74,6 +73,7 @@ export default function RootLayout({
             <ToastContainer />
           </ToastProvider>
         </ForumAuthProvider>
+        <FloatingQuickPanel />
       </body>
     </html>
   );
