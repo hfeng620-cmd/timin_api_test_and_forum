@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AuthButton } from "@/components/auth-button";
 import { QqGroupModalButton } from "@/components/qq-group-modal-button";
 import { StationRowLink } from "@/components/station-row-link";
 import {
@@ -51,6 +52,7 @@ export default function Home() {
                 更多指南
               </Link>
             </nav>
+            <AuthButton />
           </div>
         </div>
 

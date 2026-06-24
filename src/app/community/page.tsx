@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { AuthButton } from "@/components/auth-button";
 import { CommunityPostPanel } from "@/components/community-post-panel";
 import { DiscussionFeed } from "@/components/discussion-feed";
 import { QqGroupModalButton } from "@/components/qq-group-modal-button";
@@ -46,6 +47,8 @@ export default function CommunityPage() {
                 论坛入口
               </span>
             </nav>
+
+            <AuthButton />
           </div>
         </div>
       </section>
@@ -73,6 +76,7 @@ export default function CommunityPage() {
           />
         </div>
       </section>
+
     </main>
   );
 }

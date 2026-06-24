@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { AuthButton } from "@/components/auth-button";
 import { StationsBoard } from "@/components/stations-board";
 
 export default function StationsPage() {
@@ -35,6 +36,7 @@ export default function StationsPage() {
                 论坛入口
               </Link>
             </nav>
+            <AuthButton />
           </div>
         </div>
       </section>
