@@ -13,7 +13,7 @@ export default function ModelsPage() {
               T
             </div>
             <div>
-              <p className="text-2xl font-black tracking-tight">Timin观察站</p>
+              <p className="text-2xl font-black tracking-tight">Timix观察站</p>
               <p className="text-sm text-[var(--color-muted)]">模型观察与站点选择</p>
             </div>
           </div>

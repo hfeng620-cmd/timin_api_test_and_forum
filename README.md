@@ -1,4 +1,4 @@
-# Timin观察站
+# Timix观察站
 
 一个由社区共建的 AI 中转站观察站。我们用公开、可修正、可持续补充的方式，持续整理中转站的价格、倍率、套餐口径、试用入口和真实体验。
 
@@ -101,7 +101,7 @@
 
 如果你想一起补中转站信息、提交试用入口、反馈价格变化，或者帮忙一起维护这个项目，欢迎加入 QQ 群。
 
-![Timin观察站 QQ群二维码](./public/qq-group-qrcode.jpg)
+![Timix观察站 QQ群二维码](./public/qq-group-qrcode.jpg)
 
 ## 你可以怎么参与
 
@@ -142,10 +142,10 @@ npm run dev -- -H 0.0.0.0 -p 3001
 npm install
 winget install --id Cloudflare.cloudflared
 .\scripts\install-timin-public-preview-startup.ps1
-Start-ScheduledTask -TaskName "TiminObserveDevTunnel"
+Start-ScheduledTask -TaskName "TimixObserveDevTunnel"
 ```
 
-日志放在 `%LOCALAPPDATA%\TiminObserve\logs`，最新状态写入 `%LOCALAPPDATA%\TiminObserve\latest-url.txt`。计划任务只在安装脚本执行后生效，触发时间是当前用户登录 Windows 后；如果还没有安装，`Start-ScheduledTask` 会找不到任务。卸载自启动任务：
+日志放在 `%LOCALAPPDATA%\TimixObserve\logs`，最新状态写入 `%LOCALAPPDATA%\TimixObserve\latest-url.txt`。计划任务只在安装脚本执行后生效，触发时间是当前用户登录 Windows 后；如果还没有安装，`Start-ScheduledTask` 会找不到任务。卸载自启动任务：
 
 ```powershell
 .\scripts\uninstall-timin-public-preview-startup.ps1
@@ -188,7 +188,7 @@ npm run start:named-tunnel -- -Port 3001 -TunnelName "timin-observe" -Hostname "
 .\scripts\start-timin-named-tunnel.ps1 -Port 3001 -TunnelName "timin-observe" -Hostname "observe.example.com" -ConfigPath "$env:USERPROFILE\.cloudflared\config.yml"
 ```
 
-脚本会先启动本地 Next，再执行 `cloudflared tunnel run` 运行 named tunnel，并把固定入口写入 `%LOCALAPPDATA%\TiminObserve\latest-url.txt`。日志仍放在 `%LOCALAPPDATA%\TiminObserve\logs`。
+脚本会先启动本地 Next，再执行 `cloudflared tunnel run` 运行 named tunnel，并把固定入口写入 `%LOCALAPPDATA%\TimixObserve\latest-url.txt`。日志仍放在 `%LOCALAPPDATA%\TimixObserve\logs`。
 
 ## GitHub Pages 自动部署
 

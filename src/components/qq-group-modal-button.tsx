@@ -63,7 +63,7 @@ export function QqGroupModalButton() {
             <div className="flex justify-center rounded-[14px] bg-[var(--color-panel-strong)] p-3 shadow-[inset_0_0_0_1px_var(--color-line)]">
               <Image
                 src="/qq-group-qrcode.jpg"
-                alt="Timin观察站 QQ群二维码"
+                alt="Timix观察站 QQ群二维码"
                 width={248}
                 height={248}
                 className="h-auto w-[248px] rounded-[18px]"

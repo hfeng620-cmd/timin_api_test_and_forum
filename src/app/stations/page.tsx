@@ -14,7 +14,7 @@ export default function StationsPage() {
               T
             </div>
             <div>
-              <p className="text-2xl font-black tracking-tight">Timin观察站</p>
+              <p className="text-2xl font-black tracking-tight">Timix观察站</p>
               <p className="text-sm text-[var(--color-muted)]">价格、倍率、入口。</p>
             </div>
           </div>

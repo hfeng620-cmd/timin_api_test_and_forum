@@ -34,7 +34,7 @@ export default function CommunityPage() {
               T
             </div>
             <div>
-              <p className="text-2xl font-black tracking-tight">Timin观察站</p>
+              <p className="text-2xl font-black tracking-tight">Timix观察站</p>
               <p className="text-sm text-[var(--color-muted)]">讨论区与共建入口</p>
             </div>
             <div className="hidden md:block">

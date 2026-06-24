@@ -13,7 +13,7 @@ export default function NotFound() {
           这个入口可能还是旧仓库地址。
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--color-muted)]">
-          Timin观察站已经迁到新的 GitHub Pages 路径。建议从首页、榜单页或 GitHub Discussions 重新进入。
+          Timix观察站已经迁到新的 GitHub Pages 路径。建议从首页、榜单页或 GitHub Discussions 重新进入。
         </p>
 
         <div className="mt-8 flex flex-wrap gap-3">

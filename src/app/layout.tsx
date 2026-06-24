@@ -25,11 +25,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Timin观察站 — AI 中转站榜单与社区",
+  title: "Timix观察站 — AI 中转站榜单与社区",
   description: "社区共建的 AI 中转站观察站，持续整理价格、倍率、稳定性、模型覆盖和真实使用反馈。",
   keywords: ["AI中转站", "API中转", "GPT", "Claude", "倍率对比", "模型价格"],
   openGraph: {
-    title: "Timin观察站 — AI 中转站榜单与社区",
+    title: "Timix观察站 — AI 中转站榜单与社区",
     description: "社区共建的 AI 中转站观察站，持续整理价格、倍率、稳定性、模型覆盖和真实使用反馈。",
     type: "website",
     locale: "zh_CN",

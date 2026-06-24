@@ -48,7 +48,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[1fr_1fr] lg:px-10">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-deep)]">
-            Timin观察站
+            Timix观察站
           </p>
           <h2 className="mt-3 max-w-2xl text-2xl font-black tracking-tight text-[var(--color-ink)]">
             中转站榜单与社区反馈。

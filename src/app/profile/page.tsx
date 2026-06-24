@@ -60,7 +60,7 @@ export default function ProfilePage() {
               T
             </Link>
             <div>
-              <p className="text-2xl font-black tracking-tight">Timin观察站</p>
+              <p className="text-2xl font-black tracking-tight">Timix观察站</p>
               <p className="text-sm text-[var(--color-muted)]">个人主页</p>
             </div>
           </div>
