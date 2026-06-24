@@ -121,16 +121,20 @@ async function ensureProfile(displayName = "群友补充") {
 }
 
 export async function loadDiscussionPosts(): Promise<DiscussionPost[]> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("forum_posts_public")
-    .select("*")
-    .order("is_pinned", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(50);
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("forum_posts_public")
+      .select("*")
+      .order("is_pinned", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-  if (error) throw error;
-  return ((data ?? []) as ForumPostRow[]).map(postFromRow);
+    if (error) throw error;
+    return ((data ?? []) as ForumPostRow[]).map(postFromRow);
+  } catch {
+    return [];
+  }
 }
 
 export async function createDiscussionPost(
@@ -165,15 +169,19 @@ export async function createDiscussionPost(
 }
 
 export async function loadComments(postId: string): Promise<DiscussionReply[]> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("forum_public_replies")
-    .select("*")
-    .eq("post_id", postId)
-    .order("created_at", { ascending: true });
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("forum_public_replies")
+      .select("*")
+      .eq("post_id", postId)
+      .order("created_at", { ascending: true });
 
-  if (error) throw error;
-  return ((data ?? []) as ForumReplyRow[]).map(replyFromRow);
+    if (error) throw error;
+    return ((data ?? []) as ForumReplyRow[]).map(replyFromRow);
+  } catch {
+    return [];
+  }
 }
 
 export async function replyDiscussionPost(
@@ -218,27 +226,31 @@ export async function likeDiscussionPost(
 }
 
 export async function loadPendingDiscussionPosts(): Promise<DiscussionPost[]> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("forum_posts")
-    .select("id, body, station, tags, created_at, forum_profiles(display_name)")
-    .eq("is_hidden", true)
-    .order("created_at", { ascending: false });
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("forum_posts")
+      .select("id, body, station, tags, created_at, forum_profiles(display_name)")
+      .eq("is_hidden", true)
+      .order("created_at", { ascending: false });
 
-  if (error) throw error;
-  return (data ?? []).map((row: Record<string, unknown>) => {
-    const profile = row.forum_profiles as { display_name?: string } | null;
-    return postFromRow({
-      id: String(row.id),
-      body: String(row.body ?? ""),
-      station: typeof row.station === "string" ? row.station : "",
-      tags: Array.isArray(row.tags) ? (row.tags as string[]) : [],
-      created_at: typeof row.created_at === "string" ? row.created_at : null,
-      author_display_name: profile?.display_name ?? "群友补充",
-      reply_count: 0,
-      like_count: 0,
+    if (error) throw error;
+    return (data ?? []).map((row: Record<string, unknown>) => {
+      const profile = row.forum_profiles as { display_name?: string } | null;
+      return postFromRow({
+        id: String(row.id),
+        body: String(row.body ?? ""),
+        station: typeof row.station === "string" ? row.station : "",
+        tags: Array.isArray(row.tags) ? (row.tags as string[]) : [],
+        created_at: typeof row.created_at === "string" ? row.created_at : null,
+        author_display_name: profile?.display_name ?? "群友补充",
+        reply_count: 0,
+        like_count: 0,
+      });
     });
-  });
+  } catch {
+    return [];
+  }
 }
 
 export async function approveDiscussionPost(postId: string): Promise<void> {
@@ -328,14 +340,18 @@ export type HotTopic = {
 };
 
 export async function getHotTopics(): Promise<HotTopic[]> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("forum_hot_topics")
-    .select("*")
-    .limit(10);
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("forum_hot_topics")
+      .select("*")
+      .limit(10);
 
-  if (error) throw error;
-  return (data ?? []) as HotTopic[];
+    if (error) throw error;
+    return (data ?? []) as HotTopic[];
+  } catch {
+    return [];
+  }
 }
 
 export type ForumStats = {
@@ -347,14 +363,18 @@ export type ForumStats = {
 };
 
 export async function getForumStats(): Promise<ForumStats | null> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("forum_stats")
-    .select("*")
-    .single();
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("forum_stats")
+      .select("*")
+      .single();
 
-  if (error) return null;
-  return data as ForumStats;
+    if (error) return null;
+    return data as ForumStats;
+  } catch {
+    return null;
+  }
 }
 
 export async function checkSpam(body: string): Promise<boolean> {

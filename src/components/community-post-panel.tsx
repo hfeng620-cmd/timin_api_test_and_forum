@@ -101,7 +101,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
           </button>
           <div className="flex flex-wrap items-center gap-3 sm:justify-end">
             <button
-              className="rounded-full bg-[var(--color-brand)] px-6 py-3 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
+              className="rounded-full bg-[var(--color-brand)] px-6 py-3 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)] btn-press"
               onClick={handlePlaceholderClick}
               type="button"
             >
@@ -167,7 +167,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
             </button>
 
             <button
-              className="rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)] disabled:opacity-60"
+              className="rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)] disabled:opacity-60 btn-press"
               disabled={submitting}
               onClick={handleSubmit}
               type="button"

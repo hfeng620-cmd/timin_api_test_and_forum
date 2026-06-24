@@ -26,7 +26,7 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     signOut,
   } = useForumAuth();
 
-  const [mode, setMode] = useState<AuthMode>("code");
+  const [mode, setMode] = useState<AuthMode>("password");
   const [email, setEmail] = useState("");
   const [displayNameInput, setDisplayNameInput] = useState(displayName ?? "");
   const [password, setPasswordValue] = useState("");
@@ -92,6 +92,16 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
   }, [open, onClose]);
 
 
+  // Pre-fill nickname from email username when setting password for first time
+  useEffect(() => {
+    if (isConnected && needsPassword && !displayName && signedInEmail) {
+      const at = signedInEmail.indexOf("@");
+      if (at > 0) {
+        setDisplayNameInput(signedInEmail.slice(0, at));
+      }
+    }
+  }, [isConnected, needsPassword, displayName, signedInEmail]);
+
   if (!open) return null;
 
   async function handleSendCode() {
@@ -147,7 +157,7 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     setPasswordValue("");
     setConfirmPassword("");
     setDisplayNameInput("");
-    setNotice("密码和昵称已设置，下次可以直接用邮箱和密码登录。");
+    setNotice("✓ 密码已设置完成！下次可以直接用邮箱和密码登录。");
   }
 
   return (
@@ -304,11 +314,11 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
               </h2>
               {mode === "password" ? (
                 <p className="mt-1.5 text-xs text-[var(--color-muted)]">
-                  输入邮箱和密码登录
+                  已设置密码？直接登录
                 </p>
               ) : (
                 <p className="mt-1.5 text-xs text-[var(--color-muted)]">
-                  首次使用先走邮箱验证，验证成功后回到这里设置密码。
+                  首次使用？输入邮箱获取验证链接
                 </p>
               )}
             </div>

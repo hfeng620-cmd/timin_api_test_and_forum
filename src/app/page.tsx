@@ -166,7 +166,7 @@ export default function Home() {
                       href={stationLinkMap[row.name]}
                       className="stagger-in grid cursor-pointer gap-4 border-b border-[var(--color-line)] py-5 transition hover:bg-[var(--color-hover)] md:grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.35fr] md:items-start"
                     >
-                      <div className="flex items-center justify-between gap-3 md:block">
+                      <div className="flex min-w-0 items-center justify-between gap-3 md:block">
                         <span className="text-sm font-bold text-[var(--color-muted)] md:pt-1">
                           {(index + 1).toString().padStart(2, "0")}
                         </span>
@@ -174,23 +174,23 @@ export default function Home() {
                           {row.badge}
                         </span>
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <div className="flex items-center gap-3">
                           <h3 className="text-lg font-black">{row.name}</h3>
                           <span className="hidden text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-deep)] md:inline">
                             {row.badge}
                           </span>
                         </div>
-                        <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
+                        <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
                       </div>
-                      <div>
-                        <p className="text-base font-black">{row.price}</p>
-                        <p className="mt-2 text-sm leading-6 text-[var(--color-brand-deep)]">{row.entry}</p>
+                      <div className="min-w-0">
+                        <p className="truncate text-base font-black">{row.price}</p>
+                        <p className="mt-2 truncate text-sm leading-6 text-[var(--color-brand-deep)]">{row.entry}</p>
                       </div>
-                      <p className="pt-1 text-base font-black">{row.multiplier}</p>
-                      <div>
-                        <p className="text-base font-black">{row.verdict}</p>
-                        <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.note}</p>
+                      <p className="min-w-0 truncate pt-1 text-base font-black">{row.multiplier}</p>
+                      <div className="min-w-0">
+                        <p className="truncate text-base font-black">{row.verdict}</p>
+                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--color-muted)]">{row.note}</p>
                       </div>
                     </StationRowLink>
                   ))}
@@ -272,23 +272,23 @@ export default function Home() {
                 key={`${row.name}-extended-${index}`}
                 className="stagger-in card-lift grid gap-3 border-b border-[var(--color-line)] py-5 transition hover:bg-[var(--color-hover)] md:grid-cols-[0.9fr_0.9fr_0.6fr_1.4fr]"
               >
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-3">
                     <h3 className="text-lg font-black">{row.name}</h3>
                     <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
                       {row.badge}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
+                  <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">{row.group}</p>
                 </div>
-                <div>
-                  <p className="font-black">{row.price}</p>
-                  <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
+                <div className="min-w-0">
+                  <p className="truncate font-black">{row.price}</p>
+                  <p className="mt-2 truncate text-sm leading-6 text-[var(--color-muted)]">
                     {row.packageType}
                   </p>
                 </div>
-                <p className="font-black">{row.multiplier}</p>
-                <p className="text-sm leading-6 text-[var(--color-muted)] line-clamp-2">{row.note}</p>
+                <p className="min-w-0 truncate font-black">{row.multiplier}</p>
+                <p className="min-w-0 text-sm leading-6 text-[var(--color-muted)] line-clamp-2">{row.note}</p>
               </article>
             ))}
           </div>

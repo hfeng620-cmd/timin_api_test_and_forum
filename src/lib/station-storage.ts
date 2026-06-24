@@ -41,12 +41,6 @@ export type StationEditRecord = {
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-function assertConfigured() {
-  if (!isSupabaseConfigured()) {
-    throw new Error("Supabase is not configured.");
-  }
-}
-
 /** Map the view/table row (snake_case) to our camelCase Station type. */
 function stationFromRow(row: Record<string, unknown>): Station {
   return {
@@ -150,15 +144,19 @@ export async function loadStations(): Promise<Station[]> {
 
 /** Get a single station by id (from the view). */
 export async function getStation(id: string): Promise<Station | null> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("stations_with_editor")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  if (!isSupabaseConfigured()) return null;
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("stations_with_editor")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
 
-  if (error) throw error;
-  return data ? stationFromRow(data as Record<string, unknown>) : null;
+    if (error) throw error;
+    return data ? stationFromRow(data as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
 }
 
 /** Create a new station. The authenticated user becomes the author;
@@ -182,53 +180,59 @@ export async function createStation(input: {
   badge?: string;
   groupName?: string;
 }): Promise<Station> {
-  assertConfigured();
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase 未配置，无法创建站点。请先配置 Supabase 环境变量。");
+  }
   const supabase = getSupabaseClient();
 
-  // Compute next sort_order
-  const { data: maxRow, error: maxError } = await supabase
-    .from("stations")
-    .select("sort_order")
-    .order("sort_order", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  try {
+    // Compute next sort_order
+    const { data: maxRow, error: maxError } = await supabase
+      .from("stations")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-  if (maxError) throw maxError;
+    if (maxError) throw maxError;
 
-  const nextSortOrder =
-    maxRow && typeof maxRow.sort_order === "number"
-      ? maxRow.sort_order + 1
-      : 1;
+    const nextSortOrder =
+      maxRow && typeof maxRow.sort_order === "number"
+        ? maxRow.sort_order + 1
+        : 1;
 
-  const row = {
-    name: input.name,
-    url: input.url ?? null,
-    price: input.price ?? null,
-    multiplier: input.multiplier ?? null,
-    entry: input.entry ?? null,
-    package_type: input.packageType ?? null,
-    status: input.status ?? null,
-    models: input.models ?? null,
-    uptime: input.uptime ?? null,
-    latency: input.latency ?? null,
-    source: input.source ?? null,
-    verdict: input.verdict ?? null,
-    note: input.note ?? null,
-    advantage: input.advantage ?? null,
-    risk: input.risk ?? null,
-    badge: input.badge ?? null,
-    group_name: input.groupName ?? null,
-    sort_order: nextSortOrder,
-  };
+    const row = {
+      name: input.name,
+      url: input.url ?? null,
+      price: input.price ?? null,
+      multiplier: input.multiplier ?? null,
+      entry: input.entry ?? null,
+      package_type: input.packageType ?? null,
+      status: input.status ?? null,
+      models: input.models ?? null,
+      uptime: input.uptime ?? null,
+      latency: input.latency ?? null,
+      source: input.source ?? null,
+      verdict: input.verdict ?? null,
+      note: input.note ?? null,
+      advantage: input.advantage ?? null,
+      risk: input.risk ?? null,
+      badge: input.badge ?? null,
+      group_name: input.groupName ?? null,
+      sort_order: nextSortOrder,
+    };
 
-  const { data, error } = await supabase
-    .from("stations")
-    .insert(row)
-    .select("*")
-    .single();
+    const { data, error } = await supabase
+      .from("stations")
+      .insert(row)
+      .select("*")
+      .single();
 
-  if (error) throw error;
-  return stationFromRow(data as Record<string, unknown>);
+    if (error) throw error;
+    return stationFromRow(data as Record<string, unknown>);
+  } catch (e) {
+    throw e instanceof Error ? e : new Error("创建站点失败，请稍后重试。");
+  }
 }
 
 /**
@@ -240,119 +244,139 @@ export async function updateStation(
   updates: Partial<Station>,
   editorName: string,
 ): Promise<void> {
-  assertConfigured();
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase 未配置，无法更新站点。请先配置 Supabase 环境变量。");
+  }
   const supabase = getSupabaseClient();
 
-  // Fetch current row
-  const { data: current, error: fetchError } = await supabase
-    .from("stations")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (fetchError) throw fetchError;
-
-  const currentRow = current as Record<string, unknown>;
-
-  // Get editor id
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError || !userData.user) {
-    throw new Error("Please sign in first.");
-  }
-  const editorId = userData.user.id;
-
-  // Write the update row
-  const updateRow = stationToUpdate(updates);
-  if (Object.keys(updateRow).length > 0) {
-    const { error: updateError } = await supabase
+  try {
+    // Fetch current row
+    const { data: current, error: fetchError } = await supabase
       .from("stations")
-      .update(updateRow)
-      .eq("id", id);
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    if (updateError) throw updateError;
-  }
+    if (fetchError) throw fetchError;
 
-  // Record edits for each changed field
-  const editInserts: Array<{
-    station_id: string;
-    editor_id: string;
-    editor_name: string;
-    field_name: string;
-    old_value: string;
-    new_value: string;
-  }> = [];
+    const currentRow = current as Record<string, unknown>;
 
-  for (const [camelKey, newVal] of Object.entries(updates)) {
-    if (camelKey === "id") continue; // never edit id
-
-    const snakeKey = toSnakeCase(camelKey);
-    const oldVal = currentRow[snakeKey];
-
-    const oldStr =
-      oldVal === null || oldVal === undefined
-        ? ""
-        : String(oldVal);
-    const newStr =
-      newVal === null || newVal === undefined
-        ? ""
-        : String(newVal);
-
-    if (oldStr !== newStr) {
-      editInserts.push({
-        station_id: id,
-        editor_id: editorId,
-        editor_name: editorName,
-        field_name: snakeKey,
-        old_value: oldStr,
-        new_value: newStr,
-      });
+    // Get editor id
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      throw new Error("Please sign in first.");
     }
-  }
+    const editorId = userData.user.id;
 
-  if (editInserts.length > 0) {
-    const { error: editError } = await supabase
-      .from("station_edits")
-      .insert(editInserts);
+    // Write the update row
+    const updateRow = stationToUpdate(updates);
+    if (Object.keys(updateRow).length > 0) {
+      const { error: updateError } = await supabase
+        .from("stations")
+        .update(updateRow)
+        .eq("id", id);
 
-    if (editError) throw editError;
+      if (updateError) throw updateError;
+    }
+
+    // Record edits for each changed field
+    const editInserts: Array<{
+      station_id: string;
+      editor_id: string;
+      editor_name: string;
+      field_name: string;
+      old_value: string;
+      new_value: string;
+    }> = [];
+
+    for (const [camelKey, newVal] of Object.entries(updates)) {
+      if (camelKey === "id") continue; // never edit id
+
+      const snakeKey = toSnakeCase(camelKey);
+      const oldVal = currentRow[snakeKey];
+
+      const oldStr =
+        oldVal === null || oldVal === undefined
+          ? ""
+          : String(oldVal);
+      const newStr =
+        newVal === null || newVal === undefined
+          ? ""
+          : String(newVal);
+
+      if (oldStr !== newStr) {
+        editInserts.push({
+          station_id: id,
+          editor_id: editorId,
+          editor_name: editorName,
+          field_name: snakeKey,
+          old_value: oldStr,
+          new_value: newStr,
+        });
+      }
+    }
+
+    if (editInserts.length > 0) {
+      const { error: editError } = await supabase
+        .from("station_edits")
+        .insert(editInserts);
+
+      if (editError) throw editError;
+    }
+  } catch (e) {
+    throw e instanceof Error ? e : new Error("更新站点失败，请稍后重试。");
   }
 }
 
 /** Delete a station by id. */
 export async function deleteStation(id: string): Promise<void> {
-  assertConfigured();
-  const { error } = await getSupabaseClient()
-    .from("stations")
-    .delete()
-    .eq("id", id);
+  if (!isSupabaseConfigured()) {
+    throw new Error("Supabase 未配置，无法删除站点。请先配置 Supabase 环境变量。");
+  }
+  try {
+    const { error } = await getSupabaseClient()
+      .from("stations")
+      .delete()
+      .eq("id", id);
 
-  if (error) throw error;
+    if (error) throw error;
+  } catch (e) {
+    throw e instanceof Error ? e : new Error("删除站点失败，请稍后重试。");
+  }
 }
 
 /** Load the edit history for a single station. */
 export async function loadStationEditHistory(
   stationId: string,
 ): Promise<StationEditRecord[]> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("station_edits")
-    .select("*")
-    .eq("station_id", stationId)
-    .order("created_at", { ascending: false });
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("station_edits")
+      .select("*")
+      .eq("station_id", stationId)
+      .order("created_at", { ascending: false });
 
-  if (error) throw error;
-  return ((data ?? []) as Record<string, unknown>[]).map(editRecordFromRow);
+    if (error) throw error;
+    return ((data ?? []) as Record<string, unknown>[]).map(editRecordFromRow);
+  } catch {
+    return [];
+  }
 }
 
 /** Load the most recent edits across all stations (limit 50). */
 export async function loadRecentEdits(): Promise<StationEditRecord[]> {
-  assertConfigured();
-  const { data, error } = await getSupabaseClient()
-    .from("station_edits")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(50);
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const { data, error } = await getSupabaseClient()
+      .from("station_edits")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
 
-  if (error) throw error;
-  return ((data ?? []) as Record<string, unknown>[]).map(editRecordFromRow);
+    if (error) throw error;
+    return ((data ?? []) as Record<string, unknown>[]).map(editRecordFromRow);
+  } catch {
+    return [];
+  }
 }

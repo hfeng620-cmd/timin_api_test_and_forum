@@ -247,7 +247,7 @@ body::before {
   pointer-events: none;
   background: var(--ambient-background);
   background-size: 200% 200%, auto, auto;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.52), transparent 88%);
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.65), transparent 100%);
   z-index: -1;
   animation: bg-shift 20s ease-in-out infinite;
 }
@@ -266,7 +266,7 @@ body::after {
   transition: opacity 320ms ease;
   animation: body-glow-enter 1s ease-out backwards;
   background:
-    radial-gradient(circle 480px at var(--mouse-x) var(--mouse-y), rgba(10,132,255,0.07), transparent 62%),
+    radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(10,132,255,0.10), transparent 62%),
     radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(10,132,255,0.04), transparent 56%),
     radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.55), transparent 48%);
   filter: blur(16px);
@@ -274,21 +274,21 @@ body::after {
 
 :root[data-theme="midnight"] body::after {
   background:
-    radial-gradient(circle 480px at var(--mouse-x) var(--mouse-y), rgba(10,132,255,0.12), transparent 62%),
+    radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(10,132,255,0.12), transparent 62%),
     radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(255,255,255,0.04), transparent 56%),
     radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.15), transparent 48%);
 }
 
 :root[data-theme="cyber"] body::after {
   background:
-    radial-gradient(circle 480px at var(--mouse-x) var(--mouse-y), rgba(48,209,88,0.14), transparent 62%),
+    radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(48,209,88,0.14), transparent 62%),
     radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(48,209,88,0.06), transparent 56%),
     radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(48,209,88,0.18), transparent 48%);
 }
 
 :root[data-theme="stone"] body::after {
   background:
-    radial-gradient(circle 480px at var(--mouse-x) var(--mouse-y), rgba(47,111,115,0.08), transparent 62%),
+    radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(47,111,115,0.08), transparent 62%),
     radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(172,122,73,0.04), transparent 56%),
     radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(255,252,247,0.5), transparent 48%);
 }

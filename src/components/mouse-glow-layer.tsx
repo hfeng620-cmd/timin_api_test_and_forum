@@ -13,10 +13,10 @@ interface Particle {
   createdAt: number;
 }
 
-const MAX_PARTICLES = 12;
+const MAX_PARTICLES = 16;
 const PARTICLE_LIFETIME_MS = 800;
 const PARTICLE_RADIUS = 3.5;
-const PARTICLE_MAX_OPACITY = 0.4;
+const PARTICLE_MAX_OPACITY = 0.5;
 
 /**
  * Reads a CSS custom property from the document root and extracts
@@ -185,7 +185,7 @@ export function MouseGlowLayer() {
 
     function handlePointerLeave() {
       // CSS glow — drift back to hero position
-      root.style.setProperty("--mouse-glow-opacity", "0.42");
+      root.style.setProperty("--mouse-glow-opacity", "0.3");
       targetX = window.innerWidth * 0.62;
       targetY = 220;
       queueGlowRender();
