@@ -149,7 +149,7 @@ export async function createDiscussionPost(
       body: input.body.trim(),
       station,
       tags: input.tags ?? [],
-      is_hidden: true,
+      is_hidden: false,
     })
     .select("id, body, station, tags, created_at")
     .single();

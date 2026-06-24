@@ -317,10 +317,7 @@ export function StationsBoard() {
         <div className="surface-in overflow-hidden rounded-[8px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[var(--shadow-card)]">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-line)] px-6 py-5">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                中转站总表
-              </p>
-              <h2 className="mt-2 text-3xl font-black">把地址、收费方式、价格和备注横向摆平</h2>
+              <h2 className="text-3xl font-black">中转站总表</h2>
             </div>
             <div className="flex flex-wrap gap-3">
               <button

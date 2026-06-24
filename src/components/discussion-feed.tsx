@@ -180,7 +180,7 @@ export function DiscussionFeed({
       await loadPosts(false);
       setBody("");
       setStation("");
-      setStatus("已提交，等待审核。");
+      setStatus("已发布。");
     } catch {
       setStatus("发布失败，请检查网络后重试。");
     }

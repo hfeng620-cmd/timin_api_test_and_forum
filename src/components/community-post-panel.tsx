@@ -14,7 +14,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
   const [open, setOpen] = useState(false);
   const [station, setStation] = useState("");
   const [body, setBody] = useState("");
-  const [status, setStatus] = useState("提交后需管理员审核。");
+  const [status, setStatus] = useState("发布后即显示在讨论区。");
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -51,7 +51,7 @@ export function CommunityPostPanel({ onPostCreated }: CommunityPostPanelProps) {
       setBody("");
       setStation("");
       setOpen(false);
-      setStatus("已提交，等待管理员审核后显示。");
+      setStatus("已发布。");
       onPostCreated?.();
     } catch {
       setStatus("发布失败，请检查网络后重试。");
