@@ -26,6 +26,7 @@ export type DiscussionReply = {
   avatar: string;
   postedAt: string;
   body: string;
+  likes: number;
 };
 
 export type CreateDiscussionPostInput = {
@@ -62,6 +63,7 @@ type ForumReplyRow = {
   author_avatar_url?: string | null;
   body: string;
   created_at: string;
+  like_count?: number | null;
 };
 
 function assertConfigured() {
@@ -112,6 +114,7 @@ function replyFromRow(row: ForumReplyRow): DiscussionReply {
     avatar: row.author_avatar_url || "",
     postedAt: formatDate(row.created_at),
     body: row.body,
+    likes: Number(row.like_count ?? 0),
   };
 }
 
@@ -280,6 +283,28 @@ export async function likeDiscussionPost(
   }
 
   return currentLikes + 1;
+}
+
+export async function likeReply(replyId: string): Promise<number> {
+  const authorId = await ensureProfile();
+  const supabase = getSupabaseClient();
+  const { error } = await supabase.from("forum_likes").insert({
+    reply_id: replyId,
+    user_id: authorId,
+  });
+
+  if (error) {
+    if (error.code === "23505") return 0;
+    throw error;
+  }
+
+  // Get updated like count
+  const { data } = await supabase
+    .from("forum_public_replies")
+    .select("like_count")
+    .eq("id", replyId)
+    .single();
+  return (data as { like_count?: number } | null)?.like_count ?? 1;
 }
 
 export async function loadPendingDiscussionPosts(): Promise<DiscussionPost[]> {

@@ -6,6 +6,7 @@ import {
   createDiscussionPost,
   deleteDiscussionPost,
   likeDiscussionPost,
+  likeReply,
   loadComments,
   loadDiscussionPosts,
   pinDiscussionPost,
@@ -985,13 +986,36 @@ export function DiscussionFeed({
                               <p className="mt-1 text-sm leading-7 text-[var(--color-ink)]">
                                 {renderBodyWithMentions(reply.body)}
                               </p>
-                              <button
-                                className="mt-1 text-xs font-semibold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
-                                onClick={() => openReplyBox(post.issueNumber, reply.author)}
-                                type="button"
-                              >
-                                回复
-                              </button>
+                              <div className="mt-1 flex items-center gap-3">
+                                <button
+                                  className="text-xs font-semibold text-[var(--color-muted)] transition hover:text-[var(--color-brand-deep)]"
+                                  onClick={() => openReplyBox(post.issueNumber, reply.author)}
+                                  type="button"
+                                >
+                                  回复
+                                </button>
+                                <button
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-muted)] transition hover:text-red-400"
+                                  onClick={async () => {
+                                    if (!isConnected) { showAuthModal(); return; }
+                                    try {
+                                      const newLikes = await likeReply(reply.id);
+                                      setCommentsMap((prev) => ({
+                                        ...prev,
+                                        [post.issueNumber]: (prev[post.issueNumber] ?? []).map((r) =>
+                                          r.id === reply.id ? { ...r, likes: newLikes } : r
+                                        ),
+                                      }));
+                                    } catch { /* ignore */ }
+                                  }}
+                                  type="button"
+                                >
+                                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 20.4s-7-4.355-7-9.24A4.16 4.16 0 0 1 9.2 7a4.62 4.62 0 0 1 2.8 1.1A4.62 4.62 0 0 1 14.8 7A4.16 4.16 0 0 1 19 11.16c0 4.885-7 9.24-7 9.24Z" />
+                                  </svg>
+                                  {reply.likes > 0 ? reply.likes : null}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
