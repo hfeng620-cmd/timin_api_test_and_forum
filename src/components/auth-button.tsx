@@ -50,14 +50,14 @@ export function AuthButton() {
           </button>
         ) : null}
         <Link
-          className="flex min-h-11 min-w-11 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--color-line)] transition hover:border-[var(--color-brand)] hover:shadow-[0_0_12px_var(--color-panel-glow)]"
+          className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--color-line)] transition hover:border-[var(--color-brand)] hover:shadow-[0_0_12px_var(--color-panel-glow)]"
           href="/profile"
           title={email ?? undefined}
         >
           {avatarUrl ? (
             <img alt={label} className="h-full w-full object-cover" src={avatarUrl} />
           ) : (
-            <span className="flex h-full w-full items-center justify-center text-sm font-bold text-white" style={{ backgroundColor: bgColor }}>
+            <span className="flex h-full w-full items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: bgColor }}>
               {initial}
             </span>
           )}
