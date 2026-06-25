@@ -164,7 +164,7 @@ export function NotificationBell({
 
       {/* Full-screen overlay modal */}
       {open && (
-        <div className="fixed inset-0 z-[90] flex items-start justify-center bg-black/50 px-4 pt-[12vh] backdrop-blur-sm">
+        <div className="fixed inset-0 z-[110] flex items-start justify-center bg-black/50 px-4 pt-[12vh] backdrop-blur-sm">
           {/* Card */}
           <div
             className="surface-in w-full max-w-lg overflow-hidden rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[0_24px_80px_rgba(15,23,42,0.18)]"
