@@ -104,24 +104,44 @@ export default function AdminPage() {
 
   // ---- User management state ----
   const [userList, setUserList] = useState<
-    { id: string; display_name: string; avatar_url: string | null; created_at: string }[]
+    { id: string; display_name: string; avatar_url: string | null; created_at: string; isAdmin: boolean }[]
   >([]);
   const [userListLoading, setUserListLoading] = useState(false);
   const [userSearch, setUserSearch] = useState("");
 
-  // Load users for admin management
+  // Load users + admin status
   const loadUsers = useCallback(async () => {
     setUserListLoading(true);
     try {
-      const { data } = await getSupabaseClient()
-        .from("forum_profiles")
-        .select("id, display_name, avatar_url, created_at")
-        .order("created_at", { ascending: false })
-        .limit(100);
-      setUserList((data as any[]) ?? []);
+      const supabase = getSupabaseClient();
+      const [profilesRes, adminsRes] = await Promise.all([
+        supabase.from("forum_profiles").select("id, display_name, avatar_url, created_at").order("created_at", { ascending: false }).limit(100),
+        supabase.from("forum_admins").select("user_id"),
+      ]);
+      const adminIds = new Set(((adminsRes.data ?? []) as { user_id: string }[]).map((a: { user_id: string }) => a.user_id));
+      const users = ((profilesRes.data ?? []) as any[]).map((u: any) => ({
+        id: u.id,
+        display_name: u.display_name,
+        avatar_url: u.avatar_url,
+        created_at: u.created_at,
+        isAdmin: adminIds.has(u.id),
+      }));
+      setUserList(users);
     } catch { /* ignore */ }
     setUserListLoading(false);
   }, []);
+
+  // Promote/demote user
+  async function toggleAdmin(userId: string, makeAdmin: boolean) {
+    try {
+      if (makeAdmin) {
+        await getSupabaseClient().from("forum_admins").insert({ user_id: userId });
+      } else {
+        await getSupabaseClient().from("forum_admins").delete().eq("user_id", userId);
+      }
+      loadUsers();
+    } catch { /* ignore */ }
+  }
 
   useEffect(() => {
     if (adminOk && activeTab === "users") loadUsers();
@@ -1534,8 +1554,17 @@ export default function AdminPage() {
                       <p className="font-bold text-[var(--color-ink)]">{user.display_name}</p>
                       <p className="text-xs text-[var(--color-muted)]">{new Date(user.created_at).toLocaleDateString("zh-CN")} 加入</p>
                     </div>
-                    {adminList.some((a) => a.user_id === user.id) && (
+                    {user.isAdmin && (
                       <span className="rounded-full bg-[#fef3c7] px-2 py-0.5 text-[10px] font-bold text-[#b45309]">管理员</span>
+                    )}
+                    {isOwner && (
+                      <button
+                        className="rounded-full border border-[var(--color-line)] px-3 py-1 text-[10px] font-bold text-[var(--color-brand-deep)] transition hover:bg-[var(--color-brand-soft)]"
+                        onClick={() => toggleAdmin(user.id, !user.isAdmin)}
+                        type="button"
+                      >
+                        {user.isAdmin ? "取消管理员" : "升级为管理员"}
+                      </button>
                     )}
                   </div>
                 ))
