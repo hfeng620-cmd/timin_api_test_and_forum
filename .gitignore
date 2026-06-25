@@ -47,5 +47,8 @@ next-env.d.ts
 # local backup
 /backup/
 
+# supabase CLI local metadata
+/supabase/.temp/
+
 # local runtime logs
 .runtime/
