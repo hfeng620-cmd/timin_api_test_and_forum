@@ -36,5 +36,5 @@ pm2 save
 pm2 startup
 
 echo "=== 完成 ==="
-echo "网站已启动，检查端口后访问 http://\$(curl -s ifconfig.me):3000"
+echo "网站已启动，检查端口后访问 http://$(curl -s ifconfig.me):3000"
 pm2 status
