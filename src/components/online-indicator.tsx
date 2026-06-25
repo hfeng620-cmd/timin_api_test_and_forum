@@ -31,11 +31,19 @@ export function OnlineIndicator() {
 
     async function ping() {
       try {
-        // Upsert presence
-        await supabase.from("user_presence").upsert(
-          { user_id: user!.id, last_seen: new Date().toISOString() },
-          { onConflict: "user_id" }
-        );
+        // Upsert presence — use .update + .insert fallback for Supabase
+        const now = new Date().toISOString();
+        const { error: updateError } = await supabase
+          .from("user_presence")
+          .update({ last_seen: now })
+          .eq("user_id", user!.id);
+
+        // If update failed (row doesn't exist), insert
+        if (updateError) {
+          await supabase
+            .from("user_presence")
+            .upsert({ user_id: user!.id, last_seen: now }, { onConflict: "user_id" });
+        }
       } catch { /* table may not exist yet */ }
     }
 
