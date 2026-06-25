@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FloatingQuickPanel } from "@/components/floating-quick-panel";
+import { RegisterCounter } from "@/components/register-counter";
 import { MobileDock } from "@/components/mobile-dock";
 import { MouseGlowLayer } from "@/components/mouse-glow-layer";
 import { PageLoadingBar } from "@/components/page-loading-bar";
@@ -74,6 +75,7 @@ export default function RootLayout({
           </ToastProvider>
         </ForumAuthProvider>
         <FloatingQuickPanel />
+        <RegisterCounter />
       </body>
     </html>
   );
