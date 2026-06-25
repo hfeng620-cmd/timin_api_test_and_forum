@@ -109,9 +109,12 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
     }, 0);
 
     document.addEventListener("keydown", handleKeyDown);
+    // Lock body scroll
+    document.body.style.overflow = "hidden";
     return () => {
       clearTimeout(timer);
       document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
     };
   }, [open, onClose]);
 

@@ -42,7 +42,7 @@ export function QqGroupModalButton() {
       </button>
 
       {open ? (
-        <div className="surface-in absolute left-0 top-[calc(100%+14px)] z-50 w-[320px] overflow-hidden rounded-[22px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur">
+        <div className="surface-in absolute right-0 top-[calc(100%+14px)] z-50 w-[min(320px,calc(100vw-32px))] overflow-hidden rounded-[22px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur sm:left-0 sm:right-auto">
           <div className="flex items-start justify-between gap-4 border-b border-[var(--color-line)] pb-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">

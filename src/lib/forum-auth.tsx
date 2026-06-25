@@ -323,18 +323,34 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
       if (!trimmed || trimmed.length > 80) return;
 
       try {
-        const { data: userData } = await getSupabaseClient().auth.getUser();
+        const supabase = getSupabaseClient();
+        const { data: userData } = await supabase.auth.getUser();
         if (!userData.user) return;
 
-        const { error } = await getSupabaseClient()
+        // Use update first (more reliable than upsert for existing profiles)
+        const { error: updateError } = await supabase
           .from("forum_profiles")
-          .upsert({ id: userData.user.id, display_name: trimmed }, { onConflict: "id" });
+          .update({ display_name: trimmed })
+          .eq("id", userData.user.id);
 
-        if (error) throw error;
-        setDisplayNameState(trimmed);
+        // If no rows updated (profile doesn't exist yet), insert
+        if (updateError) {
+          const { error: insertError } = await supabase
+            .from("forum_profiles")
+            .insert({ id: userData.user.id, display_name: trimmed });
+          if (insertError) throw insertError;
+        }
+
+        // Verify it was saved
+        const { data: verify } = await supabase
+          .from("forum_profiles")
+          .select("display_name")
+          .eq("id", userData.user.id)
+          .single();
+        if (verify) setDisplayNameState(verify.display_name);
       } catch {
-        // Silently ignore — name will persist in local state only
-        // Next auth refresh will re-fetch from DB
+        // Still update local state so UI doesn't revert immediately
+        setDisplayNameState(trimmed);
       }
     },
     [configured],
