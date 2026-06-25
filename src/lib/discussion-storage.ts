@@ -408,7 +408,7 @@ export async function replyDiscussionPost(
 
   if (error) throw error;
   // Read the actual profile for display name
-  const { data: profile } = await supabase
+  const { data: profile } = await getSupabaseClient()
     .from("forum_profiles")
     .select("display_name")
     .eq("id", authorId)
