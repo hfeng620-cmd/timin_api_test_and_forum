@@ -31,7 +31,7 @@ export function RegisterCounter() {
 
   return (
     <div className="fixed bottom-4 right-4 z-[60] pointer-events-none select-none">
-      <div className="rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-4 py-2 text-xs font-semibold text-[var(--color-muted)] shadow-[var(--shadow-card)] backdrop-blur">
+      <div className="rounded-full border border-[var(--color-line)] bg-[var(--color-panel)]/95 px-4 py-2 text-xs font-semibold text-[var(--color-muted)] shadow-[var(--shadow-card)] backdrop-blur-sm">
         截止{month}{day}日 · 站内已累计注册 {count} 人
       </div>
     </div>
