@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { AnnouncementModal } from "@/components/announcement-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FloatingQuickPanel } from "@/components/floating-quick-panel";
 import { RegisterCounter } from "@/components/register-counter";
@@ -76,6 +77,7 @@ export default function RootLayout({
         </ForumAuthProvider>
         <FloatingQuickPanel />
         <RegisterCounter />
+        <AnnouncementModal />
       </body>
     </html>
   );
