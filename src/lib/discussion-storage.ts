@@ -126,15 +126,21 @@ async function ensureProfile(displayName = "噜噜") {
     throw new Error("Please sign in first.");
   }
 
-  const { error } = await supabase.from("forum_profiles").upsert(
-    {
+  // Read existing profile first — don't overwrite with defaults
+  const { data: existing } = await supabase
+    .from("forum_profiles")
+    .select("display_name")
+    .eq("id", userData.user.id)
+    .maybeSingle();
+
+  // Only upsert if profile doesn't exist yet
+  if (!existing) {
+    await supabase.from("forum_profiles").insert({
       id: userData.user.id,
       display_name: displayName,
-    },
-    { onConflict: "id" },
-  );
+    });
+  }
 
-  if (error) throw error;
   return userData.user.id;
 }
 
@@ -401,9 +407,15 @@ export async function replyDiscussionPost(
     .single();
 
   if (error) throw error;
+  // Read the actual profile for display name
+  const { data: profile } = await supabase
+    .from("forum_profiles")
+    .select("display_name")
+    .eq("id", authorId)
+    .single();
   return replyFromRow({
     ...(data as ForumReplyRow),
-    author_display_name: "噜噜",
+    author_display_name: profile?.display_name || "噜噜",
   });
 }
 
