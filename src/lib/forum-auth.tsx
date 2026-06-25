@@ -321,13 +321,20 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
       const trimmed = name.trim();
       if (!trimmed || trimmed.length > 80) return;
 
-      const { data: userData } = await getSupabaseClient().auth.getUser();
-      if (!userData.user) return;
+      try {
+        const { data: userData } = await getSupabaseClient().auth.getUser();
+        if (!userData.user) return;
 
-      await getSupabaseClient()
-        .from("forum_profiles")
-        .upsert({ id: userData.user.id, display_name: trimmed }, { onConflict: "id" });
-      setDisplayNameState(trimmed);
+        const { error } = await getSupabaseClient()
+          .from("forum_profiles")
+          .upsert({ id: userData.user.id, display_name: trimmed }, { onConflict: "id" });
+
+        if (error) throw error;
+        setDisplayNameState(trimmed);
+      } catch {
+        // Silently ignore — name will persist in local state only
+        // Next auth refresh will re-fetch from DB
+      }
     },
     [configured],
   );

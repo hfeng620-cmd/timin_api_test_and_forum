@@ -1,14 +1,39 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
+import { getSupabaseClient } from "@/lib/supabase";
 import { useForumAuth } from "@/lib/forum-auth";
 
+const AVATAR_COLORS = ["#6366f1","#0ea5e9","#10b981","#f59e0b","#ef4444","#8b5cf6","#ec4899","#14b8a6","#f97316","#84cc16"];
+
+function getAvatarColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
 export function AuthButton() {
-  const { isConnected, isAdmin, isOwner, displayName, email, needsPassword, signOut, showAuthModal } = useForumAuth();
+  const { isConnected, isAdmin, isOwner, displayName, email, needsPassword, signOut, showAuthModal, user } = useForumAuth();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isConnected || !user) return;
+    getSupabaseClient()
+      .from("forum_profiles")
+      .select("avatar_url")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => { if (data?.avatar_url) setAvatarUrl(data.avatar_url); })
+      .catch(() => {});
+  }, [isConnected, user]);
 
   if (isConnected) {
     const label = displayName || email?.split("@")[0] || "我";
+    const initial = label.charAt(0).toUpperCase();
+    const bgColor = getAvatarColor(label);
+
     return (
       <div className="flex items-center gap-2">
         {needsPassword ? (
@@ -22,11 +47,17 @@ export function AuthButton() {
           </button>
         ) : null}
         <Link
-          className="flex min-h-11 min-w-[3rem] items-center justify-center rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-3 text-xs font-bold text-[var(--color-brand-deep)] transition hover:bg-[var(--color-soft)]"
+          className="flex min-h-11 min-w-11 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--color-line)] transition hover:border-[var(--color-brand)] hover:shadow-[0_0_12px_var(--color-panel-glow)]"
           href="/profile"
           title={email ?? undefined}
         >
-          {label.slice(0, 4)}
+          {avatarUrl ? (
+            <img alt={label} className="h-full w-full object-cover" src={avatarUrl} />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center text-sm font-bold text-white" style={{ backgroundColor: bgColor }}>
+              {initial}
+            </span>
+          )}
         </Link>
         {isOwner ? (
           <span className="rounded-full bg-[#fef9e7] px-2 py-0.5 text-[10px] font-bold text-[#b8860b] ring-1 ring-[#daa520]/40" title="站主">
