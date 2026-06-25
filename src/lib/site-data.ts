@@ -336,9 +336,6 @@ export const stationComparisonRows = [
     risk: "如果只看最低值，很容易误读 CC Max 的实际价格。",
   },
   {
-    name: "Datopology",
-    badge: "未实测",
-    group: "https://api.dstopology.com/keys",
     name: "秋天中转站",
     badge: "新收录",
     group: "https://qiutian.live",
