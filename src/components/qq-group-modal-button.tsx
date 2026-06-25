@@ -68,7 +68,7 @@ export function QqGroupModalButton() {
                 height={248}
                 className="h-auto w-[248px] rounded-[18px]"
                 unoptimized
-                loading="lazy"
+                priority
               />
             </div>
             <div className="mt-4 grid gap-2 text-center">
