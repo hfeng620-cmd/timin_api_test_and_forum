@@ -117,17 +117,21 @@ export function NotificationBell({
   useEffect(() => {
     if (!isConnected || !user) return;
 
-    // Clean up previous subscription
+    // Tear down previous channel first
     if (unsubRef.current) {
       unsubRef.current();
       unsubRef.current = null;
     }
 
-    unsubRef.current = subscribeNotifications(user.id, (newNotification) => {
-      setNotifications((prev) => [newNotification, ...prev.slice(0, 49)]);
-    });
+    // Delay subscription to avoid race condition with auth state
+    const timer = setTimeout(() => {
+      unsubRef.current = subscribeNotifications(user.id, (newNotification) => {
+        setNotifications((prev) => [newNotification, ...prev.slice(0, 49)]);
+      });
+    }, 500);
 
     return () => {
+      clearTimeout(timer);
       if (unsubRef.current) {
         unsubRef.current();
         unsubRef.current = null;
