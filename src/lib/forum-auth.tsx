@@ -290,6 +290,16 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
 
       const name = (displayName ?? "").trim() || "群友补充";
 
+      // Save display name FIRST (before auth update triggers state change)
+      const { data: userData } = await getSupabaseClient().auth.getUser();
+      if (userData.user) {
+        await getSupabaseClient()
+          .from("forum_profiles")
+          .upsert({ id: userData.user.id, display_name: name }, { onConflict: "id" });
+        setDisplayNameState(name);
+      }
+
+      // Now update password — onAuthStateChange will re-read and find the new name
       const { error } = await getSupabaseClient().auth.updateUser({
         password,
         data: { password_set: true, full_name: name },
@@ -297,15 +307,6 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         return { ok: false, error: getAuthErrorMessage(error.message) };
-      }
-
-      // Upsert profile with display name
-      const { data: userData } = await getSupabaseClient().auth.getUser();
-      if (userData.user) {
-        await getSupabaseClient()
-          .from("forum_profiles")
-          .upsert({ id: userData.user.id, display_name: name }, { onConflict: "id" });
-        setDisplayNameState(name);
       }
 
       const { data: sessionData } = await getSupabaseClient().auth.getSession();
