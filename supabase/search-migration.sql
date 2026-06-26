@@ -21,7 +21,8 @@ create or replace function public.search_forum_posts(
   tag_filter text default null,
   sort_by text default 'latest',
   page_size int default 20,
-  page_cursor timestamptz default null
+  page_cursor timestamptz default null,
+  station_filter text default null
 )
 returns table (
   id uuid,
@@ -76,6 +77,7 @@ as $$
     left join public.forum_replies r on r.post_id = p.id
     left join public.forum_likes l on l.post_id = p.id
     where p.is_hidden = false
+      and (station_filter is null or p.station = station_filter)
       and (
         query is null
         or trim(query) = ''

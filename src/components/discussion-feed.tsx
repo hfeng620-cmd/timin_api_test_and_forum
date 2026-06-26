@@ -276,7 +276,7 @@ export function DiscussionFeed({
   // Execute server-side search with debounce
   const executeSearch = useCallback(
     async (query: string, tag: string | null, sort: string, cursor: string | null = null, append = false) => {
-      if (!query.trim() && !tag) {
+      if (!query.trim() && !tag && !stationFilter) {
         // No search active — use regular paginated load
         return;
       }
@@ -293,6 +293,7 @@ export function DiscussionFeed({
           sort: sort as "latest" | "mostReplies" | "mostLikes",
           limit: pageSize,
           cursor,
+          station: stationFilter,
         });
         if (append) {
           setSearchResult((current) =>
@@ -316,7 +317,7 @@ export function DiscussionFeed({
         setLoadingMore(false);
       }
     },
-    [pageSize],
+    [pageSize, stationFilter],
   );
 
   // Debounced search effect
@@ -428,7 +429,11 @@ export function DiscussionFeed({
   useEffect(() => {
     let cancelled = false;
 
-    loadDiscussionPostsPaginated(pageSize)
+    const loadFn = stationFilter
+      ? () => loadStationDiscussionPosts(stationFilter, pageSize)
+      : () => loadDiscussionPostsPaginated(pageSize);
+
+    loadFn()
       .then((result) => {
         if (cancelled) return;
         setPosts(result.posts);
@@ -445,7 +450,7 @@ export function DiscussionFeed({
     return () => {
       cancelled = true;
     };
-  }, [pageSize]);
+  }, [pageSize, stationFilter]);
 
   const topTags = useMemo(() => {
     const counts = new Map<string, number>();

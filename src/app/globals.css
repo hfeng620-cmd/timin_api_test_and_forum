@@ -272,6 +272,62 @@ body::after {
   filter: blur(16px);
 }
 
+main#main-content {
+  isolation: isolate;
+}
+
+main#main-content::before {
+  content: "";
+  position: absolute;
+  inset: -48px 0 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.95;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(37,99,235,0.12), transparent 22%),
+    radial-gradient(circle at 86% 10%, rgba(56,189,248,0.08), transparent 20%),
+    radial-gradient(circle at 78% 46%, rgba(255,255,255,0.62), transparent 16%),
+    radial-gradient(circle at 16% 74%, rgba(191,219,254,0.18), transparent 24%),
+    linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0));
+  filter: blur(2px);
+  animation: ambient-float 24s ease-in-out infinite;
+}
+
+main#main-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(rgba(148,163,184,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,0.07) 1px, transparent 1px),
+    radial-gradient(circle at 76% 18%, rgba(255,255,255,0.52), transparent 14%),
+    radial-gradient(circle at 18% 56%, rgba(37,99,235,0.06), transparent 20%);
+  background-size: 38px 38px, 38px 38px, auto, auto;
+  background-position: center top, center top, center top, center top;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.18) 44%, transparent 100%);
+  animation: grid-drift 18s linear infinite;
+}
+
+main#main-content > section {
+  position: relative;
+  isolation: isolate;
+}
+
+main#main-content > section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.72;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,255,255,0.5), transparent 18%),
+    radial-gradient(circle at 88% 100%, rgba(37,99,235,0.05), transparent 22%);
+}
+
 :root[data-theme="midnight"] body::after {
   background:
     radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(10,132,255,0.12), transparent 62%),
@@ -291,6 +347,31 @@ body::after {
     radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(47,111,115,0.08), transparent 62%),
     radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(172,122,73,0.04), transparent 56%),
     radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(255,252,247,0.5), transparent 48%);
+}
+
+:root[data-theme="cyber"] main#main-content::before,
+:root[data-theme="midnight"] main#main-content::before {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(48,209,88,0.09), transparent 24%),
+    radial-gradient(circle at 84% 12%, rgba(255,255,255,0.06), transparent 22%),
+    radial-gradient(circle at 68% 48%, rgba(255,255,255,0.1), transparent 18%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+}
+
+:root[data-theme="midnight"] main#main-content::before {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(10,132,255,0.12), transparent 24%),
+    radial-gradient(circle at 84% 12%, rgba(255,255,255,0.05), transparent 22%),
+    radial-gradient(circle at 68% 48%, rgba(112,184,255,0.08), transparent 18%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+}
+
+:root[data-theme="cyber"] main#main-content::after,
+:root[data-theme="midnight"] main#main-content::after {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+    radial-gradient(circle at 78% 20%, rgba(255,255,255,0.08), transparent 14%);
 }
 
 a {
@@ -380,6 +461,28 @@ button[aria-label="Open Next.js Dev Tools"] {
   }
   50% {
     background-position: 100% 50%;
+  }
+}
+
+@keyframes ambient-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.03);
+  }
+  66% {
+    transform: translate3d(-1.5%, 1.5%, 0) scale(0.985);
+  }
+}
+
+@keyframes grid-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 18px, 0);
   }
 }
 
@@ -646,6 +749,11 @@ h3 {
   }
 
   body::before {
+    animation: none;
+  }
+
+  main#main-content::before,
+  main#main-content::after {
     animation: none;
   }
 

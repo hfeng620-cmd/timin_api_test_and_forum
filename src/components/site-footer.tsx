@@ -58,24 +58,25 @@ export function SiteFooter() {
   const { isAdmin } = useForumAuth();
 
   return (
-    <footer className="mt-auto border-t border-[var(--color-line)] bg-[var(--color-panel)] backdrop-blur">
+    <footer className="relative mt-auto overflow-hidden border-t border-[var(--color-line)] bg-[var(--color-panel)] backdrop-blur">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.12),transparent_24%),radial-gradient(circle_at_88%_18%,rgba(125,211,252,0.12),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.18),rgba(255,255,255,0))]" />
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-10">
-        <div className="space-y-6">
+        <div className="relative space-y-6">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-brand-deep)]">
             Timix观察站
           </p>
           <h2 className="mt-3 max-w-2xl text-2xl font-black tracking-tight text-[var(--color-ink)]">
-            从榜单出发，把判断带回社区。
+            看到这里，下一步应该很清楚了。
           </h2>
           <p className="max-w-2xl text-sm leading-7 text-[var(--color-muted)]">
-            这里是一张收束区地图：找候选、比模型、查指南、回社区。
+            先圈候选，再做判断，最后把结论回流到社区。
           </p>
 
           <div className="grid gap-3 md:grid-cols-2">
             {decisionMap.map((item) => (
               <Link
                 key={item.href}
-                className="group rounded-3xl border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_78%,white)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:shadow-[0_18px_50px_rgba(15,23,42,0.08)]"
+                className="group rounded-3xl border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_78%,white)] p-5 transition hover:-translate-y-0.5 hover:border-[var(--color-brand)] hover:bg-white/92 hover:shadow-[0_18px_50px_rgba(15,23,42,0.08)]"
                 href={item.href}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -97,28 +98,28 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="grid gap-6">
-          <div className="rounded-[28px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_74%,white)] p-6">
+        <div className="relative grid gap-6">
+          <div className="rounded-[28px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_74%,white)] p-6 shadow-[0_18px_44px_rgba(15,23,42,0.05)]">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
               下一步地图
             </p>
             <div className="mt-4 space-y-4 text-sm text-[var(--color-muted)]">
               <div className="rounded-2xl border border-[var(--color-line)] px-4 py-3">
-                <p className="font-semibold text-[var(--color-ink)]">发现候选</p>
-                <p className="mt-1 leading-6">先看榜单，再去模型页核对可用性。</p>
+                <p className="font-semibold text-[var(--color-ink)]">想先筛站点</p>
+                <p className="mt-1 leading-6">先看榜单，快速把候选缩小。</p>
               </div>
               <div className="rounded-2xl border border-[var(--color-line)] px-4 py-3">
-                <p className="font-semibold text-[var(--color-ink)]">校准判断</p>
-                <p className="mt-1 leading-6">拿不准时查指南，想看样本就去社区。</p>
+                <p className="font-semibold text-[var(--color-ink)]">想尽快做判断</p>
+                <p className="mt-1 leading-6">模型页和指南负责帮你收口。</p>
               </div>
               <div className="rounded-2xl border border-[var(--color-line)] px-4 py-3">
-                <p className="font-semibold text-[var(--color-ink)]">回流共建</p>
-                <p className="mt-1 leading-6">把新结论留在社区，下一轮会更准。</p>
+                <p className="font-semibold text-[var(--color-ink)]">想补样本或提醒</p>
+                <p className="mt-1 leading-6">把新发现留在社区，下一轮会更准。</p>
               </div>
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_74%,white)] p-6">
+          <div className="rounded-[28px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_74%,white)] p-6 shadow-[0_18px_44px_rgba(15,23,42,0.05)]">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
               协作入口
             </p>
@@ -126,25 +127,25 @@ export function SiteFooter() {
               {collaborationLinks.map((item) => (
                 <a
                   key={item.label}
-                  className="inline-flex items-center justify-between rounded-2xl border border-[var(--color-line)] px-4 py-3 font-medium text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
+                  className="inline-flex items-center justify-between rounded-2xl border border-[var(--color-line)] px-4 py-3 font-medium text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:bg-white/88 hover:text-[var(--color-brand-deep)]"
                   href={item.href}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
                   <span>{item.label}</span>
                   <span className="text-xs uppercase tracking-[0.2em] text-[var(--color-muted)]">
-                    Go
+                    打开
                   </span>
                 </a>
               ))}
               {isAdmin ? (
                 <Link
-                  className="inline-flex items-center justify-between rounded-2xl border border-[var(--color-line)] px-4 py-3 font-medium text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
+                  className="inline-flex items-center justify-between rounded-2xl border border-[var(--color-line)] px-4 py-3 font-medium text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:bg-white/88 hover:text-[var(--color-brand-deep)]"
                   href="/admin"
                 >
                   <span>管理员面板</span>
                   <span className="text-xs uppercase tracking-[0.2em] text-[var(--color-muted)]">
-                    Admin
+                    进入
                   </span>
                 </Link>
               ) : null}

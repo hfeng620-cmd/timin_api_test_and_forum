@@ -26,6 +26,13 @@ type ProfileSignal = {
   hint: string;
 };
 
+type FootprintItem = {
+  title: string;
+  value: string;
+  meta: string;
+  detail: string;
+};
+
 const activityTabs: { key: ActivityTab; label: string }[] = [
   { key: "posts", label: "发帖" },
   { key: "replies", label: "回复" },
@@ -45,6 +52,14 @@ function formatDateLabel(value?: string | null) {
   } catch {
     return value;
   }
+}
+
+function truncateText(value?: string | null, maxLength = 72) {
+  if (!value) return "";
+
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) return normalized;
+  return `${normalized.slice(0, maxLength).trimEnd()}...`;
 }
 
 function pickTopStation(posts: DiscussionPost[]) {
@@ -203,6 +218,14 @@ export default function ProfilePage() {
           : completenessPercent >= 75
             ? "资料已经差不多，只差内容互动来补足真实感。"
             : "先补资料或发出第一条帖子，主页会更立得住。";
+  const profileHeadline =
+    totalContribution > 0
+      ? mostDiscussedStation
+        ? `主要关注 ${mostDiscussedStation.station}，已经留下 ${totalContribution} 次公开表达。`
+        : `已经留下 ${totalContribution} 次公开表达，主页正在形成自己的观察记录。`
+      : completenessPercent >= 75
+        ? "资料已经差不多，只差第一条内容就能让主页真正动起来。"
+        : "先补头像、简介或标签，让这张主页先有更清晰的身份感。";
   const profileMeta = [
     {
       label: "账号阶段",
@@ -224,10 +247,10 @@ export default function ProfilePage() {
   ];
   const activeTabDescription =
     activeTab === "posts"
-      ? "这里收纳你最近公开发出的帖子，方便回看自己的表达与观察。"
+      ? "这里收纳你公开发出的帖子，方便回看自己的表达与观察。"
       : activeTab === "replies"
-        ? "这里整理你参与过的话题回应，更像一条个人讨论轨迹。"
-        : "这里展示你点过赞的内容偏好，能反映近期关注重点。";
+        ? "这里整理你参与过的话题回应，形成一条个人讨论轨迹。"
+        : "这里展示你点过赞的内容偏好，能快速看出近期关注重点。";
 
   const profileSignals: ProfileSignal[] = [
     {
@@ -288,21 +311,30 @@ export default function ProfilePage() {
     },
   ];
 
-  const footprintItems = [
+  const footprintItems: FootprintItem[] = [
     {
       title: "最近发帖",
       value: latestPost ? latestPostDateLabel : "暂无",
-      detail: latestPost ? latestPost.body : "发出第一条帖子后，这里会显示你的最新内容。",
+      meta: latestPost?.station ? `${latestPost.station} · 公开发帖` : "公开发帖",
+      detail: latestPost
+        ? truncateText(latestPost.body)
+        : "发出第一条帖子后，这里会自动收纳你的最新公开表达。",
     },
     {
       title: "最近回复",
       value: latestReply ? latestReplyDateLabel : "暂无",
-      detail: latestReply ? latestReply.postTitle : "开始参与讨论后，这里会显示你最近回复的话题。",
+      meta: latestReply ? `回复话题 · ${latestReply.postTitle}` : "讨论轨迹",
+      detail: latestReply
+        ? truncateText(latestReply.reply.body)
+        : "参与一次追问、补充或纠错后，这里会留下你的最近回应。",
     },
     {
       title: "最近点赞内容",
       value: latestLike ? `发布于 ${latestLikedPostDateLabel}` : "暂无",
-      detail: latestLike ? latestLike.body : "给喜欢的内容点个赞，这里会留下你的兴趣轨迹。",
+      meta: latestLike?.station ? `${latestLike.station} · 兴趣记录` : "兴趣记录",
+      detail: latestLike
+        ? truncateText(latestLike.body)
+        : "点过赞的内容会留在这里，逐步沉淀出你的关注方向。",
     },
   ];
 
@@ -454,6 +486,9 @@ export default function ProfilePage() {
                           <p className="mt-2 text-sm text-[var(--color-muted)]">
                             {joinDate} 加入，已累计参与 {totalContribution} 次内容互动
                           </p>
+                          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
+                            {profileHeadline}
+                          </p>
                         </div>
 
                         <div className="flex flex-wrap gap-2">
@@ -480,7 +515,7 @@ export default function ProfilePage() {
                       </div>
 
                       <p className="mt-5 max-w-3xl text-sm leading-7 text-[var(--color-muted)] sm:text-base">
-                        {bio || "这个人很懒，什么都没写..."}
+                        {bio || "还没有留下个人简介，先补一句常用场景或关注方向会更像完整主页。"}
                       </p>
 
                       <div className="mt-5 flex flex-wrap gap-2">
@@ -762,10 +797,13 @@ export default function ProfilePage() {
                     className="rounded-[22px] border border-[var(--color-line)] bg-[var(--color-soft)] px-4 py-4"
                   >
                     <div className="flex items-center justify-between gap-4">
-                      <p className="text-sm font-black text-[var(--color-ink)]">{item.title}</p>
+                      <div>
+                        <p className="text-sm font-black text-[var(--color-ink)]">{item.title}</p>
+                        <p className="mt-1 text-xs font-semibold text-[var(--color-muted)]">{item.meta}</p>
+                      </div>
                       <span className="text-xs font-semibold text-[var(--color-brand-deep)]">{item.value}</span>
                     </div>
-                    <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{item.detail}</p>
+                    <p className="mt-3 text-sm leading-6 text-[var(--color-muted)]">{item.detail}</p>
                   </div>
                 ))}
               </div>
@@ -823,11 +861,11 @@ export default function ProfilePage() {
                     <div className="px-6 py-12 text-center">
                       <p className="text-sm font-bold text-[var(--color-ink)]">暂无发帖。</p>
                       <p className="mt-2 text-sm text-[var(--color-muted)]">
-                        去
+                        你的内容档案还是空的，去
                         <Link className="mx-1 font-semibold text-[var(--color-brand-deep)]" href="/community">
                           讨论区
                         </Link>
-                        发布你的第一条帖子吧。
+                        发出第一条公开观察吧。
                       </p>
                     </div>
                   ) : (
@@ -867,7 +905,7 @@ export default function ProfilePage() {
                     <div className="px-6 py-12 text-center">
                       <p className="text-sm font-bold text-[var(--color-ink)]">暂无回复。</p>
                       <p className="mt-2 text-sm text-[var(--color-muted)]">
-                        参与一次追问、补充或纠错后，这里会沉淀你的讨论轨迹。
+                        还没有形成讨论轨迹，参与一次追问、补充或纠错后就会收进这里。
                       </p>
                     </div>
                   ) : (
@@ -897,7 +935,7 @@ export default function ProfilePage() {
                     <div className="px-6 py-12 text-center">
                       <p className="text-sm font-bold text-[var(--color-ink)]">暂无点赞。</p>
                       <p className="mt-2 text-sm text-[var(--color-muted)]">
-                        点赞过的内容会留在这里，逐步形成你的兴趣偏好。
+                        这里还没有兴趣记录，点过赞的内容之后会自动归档在这里。
                       </p>
                     </div>
                   ) : (

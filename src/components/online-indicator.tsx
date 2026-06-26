@@ -121,7 +121,7 @@ export function OnlineIndicator() {
     }
 
     fetchOnline();
-    const interval = setInterval(fetchOnline, 30_000); // 每30秒刷新
+    const interval = setInterval(fetchOnline, 15_000); // 每15秒刷新，更及时显示在线状态
     return () => clearInterval(interval);
   }, []);
 
@@ -130,6 +130,8 @@ export function OnlineIndicator() {
     if (!isSupabaseConfigured() || !isConnected || !user) return;
 
     const supabase = getSupabaseClient();
+    let retryCount = 0;
+    const maxRetries = 3;
 
     async function ping() {
       try {
@@ -145,15 +147,26 @@ export function OnlineIndicator() {
 
         if (error) {
           console.error("[OnlineIndicator] Ping error:", error);
+          retryCount++;
+          if (retryCount < maxRetries) {
+            // Retry after 2 seconds
+            setTimeout(ping, 2000);
+          }
+        } else {
+          retryCount = 0; // Reset on success
         }
       } catch (err) {
         console.error("[OnlineIndicator] Ping exception:", err);
+        retryCount++;
+        if (retryCount < maxRetries) {
+          setTimeout(ping, 2000);
+        }
       }
     }
 
-    // Ping immediately, then every 30 seconds
+    // Ping immediately, then every 20 seconds (more frequent for better accuracy)
     ping();
-    const interval = setInterval(ping, 30_000);
+    const interval = setInterval(ping, 20_000);
     return () => clearInterval(interval);
   }, [isConnected, user]);
 
@@ -165,9 +178,13 @@ export function OnlineIndicator() {
         {onlineUsers.slice(0, 6).map((u) => (
           <div
             key={u.id}
-            className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--color-panel)] text-[10px] font-bold text-white"
+            className={`flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border-2 text-[10px] font-bold text-white ${
+              user && u.id === user.id
+                ? "border-[var(--color-brand)] ring-2 ring-[var(--color-brand)]/30"
+                : "border-[var(--color-panel)]"
+            }`}
             style={{ backgroundColor: getColor(u.display_name) }}
-            title={u.display_name}
+            title={user && u.id === user.id ? `${u.display_name} (我)` : u.display_name}
           >
             {u.avatar_url ? (
               <img alt={u.display_name} className="h-full w-full object-cover" src={u.avatar_url} />
@@ -182,10 +199,16 @@ export function OnlineIndicator() {
           </div>
         )}
       </div>
-      {/* Count */}
-      <span className="text-[11px] font-semibold text-[var(--color-muted)] whitespace-nowrap">
-        {count} 人在线
-      </span>
+      {/* Count with status indicator */}
+      <div className="flex items-center gap-1.5">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+        </span>
+        <span className="text-[11px] font-semibold text-[var(--color-muted)] whitespace-nowrap">
+          {count} 人在线
+        </span>
+      </div>
     </div>
   );
 }

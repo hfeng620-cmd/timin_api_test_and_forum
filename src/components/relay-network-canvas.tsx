@@ -25,19 +25,61 @@ type RelayNetworkCanvasProps = {
   className?: string;
 };
 
+type SceneProfile = {
+  compact: boolean;
+  nodeCount: number;
+  particleCount: number;
+  dprCap: number;
+  horizontalPadding: number;
+  topPadding: number;
+  bottomPadding: number;
+  centerYFactor: number;
+  pointerAnchorX: number;
+  pointerAnchorY: number;
+  connectionScale: number;
+  minConnectionAlpha: number;
+  pointerReachScale: number;
+};
+
 const NODE_COUNT = 22;
 const PARTICLE_COUNT = 18;
 const BASE_CONNECTION_DISTANCE = 148;
 const POINTER_EASE = 0.08;
 
-function createNodes(width: number, height: number): RelayNode[] {
-  return Array.from({ length: NODE_COUNT }, () => {
+function getSceneProfile(width: number, height: number): SceneProfile {
+  const compact = width < 760 || height < 560;
+  const veryCompact = width < 520 || height < 420;
+
+  return {
+    compact,
+    nodeCount: veryCompact ? 14 : compact ? 18 : NODE_COUNT,
+    particleCount: veryCompact ? 10 : compact ? 14 : PARTICLE_COUNT,
+    dprCap: compact ? 1.5 : 1.75,
+    horizontalPadding: compact ? 0.08 : 0.04,
+    topPadding: compact ? 0.08 : 0.04,
+    bottomPadding: compact ? 0.16 : 0.08,
+    centerYFactor: compact ? 0.48 : 0.52,
+    pointerAnchorX: compact ? 0.5 : 0.28,
+    pointerAnchorY: compact ? 0.48 : 0.62,
+    connectionScale: compact ? 0.19 : 0.22,
+    minConnectionAlpha: compact ? 0.18 : 0.12,
+    pointerReachScale: compact ? 0.24 : 0.28,
+  };
+}
+
+function createNodes(width: number, height: number, profile: SceneProfile): RelayNode[] {
+  const minX = width * profile.horizontalPadding;
+  const maxX = width * (1 - profile.horizontalPadding);
+  const minY = height * profile.topPadding;
+  const maxY = height * (1 - profile.bottomPadding);
+
+  return Array.from({ length: profile.nodeCount }, () => {
     const depth = 0.25 + Math.random() * 0.95;
     const speed = 0.08 + depth * 0.22;
 
     return {
-      x: Math.random() * width,
-      y: Math.random() * height,
+      x: minX + Math.random() * Math.max(maxX - minX, 1),
+      y: minY + Math.random() * Math.max(maxY - minY, 1),
       vx: (Math.random() - 0.5) * speed,
       vy: (Math.random() - 0.5) * speed * 0.85,
       radius: 1.4 + depth * 2.1,
@@ -47,10 +89,15 @@ function createNodes(width: number, height: number): RelayNode[] {
   });
 }
 
-function createParticles(width: number, height: number): AtmosphereParticle[] {
-  return Array.from({ length: PARTICLE_COUNT }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
+function createParticles(width: number, height: number, profile: SceneProfile): AtmosphereParticle[] {
+  const minX = width * (profile.compact ? 0.02 : 0);
+  const maxX = width * (profile.compact ? 0.98 : 1);
+  const minY = height * profile.topPadding;
+  const maxY = height * (1 - profile.bottomPadding * 0.7);
+
+  return Array.from({ length: profile.particleCount }, () => ({
+    x: minX + Math.random() * Math.max(maxX - minX, 1),
+    y: minY + Math.random() * Math.max(maxY - minY, 1),
     radius: 18 + Math.random() * 34,
     alpha: 0.04 + Math.random() * 0.08,
     pulse: Math.random() * Math.PI * 2,
@@ -85,6 +132,7 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
     let isVisible = document.visibilityState === "visible";
     let nodes: RelayNode[] = [];
     let particles: AtmosphereParticle[] = [];
+    let sceneProfile = getSceneProfile(container.clientWidth || 1, container.clientHeight || 1);
     let ambientGlow: CanvasGradient | null = null;
     let horizonGlow: CanvasGradient | null = null;
     let atmosphereGlow: CanvasGradient | null = null;
@@ -123,18 +171,19 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
     const resizeCanvas = () => {
       width = Math.max(container.clientWidth, 1);
       height = Math.max(container.clientHeight, 1);
+      sceneProfile = getSceneProfile(width, height);
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+      const dpr = Math.min(window.devicePixelRatio || 1, sceneProfile.dprCap);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      nodes = createNodes(width, height);
-      particles = createParticles(width, height);
-      pointer.x = width * 0.28;
-      pointer.y = height * 0.62;
+      nodes = createNodes(width, height, sceneProfile);
+      particles = createParticles(width, height, sceneProfile);
+      pointer.x = width * sceneProfile.pointerAnchorX;
+      pointer.y = height * sceneProfile.pointerAnchorY;
       pointer.targetX = pointer.x;
       pointer.targetY = pointer.y;
       rebuildGradients();
@@ -145,7 +194,7 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
       context.clearRect(0, 0, width, height);
 
       const centerX = width * 0.5;
-      const centerY = height * 0.52;
+      const centerY = height * sceneProfile.centerYFactor;
       const minDimension = Math.min(width, height);
 
       if (!reduceMotion) {
@@ -184,11 +233,11 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
       context.save();
       context.globalCompositeOperation = "screen";
       const pointerGlow = context.createRadialGradient(
-        pointer.easedPresence > 0.01 ? pointer.x : width * 0.28,
-        pointer.easedPresence > 0.01 ? pointer.y : height * 0.62,
+        pointer.easedPresence > 0.01 ? pointer.x : width * sceneProfile.pointerAnchorX,
+        pointer.easedPresence > 0.01 ? pointer.y : height * sceneProfile.pointerAnchorY,
         0,
-        pointer.easedPresence > 0.01 ? pointer.x : width * 0.28,
-        pointer.easedPresence > 0.01 ? pointer.y : height * 0.62,
+        pointer.easedPresence > 0.01 ? pointer.x : width * sceneProfile.pointerAnchorX,
+        pointer.easedPresence > 0.01 ? pointer.y : height * sceneProfile.pointerAnchorY,
         minDimension * (0.34 + pointer.easedPresence * 0.1),
       );
       pointerGlow.addColorStop(0, `rgba(125, 211, 252, ${0.06 + pointer.easedPresence * 0.1})`);
@@ -203,7 +252,7 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
       context.beginPath();
       context.ellipse(
         centerX + tiltX * 18,
-        height * 0.72 + tiltY * 12,
+        height * (sceneProfile.compact ? 0.7 : 0.72) + tiltY * 12,
         width * 0.34,
         Math.max(height * 0.08, 24),
         -0.08,
@@ -215,7 +264,7 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
       context.beginPath();
       context.ellipse(
         centerX - tiltX * 12,
-        height * 0.72 + tiltY * 8,
+        height * (sceneProfile.compact ? 0.7 : 0.72) + tiltY * 8,
         width * 0.24,
         Math.max(height * 0.05, 16),
         -0.08,
@@ -299,7 +348,7 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
       });
       projectedNodes.sort((left, right) => left.depth - right.depth);
 
-      const connectionDistance = Math.min(BASE_CONNECTION_DISTANCE, width * 0.22);
+      const connectionDistance = Math.min(BASE_CONNECTION_DISTANCE, width * sceneProfile.connectionScale);
       for (let index = 0; index < projectedNodes.length; index += 1) {
         const node = projectedNodes[index];
 
@@ -313,6 +362,8 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
           if (distance > connectionDistance * depthBoost) continue;
 
           const alpha = 1 - distance / (connectionDistance * depthBoost);
+          if (alpha < sceneProfile.minConnectionAlpha) continue;
+
           context.strokeStyle = `rgba(59, 130, 246, ${0.06 + alpha * 0.16 + (node.depth + target.depth) * 0.03})`;
           context.lineWidth = 0.5 + (node.depth + target.depth) * 0.22;
           context.beginPath();
@@ -325,7 +376,7 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
           const dx = pointer.x - node.drawX;
           const dy = pointer.y - node.drawY;
           const pointerDistance = Math.hypot(dx, dy);
-          const pointerReach = Math.min(180, width * 0.28);
+          const pointerReach = Math.min(sceneProfile.compact ? 154 : 180, width * sceneProfile.pointerReachScale);
 
           if (pointerDistance < pointerReach) {
             const alpha = (1 - pointerDistance / pointerReach) * pointer.easedPresence;
@@ -337,6 +388,21 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
             context.stroke();
           }
         }
+      }
+
+      for (const node of projectedNodes) {
+        context.fillStyle = `rgba(15, 23, 42, ${0.04 + node.depth * 0.05})`;
+        context.beginPath();
+        context.ellipse(
+          node.drawX + tiltX * (1.2 + node.depth * 1.8),
+          node.drawY + node.drawRadius * 1.15 + tiltY * (0.8 + node.depth),
+          node.drawRadius * (1.3 + node.depth * 0.35),
+          node.drawRadius * (0.68 + node.depth * 0.12),
+          0,
+          0,
+          Math.PI * 2,
+        );
+        context.fill();
       }
 
       context.save();
@@ -351,6 +417,17 @@ export function RelayNetworkCanvas({ className }: RelayNetworkCanvasProps) {
         context.fillStyle = `rgba(37, 99, 235, ${0.1 + node.depth * 0.08 + pulse * 0.08})`;
         context.beginPath();
         context.arc(node.drawX, node.drawY, node.drawRadius * (2.6 + node.depth * 1.1), 0, Math.PI * 2);
+        context.fill();
+
+        context.fillStyle = `rgba(255, 255, 255, ${0.18 + node.depth * 0.08 + pulse * 0.08})`;
+        context.beginPath();
+        context.arc(
+          node.drawX - node.drawRadius * (0.34 + node.depth * 0.05),
+          node.drawY - node.drawRadius * (0.46 + node.depth * 0.05),
+          Math.max(node.drawRadius * 0.38, 0.65),
+          0,
+          Math.PI * 2,
+        );
         context.fill();
       }
       context.restore();

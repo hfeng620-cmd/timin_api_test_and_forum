@@ -4,6 +4,14 @@ import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 
 const FORUM_POSTS_PUBLIC_VIEW = "forum_posts_public";
 const FORUM_PUBLIC_REPLIES_VIEW = "forum_public_replies";
+const MAX_FORUM_IMAGE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_FORUM_IMAGE_TYPES = {
+  "image/avif": "avif",
+  "image/gif": "gif",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+} as const;
 const DEFAULT_SPAM_KEYWORDS = [
   "加微信",
   "免费领取",
@@ -391,6 +399,7 @@ export type SearchOptions = {
   sort?: "latest" | "mostReplies" | "mostLikes";
   limit?: number;
   cursor?: string | null; // ISO timestamp
+  station?: string; // Station filter
 };
 
 export type SearchResult = {
@@ -419,6 +428,7 @@ export async function searchDiscussionPosts(
         sort_by: options.sort ?? "latest",
         page_size: pageSize,
         page_cursor: options.cursor ?? null,
+        station_filter: options.station ?? null,
       });
 
     if (error) throw error;
@@ -434,7 +444,9 @@ export async function searchDiscussionPosts(
     return { posts, totalCount, nextCursor, hasMore };
   } catch {
     // Fallback: client-side filtering (for when migration hasn't been run yet)
-    const allPosts = await loadDiscussionPosts();
+    const allPosts = options.station
+      ? (await loadStationDiscussionPosts(options.station, 100)).posts
+      : await loadDiscussionPosts();
 
     let filtered = [...allPosts];
 
@@ -769,11 +781,11 @@ export async function rejectDiscussionPost(postId: string): Promise<void> {
 
 export async function uploadForumImage(file: File): Promise<string> {
   assertConfigured();
+  const ext = validateForumImageUpload(file);
   const supabase = getSupabaseClient();
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) throw new Error("请先登录。");
 
-  const ext = file.name.split(".").pop() ?? "png";
   const fileName = `${userData.user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   const { error } = await supabase.storage
@@ -897,6 +909,24 @@ function normalizeProfileTags(tags?: string[]) {
   }
 
   return Array.from(uniqueTags);
+}
+
+function validateForumImageUpload(file: File) {
+  if (file.size <= 0) {
+    throw new Error("图片文件不能为空。");
+  }
+
+  if (file.size > MAX_FORUM_IMAGE_BYTES) {
+    throw new Error("图片不能超过 5MB。");
+  }
+
+  const normalizedType = file.type.toLowerCase();
+  const extension = ALLOWED_FORUM_IMAGE_TYPES[normalizedType as keyof typeof ALLOWED_FORUM_IMAGE_TYPES];
+  if (!extension) {
+    throw new Error("仅支持 JPG、PNG、WebP、GIF 或 AVIF 图片。");
+  }
+
+  return extension;
 }
 
 export async function updatePostBody(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getSupabaseClient } from "@/lib/supabase";
 
 type UserProfileRow = {
@@ -64,7 +64,24 @@ export function UserProfileCard({ userId, position, onClose }: UserProfileCardPr
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [cardPosition, setCardPosition] = useState(position);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Smooth entrance animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+      setIsAnimating(true);
+    }, 10);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Smooth exit animation
+  const handleClose = useCallback(() => {
+    setIsAnimating(false);
+    setTimeout(onClose, 200);
+  }, [onClose]);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,21 +127,21 @@ export function UserProfileCard({ userId, position, onClose }: UserProfileCardPr
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
-        onClose();
+        handleClose();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
+  }, [handleClose]);
 
   // Close on Escape
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     }
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  }, [handleClose]);
 
   const name = profile?.display_name || "用户";
   const initial = name.charAt(0).toUpperCase();
@@ -149,6 +166,10 @@ export function UserProfileCard({ userId, position, onClose }: UserProfileCardPr
         position: "fixed",
         left: cardPosition.x,
         top: cardPosition.y,
+        transform: isAnimating ? "scale(1) translateY(0)" : "scale(0.95) translateY(-8px)",
+        opacity: isAnimating ? 1 : 0,
+        transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+        transformOrigin: "top left",
       }}
     >
       {loading ? (
@@ -172,7 +193,7 @@ export function UserProfileCard({ userId, position, onClose }: UserProfileCardPr
           <div className="relative overflow-hidden border-b border-[var(--color-line)] bg-[linear-gradient(135deg,rgba(37,99,235,0.1),rgba(255,255,255,0.94)_55%,rgba(191,219,254,0.32))] px-5 pb-5 pt-4">
             <button
               className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white/72 text-xs text-[var(--color-muted)] transition hover:bg-white hover:text-[var(--color-ink)]"
-              onClick={onClose}
+              onClick={handleClose}
               type="button"
               aria-label="关闭"
             >

@@ -28,61 +28,61 @@ export const metadata: Metadata = {
 
 const decisionRoutes = [
   {
-    title: "先比价格和倍率",
-    description: "已经有目标模型时，直接去榜单页比真实成本。",
+    title: "我先比价格",
+    description: "直接进榜单，看价格、倍率和试用门槛。",
     href: "/stations",
   },
   {
-    title: "先看社区反馈",
-    description: "想避坑或补线索时，先看最近讨论和群友口径。",
+    title: "我先看反馈",
+    description: "先看最近讨论、价格变化和避坑口径。",
     href: "/community",
   },
   {
-    title: "先定模型方向",
-    description: "还没想清楚用什么模型时，先走模型择优页。",
+    title: "我还没定模型",
+    description: "先去模型页，把长期路线先定下来。",
     href: "/models",
   },
 ];
 
 const productLayers = [
   {
-    label: "中心任务",
-    title: "先把候选站缩到 2 到 3 个",
-    description: "首页先做第一轮去留判断。",
+    label: "第一步",
+    title: "先缩到 2 到 3 个候选",
+    description: "先完成第一轮筛选。",
   },
   {
-    label: "关键输入",
-    title: "把成本、口径和风险放进同一视角",
-    description: "倍率、试用、备注和反馈一起看。",
+    label: "判断面",
+    title: "把成本、口径、风险放一起看",
+    description: "倍率、试用、备注、反馈同屏判断。",
   },
   {
-    label: "清晰下一步",
-    title: "每块信息都直接连接下一个动作",
-    description: "榜单初筛，社区校验，模型页定方向。",
+    label: "下一步",
+    title: "每一屏都通向下一个动作",
+    description: "榜单初筛，社区校验，模型页收口。",
   },
 ];
 
 const actionFlows = [
   {
     step: "01",
-    title: "先建立第一轮候选",
-    description: "先按倍率、试用和入口成本做初筛。",
+    title: "先拉出候选",
+    description: "按倍率、试用和入口成本先筛一轮。",
     href: "/stations",
-    cta: "进入榜单初筛",
+    cta: "去筛候选",
   },
   {
     step: "02",
-    title: "再补齐风险信号",
-    description: "再补价格变化、群友反馈和特殊口径。",
+    title: "再补风险信号",
+    description: "补价格变化、群友反馈和特殊口径。",
     href: "/community",
-    cta: "查看实时反馈",
+    cta: "去看反馈",
   },
   {
     step: "03",
-    title: "最后锁定长期路线",
-    description: "模型未定时，回模型页完成收口。",
+    title: "最后定长期路线",
+    description: "模型没定，就回模型页做最后收口。",
     href: "/models",
-    cta: "去定模型方向",
+    cta: "去定模型",
   },
 ];
 
@@ -210,7 +210,7 @@ export default function Home() {
       <section className="relative overflow-hidden border-b border-[var(--color-line)]">
         <RelayNetworkCanvas className="opacity-90" />
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(244,247,251,0.28)_55%,rgba(219,234,254,0.62))]" />
-        <div className="relative mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-14">
+        <div className="relative mx-auto max-w-7xl px-6 py-9 lg:px-10 lg:py-12">
           <div className="grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[var(--color-brand-deep)]">
@@ -220,23 +220,27 @@ export default function Home() {
                 把中转站从“能用”，筛到“值得长期用”。
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--color-muted)] sm:text-lg">
-                把倍率、入口、模型口径和社区反馈放进同一视角，先验证，再决定长期用谁。
+                先看成本，再补反馈，最后决定长期用谁。
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/stations"
                   className="rounded-full bg-[var(--color-brand)] px-6 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_14px_34px_var(--color-panel-glow)] transition hover:scale-105 hover:bg-[var(--color-brand-deep)]"
                 >
-                  进入观察总表
+                  直接看榜单
                 </Link>
                 <Link
                   href="/community"
                   className="rounded-full border border-[var(--color-line)] bg-white/80 px-6 py-3 text-sm font-bold text-[var(--color-ink)] backdrop-blur transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
                 >
-                  去社区看实时反馈
+                  去看实时反馈
                 </Link>
               </div>
-              <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <div className="mt-6">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+                  按你的起步方式进入
+                </p>
+                <div className="grid gap-3 sm:grid-cols-3">
                 {decisionRoutes.map((route) => (
                   <Link
                     key={route.title}
@@ -247,8 +251,9 @@ export default function Home() {
                     <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{route.description}</p>
                   </Link>
                 ))}
+                </div>
               </div>
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="mt-7 grid gap-3 sm:grid-cols-3">
                 <div className="rounded-[20px] border border-white/70 bg-white/72 px-4 py-4 shadow-[0_16px_34px_rgba(15,23,42,0.06)] backdrop-blur">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                     收录站点
@@ -350,17 +355,17 @@ export default function Home() {
       </section>
 
       <section className="border-b border-[var(--color-line)]">
-        <div className="mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-12">
+        <div className="mx-auto max-w-7xl px-6 py-9 lg:px-10 lg:py-11">
           <div className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr]">
             <div className="rounded-[30px] border border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(239,246,255,0.9))] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)] lg:p-7">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-brand-deep)]">
                 产品路径
               </p>
               <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
-                从首页直接完成第一轮判断，再进入更深的验证。
+                先筛候选，再进深一层验证。
               </h2>
               <p className="mt-4 max-w-3xl text-base leading-8 text-[var(--color-muted)]">
-                先明确看什么、先做什么、下一步去哪。
+                首页先帮你定顺序，不让动作断在半路。
               </p>
               <div className="mt-6 grid gap-4 lg:grid-cols-3">
                 {productLayers.map((layer) => (
@@ -396,7 +401,7 @@ export default function Home() {
                 推荐起步路径
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--color-muted)]">
-                先低成本验证，再补风险信号，最后决定长期路线。
+                先低成本试，再补风险，最后定长期路线。
               </p>
               <div className="mt-6 space-y-4">
                 {actionFlows.map((flow) => (

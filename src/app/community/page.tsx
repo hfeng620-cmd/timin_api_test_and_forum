@@ -17,9 +17,9 @@ import { siteLinks } from "@/lib/site-links";
 const collaborationCards = [
   {
     id: "01",
-    title: "站内讨论区",
-    summary: "短反馈、价格波动、试用线索。",
-    actionLabel: "发站内反馈",
+    title: "站内快反馈",
+    summary: "补一句、报跳价、留试用。",
+    actionLabel: "进入站内区",
     href: "#community-composer",
     external: false,
     accent:
@@ -29,8 +29,8 @@ const collaborationCards = [
   {
     id: "02",
     title: "GitHub Discussions",
-    summary: "经验整理、平台对比、长期主题。",
-    actionLabel: "去 Discussions",
+    summary: "专题归档、经验整理、长期追踪。",
+    actionLabel: "进入 Discussions",
     href: siteLinks.discussions,
     external: true,
     accent:
@@ -41,8 +41,8 @@ const collaborationCards = [
   {
     id: "03",
     title: "QQ 群 602190132",
-    summary: "新站、活动、跳价线索，先同步。",
-    actionLabel: "打开 QQ 群",
+    summary: "急线索先同步，再回流站内。",
+    actionLabel: "查看加群方式",
     href: "#qq-group-entry",
     external: false,
     accent:
@@ -53,22 +53,22 @@ const collaborationCards = [
 ];
 
 const decisionRules = [
-  "补一条: 站内发",
-  "做专题: Discussions",
-  "抢时效: 先 QQ 群",
+  "一句话: 站内",
+  "成专题: Discussions",
+  "要同步: QQ 群",
 ];
 
 const quickSignals = [
   {
-    label: "最快",
-    value: "站内发",
+    label: "快反馈",
+    value: "站内",
   },
   {
-    label: "沉淀",
+    label: "专题帖",
     value: "Discussions",
   },
   {
-    label: "实时",
+    label: "急同步",
     value: "QQ 群",
   },
 ];
@@ -96,7 +96,7 @@ export default function CommunityPage() {
             </div>
             <div>
               <p className="text-2xl font-black tracking-tight">Timix观察站</p>
-              <p className="text-sm text-[var(--color-muted)]">讨论区与共建入口</p>
+              <p className="text-sm text-[var(--color-muted)]">协作路由桌面</p>
             </div>
             <div className="hidden md:block">
               <QqGroupModalButton />
@@ -118,7 +118,7 @@ export default function CommunityPage() {
                 中转站榜单
               </Link>
               <span className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-semibold text-[var(--color-on-brand)] shadow-[0_10px_24px_var(--color-panel-glow)]">
-                论坛入口
+                协作桌面
               </span>
               {isAdmin ? (
                 <Link
@@ -145,10 +145,10 @@ export default function CommunityPage() {
                 Community Routing Desk
               </p>
               <h1 className="mt-3 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
-                先选入口，再展开。
+                先分流，再协作。
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
-                短反馈发站内，长话题进 Discussions，急线索先回 QQ 群。
+                快反馈走站内，专题进 Discussions，急线索先到 QQ 群。
               </p>
 
               <div className="mt-5 flex flex-wrap gap-2.5">
@@ -228,10 +228,10 @@ export default function CommunityPage() {
             <div className="grid gap-3">
               <div className="rounded-[24px] border border-[var(--color-line)] bg-[linear-gradient(180deg,var(--color-panel),rgba(255,255,255,0.72))] p-5 shadow-[0_14px_34px_rgba(15,23,42,0.08)]">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                  入口规则
+                  分流规则
                 </p>
                 <p className="mt-3 text-sm leading-6 text-[var(--color-muted)]">
-                  按时效和沉淀分流。
+                  先快，后沉淀。
                 </p>
                 <div className="mt-4 grid gap-3">
                   {decisionRules.map((rule, index) => (
@@ -250,10 +250,10 @@ export default function CommunityPage() {
 
               <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-brand-soft)] p-5">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
-                  手机端入口
+                  移动端直达
                 </p>
                 <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-                  三个入口都放在主内容前面，不用翻侧栏。
+                  主内容前先选入口，不用翻侧栏。
                 </p>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2">
                   <Link
@@ -281,31 +281,31 @@ export default function CommunityPage() {
 
         <div className="mb-4 rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] px-4 py-4 shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-line)] pb-3 text-sm text-[var(--color-muted)]">
-            <span>站点反馈、价格变化、试用线索，都会在这里继续流转。</span>
+            <span>这里先接短反馈，再把可沉淀内容转去 Discussions。</span>
             <a
               className="font-semibold text-[var(--color-brand-deep)] transition hover:text-[var(--color-brand)]"
               href={siteLinks.discussions}
               rel="noopener noreferrer"
               target="_blank"
             >
-              GitHub Discussions
+              去 Discussions 归档
             </a>
           </div>
           <div className="mt-3 grid gap-2 text-sm text-[var(--color-muted)] md:grid-cols-3">
             <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
-              <p className="font-bold text-[var(--color-ink)]">站内讨论区</p>
-              <p className="mt-1 leading-6">最适合快速记录和收集一线反馈。</p>
+              <p className="font-bold text-[var(--color-ink)]">站内快反馈</p>
+              <p className="mt-1 leading-6">适合短消息、价格变化和一线试用。</p>
             </div>
             <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
-              <p className="font-bold text-[var(--color-ink)]">Discussions</p>
-              <p className="mt-1 leading-6">最适合形成可复用、可长期引用的主题帖。</p>
+              <p className="font-bold text-[var(--color-ink)]">长期主题</p>
+              <p className="mt-1 leading-6">适合整理经验、对比方案和持续追踪。</p>
             </div>
             <div
               id="qq-group-entry"
               className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3"
             >
-              <p className="font-bold text-[var(--color-ink)]">QQ 群</p>
-              <p className="mt-1 leading-6">最适合实时拉齐情况，再回流成结构化内容。</p>
+              <p className="font-bold text-[var(--color-ink)]">QQ 群同步</p>
+              <p className="mt-1 leading-6">适合先拉齐情况，再回流成结构化内容。</p>
             </div>
           </div>
         </div>
@@ -366,7 +366,7 @@ export default function CommunityPage() {
             <DiscussionFeed
               key={feedRefreshKey}
               hideComposer
-              title="讨论"
+              title="站内流转"
               limit={8}
             />
           </div>
@@ -377,11 +377,11 @@ export default function CommunityPage() {
 
               <div className="rounded-[20px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[var(--shadow-card)]">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                  QQ群入口
+                  群内同步入口
                 </p>
                 <p className="mt-3 text-lg font-black tracking-tight">群号 602190132</p>
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  扫码或搜索群号加入，一起交流讨论
+                  扫码或搜索群号加入，先同步，再回流。
                 </p>
               </div>
 
@@ -395,11 +395,11 @@ export default function CommunityPage() {
             <HotTopicsPanel onTopicClick={handleTopicClick} />
             <div className="rounded-[20px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[var(--shadow-card)]">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                QQ群入口
+                群内同步入口
               </p>
               <p className="mt-3 text-lg font-black tracking-tight">群号 602190132</p>
               <p className="mt-1 text-sm text-[var(--color-muted)]">
-                扫码或搜索群号加入，一起交流讨论
+                扫码或搜索群号加入，先同步，再回流。
               </p>
               <div className="mt-4">
                 <QqGroupModalButton />
