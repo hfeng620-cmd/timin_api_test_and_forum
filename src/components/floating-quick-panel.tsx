@@ -40,12 +40,39 @@ export function FloatingQuickPanel() {
   return (
     <div className="fixed bottom-20 left-4 z-[70] lg:bottom-4" data-selection-comments="off" ref={wrapperRef}>
       {open ? (
-        <div className="surface-in mb-3 w-[292px] overflow-hidden rounded-[24px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-4 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur">
+        <div className="surface-in mb-3 w-[328px] overflow-hidden rounded-[28px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-4 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur">
           <div className="border-b border-[var(--color-line)] pb-3">
-            <p className="text-sm font-bold text-[var(--color-ink)]">观察站导航台</p>
-            <p className="mt-1 text-xs leading-5 text-[var(--color-muted)]">
-              常用页面、外部协作入口、主题和配色都放在这里。
-            </p>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-[var(--color-ink)]">观察站导航台</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--color-muted)]">
+                  常用入口、协作出口、背景主题和配色都收在这里。
+                </p>
+              </div>
+              <span className="rounded-full border border-[var(--color-line)] bg-[var(--color-soft)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-deep)]">
+                UI
+              </span>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_76%,white)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  主题
+                </p>
+                <p className="mt-1 text-sm font-bold text-[var(--color-ink)]">背景板</p>
+              </div>
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_76%,white)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  配色
+                </p>
+                <p className="mt-1 text-sm font-bold text-[var(--color-ink)]">主色系</p>
+              </div>
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_76%,white)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  导航
+                </p>
+                <p className="mt-1 text-sm font-bold text-[var(--color-ink)]">直达页</p>
+              </div>
+            </div>
           </div>
 
           <div className="mt-4">

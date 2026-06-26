@@ -26,6 +26,9 @@
   --color-row-alt: #F8FAFE;
   --color-input: #FFFFFF;
   --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244,247,251,0.96));
+  --theme-glow-rgb: 37, 99, 235;
+  --theme-secondary-rgb: 56, 189, 248;
+  --theme-surface-rgb: 255, 255, 255;
   --page-background:
     radial-gradient(circle at 18% 0%, rgba(37,99,235,0.04), transparent 32%),
     radial-gradient(circle at 80% 100%, rgba(37,99,235,0.02), transparent 28%),
@@ -57,6 +60,9 @@
   --color-row-alt: #F8F8FA;
   --color-input: #FFFFFF;
   --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,248,250,0.96));
+  --theme-glow-rgb: 48, 209, 88;
+  --theme-secondary-rgb: 102, 212, 146;
+  --theme-surface-rgb: 255, 255, 255;
   --page-background:
     radial-gradient(circle at 18% 0%, rgba(48,209,88,0.03), transparent 32%),
     linear-gradient(180deg, #F8F8FA 0%, #ECECF0 100%);
@@ -88,6 +94,9 @@
   --color-row-alt: rgba(255, 255, 255, 0.02);
   --color-input: rgba(28, 28, 30, 0.88);
   --surface-gradient: linear-gradient(180deg, rgba(28,28,30,0.94), rgba(20,20,22,0.96));
+  --theme-glow-rgb: 48, 209, 88;
+  --theme-secondary-rgb: 141, 232, 160;
+  --theme-surface-rgb: 10, 10, 10;
   --page-background: linear-gradient(180deg, #0A0A0A 0%, #111113 100%);
   --ambient-background: radial-gradient(circle at 70% 0%, rgba(48,209,88,0.04), transparent 40%);
   --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.4);
@@ -115,6 +124,9 @@
   --color-row-alt: rgba(255, 255, 255, 0.02);
   --color-input: rgba(28, 28, 30, 0.88);
   --surface-gradient: linear-gradient(180deg, rgba(28,28,30,0.94), rgba(20,20,22,0.96));
+  --theme-glow-rgb: 10, 132, 255;
+  --theme-secondary-rgb: 112, 184, 255;
+  --theme-surface-rgb: 10, 10, 10;
   --page-background: linear-gradient(180deg, #0A0A0A 0%, #111113 100%);
   --ambient-background: radial-gradient(circle at 70% 0%, rgba(10,132,255,0.04), transparent 40%);
   --shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 8px 32px rgba(0,0,0,0.4);
@@ -141,6 +153,9 @@
   --color-row-alt: #F8F8FA;
   --color-input: #FFFFFF;
   --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,248,250,0.96));
+  --theme-glow-rgb: 255, 149, 0;
+  --theme-secondary-rgb: 172, 122, 73;
+  --theme-surface-rgb: 255, 252, 247;
   --page-background:
     radial-gradient(circle at 80% 100%, rgba(255,149,0,0.03), transparent 32%),
     linear-gradient(180deg, #F8F8FA 0%, #ECECF0 100%);
@@ -148,6 +163,142 @@
     radial-gradient(circle at 18% 6%, rgba(255,255,255,0.6), transparent 18%),
     radial-gradient(circle at 74% 0%, var(--color-panel-glow), transparent 24%);
   --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03), 0 4px 16px rgba(0,0,0,0.05), 0 8px 40px rgba(0,0,0,0.06);
+}
+
+:root[data-theme="ocean"] {
+  --background: #eef7f7;
+  --foreground: #13232b;
+  --color-bg: #eef7f7;
+  --color-ink: #13232b;
+  --color-muted: #5b6b73;
+  --color-line: #d7e6e6;
+  --color-soft: #e7f2f2;
+  --color-brand: #0f8b8d;
+  --color-brand-deep: #0c7071;
+  --color-brand-strong: #095c5d;
+  --color-on-brand: #ffffff;
+  --color-brand-soft: rgba(15, 139, 141, 0.09);
+  --color-panel-glow: rgba(15, 139, 141, 0.06);
+  --color-panel: rgba(255, 255, 255, 0.93);
+  --color-panel-strong: rgba(255, 255, 255, 0.98);
+  --color-header: rgba(255, 255, 255, 0.88);
+  --color-hover: rgba(0, 0, 0, 0.028);
+  --color-row-alt: #f5fbfb;
+  --color-input: #ffffff;
+  --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(238,247,247,0.96));
+  --theme-glow-rgb: 15, 139, 141;
+  --theme-secondary-rgb: 110, 214, 216;
+  --theme-surface-rgb: 255, 255, 255;
+  --page-background:
+    radial-gradient(circle at 16% 0%, rgba(15,139,141,0.06), transparent 30%),
+    radial-gradient(circle at 84% 96%, rgba(110,214,216,0.08), transparent 24%),
+    linear-gradient(180deg, #f7fcfc 0%, #eef7f7 100%);
+  --ambient-background:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,0.65), transparent 18%),
+    radial-gradient(circle at 74% 0%, var(--color-panel-glow), transparent 28%);
+  --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.025), 0 4px 18px rgba(0,0,0,0.045), 0 10px 42px rgba(0,0,0,0.055);
+}
+
+:root[data-theme="sage"] {
+  --background: #f1f5f0;
+  --foreground: #18221d;
+  --color-bg: #f1f5f0;
+  --color-ink: #18221d;
+  --color-muted: #66736d;
+  --color-line: #dde6df;
+  --color-soft: #e8efe9;
+  --color-brand: #567c6d;
+  --color-brand-deep: #47685b;
+  --color-brand-strong: #365046;
+  --color-on-brand: #ffffff;
+  --color-brand-soft: rgba(86, 124, 109, 0.1);
+  --color-panel-glow: rgba(86, 124, 109, 0.06);
+  --color-panel: rgba(255, 255, 255, 0.93);
+  --color-panel-strong: rgba(255, 255, 255, 0.98);
+  --color-header: rgba(255, 255, 255, 0.88);
+  --color-hover: rgba(0, 0, 0, 0.028);
+  --color-row-alt: #f8fbf8;
+  --color-input: #ffffff;
+  --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,240,0.96));
+  --theme-glow-rgb: 86, 124, 109;
+  --theme-secondary-rgb: 163, 195, 177;
+  --theme-surface-rgb: 255, 255, 255;
+  --page-background:
+    radial-gradient(circle at 14% 0%, rgba(86,124,109,0.05), transparent 30%),
+    radial-gradient(circle at 86% 100%, rgba(163,195,177,0.08), transparent 26%),
+    linear-gradient(180deg, #f8fbf7 0%, #f1f5f0 100%);
+  --ambient-background:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,0.68), transparent 18%),
+    radial-gradient(circle at 74% 0%, var(--color-panel-glow), transparent 28%);
+  --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.025), 0 4px 18px rgba(0,0,0,0.045), 0 10px 42px rgba(0,0,0,0.055);
+}
+
+:root[data-theme="ember"] {
+  --background: #faf2ea;
+  --foreground: #271b17;
+  --color-bg: #faf2ea;
+  --color-ink: #271b17;
+  --color-muted: #78645d;
+  --color-line: #ead7cb;
+  --color-soft: #f5e9e0;
+  --color-brand: #c96a3d;
+  --color-brand-deep: #aa572e;
+  --color-brand-strong: #8e4521;
+  --color-on-brand: #ffffff;
+  --color-brand-soft: rgba(201, 106, 61, 0.1);
+  --color-panel-glow: rgba(201, 106, 61, 0.065);
+  --color-panel: rgba(255, 255, 255, 0.92);
+  --color-panel-strong: rgba(255, 255, 255, 0.98);
+  --color-header: rgba(255, 255, 255, 0.86);
+  --color-hover: rgba(0, 0, 0, 0.03);
+  --color-row-alt: #fcf7f2;
+  --color-input: #ffffff;
+  --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,242,234,0.96));
+  --theme-glow-rgb: 201, 106, 61;
+  --theme-secondary-rgb: 243, 180, 146;
+  --theme-surface-rgb: 255, 255, 255;
+  --page-background:
+    radial-gradient(circle at 14% 0%, rgba(201,106,61,0.06), transparent 30%),
+    radial-gradient(circle at 86% 100%, rgba(243,180,146,0.09), transparent 25%),
+    linear-gradient(180deg, #fdf8f4 0%, #faf2ea 100%);
+  --ambient-background:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,0.65), transparent 18%),
+    radial-gradient(circle at 74% 0%, var(--color-panel-glow), transparent 28%);
+  --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.025), 0 4px 18px rgba(0,0,0,0.05), 0 10px 42px rgba(0,0,0,0.06);
+}
+
+:root[data-theme="pearl"] {
+  --background: #faf6f8;
+  --foreground: #241c22;
+  --color-bg: #faf6f8;
+  --color-ink: #241c22;
+  --color-muted: #7a6872;
+  --color-line: #eadde3;
+  --color-soft: #f5edf1;
+  --color-brand: #b7797f;
+  --color-brand-deep: #9e666d;
+  --color-brand-strong: #7f4f56;
+  --color-on-brand: #ffffff;
+  --color-brand-soft: rgba(183, 121, 127, 0.1);
+  --color-panel-glow: rgba(183, 121, 127, 0.06);
+  --color-panel: rgba(255, 255, 255, 0.93);
+  --color-panel-strong: rgba(255, 255, 255, 0.98);
+  --color-header: rgba(255, 255, 255, 0.88);
+  --color-hover: rgba(0, 0, 0, 0.028);
+  --color-row-alt: #fcf8fa;
+  --color-input: #ffffff;
+  --surface-gradient: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,246,248,0.96));
+  --theme-glow-rgb: 183, 121, 127;
+  --theme-secondary-rgb: 227, 192, 198;
+  --theme-surface-rgb: 255, 255, 255;
+  --page-background:
+    radial-gradient(circle at 14% 0%, rgba(183,121,127,0.06), transparent 30%),
+    radial-gradient(circle at 86% 100%, rgba(227,192,198,0.09), transparent 24%),
+    linear-gradient(180deg, #fdfafc 0%, #faf6f8 100%);
+  --ambient-background:
+    radial-gradient(circle at 18% 8%, rgba(255,255,255,0.66), transparent 18%),
+    radial-gradient(circle at 74% 0%, var(--color-panel-glow), transparent 28%);
+  --shadow-card: 0 0 0 0.5px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.025), 0 4px 18px rgba(0,0,0,0.045), 0 10px 42px rgba(0,0,0,0.055);
 }
 
 @theme inline {
@@ -266,9 +417,9 @@ body::after {
   transition: opacity 320ms ease;
   animation: body-glow-enter 1s ease-out backwards;
   background:
-    radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(37,99,235,0.09), transparent 62%),
-    radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(37,99,235,0.04), transparent 56%),
-    radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.55), transparent 48%);
+    radial-gradient(circle 540px at var(--mouse-x) var(--mouse-y), rgba(var(--theme-glow-rgb), 0.09), transparent 62%),
+    radial-gradient(circle 220px at calc(var(--mouse-x) + 40px) calc(var(--mouse-y) - 30px), rgba(var(--theme-secondary-rgb), 0.06), transparent 56%),
+    radial-gradient(circle 140px at var(--mouse-x) var(--mouse-y), rgba(var(--theme-surface-rgb), 0.55), transparent 48%);
   filter: blur(16px);
 }
 
@@ -309,6 +460,124 @@ main#main-content::after {
   background-position: center top, center top, center top, center top;
   mask-image: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.18) 44%, transparent 100%);
   animation: grid-drift 18s linear infinite;
+}
+
+main#main-content > .theme-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+main#main-content > .theme-stage::before,
+main#main-content > .theme-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+:root[data-theme-mode="signal"] main#main-content > .theme-stage::before {
+  opacity: 0.95;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(var(--theme-glow-rgb), 0.14), transparent 20%),
+    radial-gradient(circle at 84% 14%, rgba(var(--theme-secondary-rgb), 0.1), transparent 22%),
+    linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px);
+  background-size: auto, auto, 40px 40px, 40px 40px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.72), rgba(0,0,0,0.16) 62%, transparent 100%);
+}
+
+:root[data-theme-mode="signal"] main#main-content > .theme-stage::after {
+  opacity: 0.72;
+  background:
+    radial-gradient(circle at 18% 72%, rgba(var(--theme-surface-rgb), 0.5), transparent 12%),
+    radial-gradient(circle at 72% 38%, rgba(var(--theme-glow-rgb), 0.08), transparent 18%);
+  animation: grid-drift 22s linear infinite;
+}
+
+:root[data-theme-mode="starfield"] main#main-content > .theme-stage::before {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(var(--theme-surface-rgb), 0.94) 0 0.12rem, transparent 0.18rem),
+    radial-gradient(circle at 32% 42%, rgba(var(--theme-surface-rgb), 0.7) 0 0.08rem, transparent 0.14rem),
+    radial-gradient(circle at 68% 24%, rgba(var(--theme-surface-rgb), 0.9) 0 0.11rem, transparent 0.17rem),
+    radial-gradient(circle at 84% 64%, rgba(var(--theme-surface-rgb), 0.72) 0 0.09rem, transparent 0.14rem),
+    radial-gradient(circle at 74% 12%, rgba(var(--theme-glow-rgb), 0.16), transparent 20%),
+    radial-gradient(circle at 18% 78%, rgba(var(--theme-secondary-rgb), 0.12), transparent 18%),
+    linear-gradient(180deg, rgba(7,10,18,0.1), rgba(7,10,18,0));
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.78), rgba(0,0,0,0.18) 60%, transparent 100%);
+  animation: starfield-twinkle 14s ease-in-out infinite;
+}
+
+:root[data-theme-mode="starfield"] main#main-content > .theme-stage::after {
+  opacity: 0.82;
+  background:
+    radial-gradient(circle at 20% 22%, rgba(var(--theme-surface-rgb), 0.55), transparent 14%),
+    radial-gradient(circle at 80% 68%, rgba(var(--theme-glow-rgb), 0.12), transparent 18%),
+    radial-gradient(circle at 58% 34%, rgba(var(--theme-secondary-rgb), 0.1), transparent 16%);
+  filter: blur(12px);
+  animation: ambient-float 28s ease-in-out infinite;
+}
+
+:root[data-theme-mode="bubble"] main#main-content > .theme-stage::before {
+  opacity: 0.98;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(var(--theme-surface-rgb), 0.72) 0 6%, transparent 7%),
+    radial-gradient(circle at 76% 28%, rgba(var(--theme-surface-rgb), 0.52) 0 5%, transparent 6.2%),
+    radial-gradient(circle at 72% 74%, rgba(var(--theme-surface-rgb), 0.42) 0 7%, transparent 8.2%),
+    radial-gradient(circle at 30% 78%, rgba(var(--theme-glow-rgb), 0.08) 0 9%, transparent 10.2%),
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.18) 66%, transparent 100%);
+  animation: bubble-float 18s ease-in-out infinite;
+}
+
+:root[data-theme-mode="bubble"] main#main-content > .theme-stage::after {
+  opacity: 0.74;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(var(--theme-glow-rgb), 0.12), transparent 18%),
+    radial-gradient(circle at 84% 18%, rgba(var(--theme-secondary-rgb), 0.1), transparent 18%),
+    radial-gradient(circle at 70% 82%, rgba(var(--theme-surface-rgb), 0.42), transparent 12%);
+  filter: blur(8px);
+}
+
+:root[data-theme-mode="orbit"] main#main-content > .theme-stage::before {
+  opacity: 0.98;
+  background:
+    radial-gradient(circle at 78% 28%, transparent 0 13%, rgba(var(--theme-surface-rgb), 0.4) 13.4% 13.8%, transparent 14.2% 23%, rgba(var(--theme-glow-rgb), 0.24) 23.4% 23.8%, transparent 24.2%),
+    radial-gradient(circle at 22% 72%, transparent 0 10%, rgba(var(--theme-surface-rgb), 0.34) 10.4% 10.8%, transparent 11.2% 18%, rgba(var(--theme-secondary-rgb), 0.22) 18.5% 18.9%, transparent 19.2%),
+    radial-gradient(circle at 50% 48%, rgba(var(--theme-glow-rgb), 0.1), transparent 22%);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.16) 62%, transparent 100%);
+  animation: orbit-spin 34s linear infinite;
+}
+
+:root[data-theme-mode="orbit"] main#main-content > .theme-stage::after {
+  opacity: 0.68;
+  background:
+    linear-gradient(rgba(148,163,184,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,0.06) 1px, transparent 1px);
+  background-size: 54px 54px, 54px 54px;
+  mask-image: radial-gradient(circle at 64% 36%, rgba(0,0,0,0.82), transparent 62%);
+}
+
+:root[data-theme-mode="aurora"] main#main-content > .theme-stage::before {
+  opacity: 1;
+  background:
+    linear-gradient(118deg, rgba(var(--theme-glow-rgb), 0.16), rgba(var(--theme-secondary-rgb), 0.1), rgba(var(--theme-surface-rgb), 0) 68%),
+    radial-gradient(circle at 18% 16%, rgba(var(--theme-surface-rgb), 0.58), transparent 16%),
+    radial-gradient(circle at 86% 18%, rgba(var(--theme-secondary-rgb), 0.16), transparent 18%);
+  filter: blur(4px);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.74), rgba(0,0,0,0.18) 62%, transparent 100%);
+  animation: aurora-sweep 18s ease-in-out infinite;
+}
+
+:root[data-theme-mode="aurora"] main#main-content > .theme-stage::after {
+  opacity: 0.74;
+  background:
+    radial-gradient(circle at 24% 72%, rgba(var(--theme-glow-rgb), 0.12), transparent 18%),
+    radial-gradient(circle at 72% 34%, rgba(var(--theme-surface-rgb), 0.42), transparent 12%);
+  filter: blur(12px);
 }
 
 :root[data-theme-mode="night"] main#main-content::before {
@@ -531,6 +800,45 @@ button[aria-label="Open Next.js Dev Tools"] {
   }
 }
 
+@keyframes bubble-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -1.8%, 0) scale(1.018);
+  }
+}
+
+@keyframes orbit-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes aurora-sweep {
+  0%,
+  100% {
+    transform: translate3d(-2%, 0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.05);
+  }
+}
+
+@keyframes starfield-twinkle {
+  0%,
+  100% {
+    opacity: 0.92;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* ── Theme hint pulse (first-visit indicator) ── */
 @keyframes theme-hint-pulse {
   0%,
@@ -551,9 +859,30 @@ button[aria-label="Open Next.js Dev Tools"] {
   animation: paper-float 28s ease-in-out infinite;
 }
 
+:root[data-theme-mode="starfield"] .card-lift:hover,
+:root[data-theme-mode="orbit"] .card-lift:hover,
+:root[data-theme-mode="aurora"] .card-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.16);
+}
+
+:root[data-theme-mode="bubble"] .card-lift:hover {
+  transform: translateY(-4px) scale(1.004);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.1);
+}
+
 :root[data-theme-mode="paper"] .card-lift:hover {
   transform: translateY(-3px) scale(1.003);
   box-shadow: 0 14px 34px rgba(131, 94, 54, 0.08);
+}
+
+:root[data-theme-mode="starfield"] .surface-in,
+:root[data-theme-mode="starfield"] .stagger-in,
+:root[data-theme-mode="starfield"] .page-enter,
+:root[data-theme-mode="aurora"] .surface-in,
+:root[data-theme-mode="aurora"] .stagger-in,
+:root[data-theme-mode="aurora"] .page-enter {
+  animation-duration: 600ms;
 }
 
 :root[data-theme-mode="night"] .card-lift:hover {
