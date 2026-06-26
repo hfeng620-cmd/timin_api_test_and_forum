@@ -33,21 +33,32 @@ export function ScrollRevealOrchestrator() {
       return;
     }
 
+    // Check if we're in fullscreen mode
+    const isFullscreen = document.fullscreenElement !== null;
+
     targets.forEach((element, index) => {
       element.style.setProperty("--reveal-delay", `${Math.min(index, 10) * 60}ms`);
       element.classList.add("reveal-ready");
 
       const bounds = element.getBoundingClientRect();
-      if (bounds.top < window.innerHeight * 0.84 && bounds.bottom > 0) {
-        // Element is in view - mark as visible immediately, never hide
+      if (isFullscreen || (bounds.top < window.innerHeight * 0.84 && bounds.bottom > window.innerHeight * 0.08)) {
         element.classList.remove("reveal-hidden");
         element.classList.add("reveal-visible");
-      } else {
-        // Element is below viewport - hide for reveal animation
-        element.classList.remove("reveal-visible");
-        element.classList.add("reveal-hidden");
+        return;
       }
+
+      element.classList.remove("reveal-visible");
+      element.classList.add("reveal-hidden");
     });
+
+    // In fullscreen mode, skip IntersectionObserver to prevent flickering
+    if (isFullscreen) {
+      targets.forEach((element) => {
+        element.classList.remove("reveal-hidden");
+        element.classList.add("reveal-visible");
+      });
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -56,14 +67,16 @@ export function ScrollRevealOrchestrator() {
           if (entry.isIntersecting) {
             element.classList.remove("reveal-hidden");
             element.classList.add("reveal-visible");
-            observer.unobserve(entry.target);
+            return;
           }
-          // Never re-hide elements that have been revealed
+
+          element.classList.remove("reveal-visible");
+          element.classList.add("reveal-hidden");
         });
       },
       {
-        threshold: 0.05,
-        rootMargin: "0px 0px -5% 0px",
+        threshold: [0, 0.12, 0.28],
+        rootMargin: "-8% 0px -14% 0px",
       },
     );
 

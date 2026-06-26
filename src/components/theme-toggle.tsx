@@ -149,6 +149,12 @@ const APPEARANCE_PRESETS = [
 
 export type ThemeModeId = (typeof THEME_MODES)[number]["id"];
 export type PaletteId = (typeof PALETTES)[number]["id"];
+export type ThemeToggleView = "all" | "theme" | "palette";
+
+type ThemeToggleInlineProps = {
+  view?: ThemeToggleView;
+  compact?: boolean;
+};
 
 const THEME_MODE_KEY = "relay-theme-mode-v1";
 const THEME_PALETTE_KEY = "relay-theme-palette-v1";
@@ -207,12 +213,15 @@ function syncTheme(mode: ThemeModeId, palette: PaletteId) {
   window.localStorage.setItem(THEME_PALETTE_KEY, palette);
 }
 
-export function ThemeToggleInline() {
+export function ThemeToggleInline({ view = "all", compact = false }: ThemeToggleInlineProps) {
   const [mode, setMode] = useState<ThemeModeId>(DEFAULT_THEME_MODE);
   const [palette, setPalette] = useState<PaletteId>(DEFAULT_PALETTE);
   const activeMode = THEME_MODES.find((item) => item.id === mode) ?? THEME_MODES[0];
   const activePalette = PALETTES.find((item) => item.id === palette) ?? PALETTES[0];
   const darkPalette = palette === "midnight" || palette === "cyber";
+  const showAll = view === "all";
+  const showTheme = showAll || view === "theme";
+  const showPalette = showAll || view === "palette";
 
   useEffect(() => {
     const nextMode = resolveStoredThemeMode();
@@ -240,90 +249,98 @@ export function ThemeToggleInline() {
   }
 
   return (
-    <div className="rounded-[18px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_82%,white)] p-3.5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-bold text-[var(--color-ink)]">外观中心</p>
-          <p className="mt-1 text-xs leading-5 text-[var(--color-muted)]">
-            主题控制背景板氛围，配色控制整站色系，两者独立组合。
-          </p>
-        </div>
-        <span className="rounded-full border border-[var(--color-line)] bg-[var(--color-soft)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-deep)]">
-          Live
-        </span>
-      </div>
+    <div
+      className={
+        compact
+          ? ""
+          : "rounded-[18px] border border-[var(--color-line)] bg-[color:color-mix(in_srgb,var(--color-panel)_82%,white)] p-3.5"
+      }
+    >
+      {showAll ? (
+        <>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-bold text-[var(--color-ink)]">外观中心</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--color-muted)]">
+                主题控制背景板氛围，配色控制整站色系，两者独立组合。
+              </p>
+            </div>
+            <span className="rounded-full border border-[var(--color-line)] bg-[var(--color-soft)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-deep)]">
+              Live
+            </span>
+          </div>
 
-      <div className="mt-4" id="appearance-summary">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-          当前组合
-        </p>
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              主题
+          <div className="mt-4" id="appearance-summary">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+              当前组合
             </p>
-            <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{THEME_MODES.length} 套</p>
-          </div>
-          <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              配色
-            </p>
-            <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{PALETTES.length} 组</p>
-          </div>
-          <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              预设
-            </p>
-            <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{APPEARANCE_PRESETS.length} 组</p>
-          </div>
-          <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              方向
-            </p>
-            <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{darkPalette ? "深层" : "明亮"}</p>
-          </div>
-        </div>
-        <div className="mt-2 grid gap-2 sm:grid-cols-2">
-          <div className="rounded-[16px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              主题
-            </p>
-            <div className="mt-2 flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="h-10 w-10 shrink-0 rounded-[12px] border border-white/40"
-                style={{ background: activeMode.accent }}
-              />
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-[var(--color-ink)]">{activeMode.label}</p>
-                <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted)]">
-                  决定背景板与整体氛围。
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  主题
                 </p>
+                <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{THEME_MODES.length} 套</p>
+              </div>
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  配色
+                </p>
+                <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{PALETTES.length} 组</p>
+              </div>
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  预设
+                </p>
+                <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{APPEARANCE_PRESETS.length} 组</p>
+              </div>
+              <div className="rounded-[14px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-2.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  方向
+                </p>
+                <p className="mt-1 text-sm font-black text-[var(--color-ink)]">{darkPalette ? "深层" : "明亮"}</p>
+              </div>
+            </div>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+              <div className="rounded-[16px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  主题
+                </p>
+                <div className="mt-2 flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="h-10 w-10 shrink-0 rounded-[12px] border border-white/40"
+                    style={{ background: activeMode.accent }}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-[var(--color-ink)]">{activeMode.label}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted)]">
+                      决定背景板与整体氛围。
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-[16px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                  配色
+                </p>
+                <div className="mt-2 flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="h-10 w-10 shrink-0 rounded-[12px] border border-white/40"
+                    style={{ background: activePalette.swatch }}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-[var(--color-ink)]">{activePalette.label}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted)]">
+                      决定按钮、描边与强调色。
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="rounded-[16px] border border-[var(--color-line)] bg-[var(--color-panel-strong)] px-3 py-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              配色
-            </p>
-            <div className="mt-2 flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="h-10 w-10 shrink-0 rounded-[12px] border border-white/40"
-                style={{ background: activePalette.swatch }}
-              />
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-[var(--color-ink)]">{activePalette.label}</p>
-                <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted)]">
-                  决定按钮、描边与强调色。
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="mt-4" id="appearance-presets">
+          <div className="mt-4" id="appearance-presets">
         <div className="flex items-center justify-between gap-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
             一键切整套
@@ -370,9 +387,12 @@ export function ThemeToggleInline() {
             );
           })}
         </div>
-      </div>
+          </div>
+        </>
+      ) : null}
 
-      <div className="mt-4" id="appearance-theme-section">
+      {showTheme ? (
+      <div className={showAll ? "mt-4" : ""} id="appearance-theme-section">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
           主题
         </p>
@@ -415,15 +435,17 @@ export function ThemeToggleInline() {
           })}
         </div>
       </div>
+      ) : null}
 
-      <div className="mt-4" id="appearance-palette-section">
+      {showPalette ? (
+      <div className={showAll ? "mt-4" : ""} id="appearance-palette-section">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
           配色
         </p>
         <p className="mt-1 text-[11px] leading-5 text-[var(--color-muted)]">
           换按钮、描边和强调色，不动背景层次。
         </p>
-        <div className="mt-2 grid grid-cols-2 gap-2">
+        <div className={`mt-2 grid grid-cols-2 gap-2 ${showAll ? "" : "sm:grid-cols-3"}`}>
           {PALETTES.map((item) => {
             const active = item.id === palette;
 
@@ -455,7 +477,9 @@ export function ThemeToggleInline() {
           })}
         </div>
       </div>
+      ) : null}
 
+      {showAll ? (
       <div className="mt-4 overflow-hidden rounded-[18px] border border-[var(--color-line)] bg-[var(--color-panel-strong)]">
         <div
           aria-hidden="true"
@@ -481,6 +505,7 @@ export function ThemeToggleInline() {
           </span>
         </div>
       </div>
+      ) : null}
     </div>
   );
 }
