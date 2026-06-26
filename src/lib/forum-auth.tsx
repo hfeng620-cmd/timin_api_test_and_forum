@@ -263,14 +263,23 @@ export function ForumAuthProvider({ children }: { children: React.ReactNode }) {
         return { ok: false, error: "请输入验证码。" };
       }
 
-      const { error } = await getSupabaseClient().auth.verifyOtp({
+      // 先尝试 signup 类型，失败则尝试 email 类型
+      let result = await getSupabaseClient().auth.verifyOtp({
         email: normalizedEmail,
         token,
         type: "signup",
       });
 
-      return error
-        ? { ok: false, error: getAuthErrorMessage(error.message) }
+      if (result.error) {
+        result = await getSupabaseClient().auth.verifyOtp({
+          email: normalizedEmail,
+          token,
+          type: "email",
+        });
+      }
+
+      return result.error
+        ? { ok: false, error: getAuthErrorMessage(result.error.message) }
         : { ok: true };
     },
     [configured],
