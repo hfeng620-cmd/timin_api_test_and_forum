@@ -53,9 +53,15 @@ const collaborationCards = [
 ];
 
 const decisionRules = [
-  "一句话: 站内",
-  "成专题: Discussions",
-  "要同步: QQ 群",
+  "短反馈",
+  "长主题",
+  "急同步",
+];
+
+const ambientOrbs = [
+  "left-[6%] top-16 h-56 w-56 bg-[var(--color-brand-soft)] opacity-70 animate-[pulse_8s_ease-in-out_infinite]",
+  "right-[8%] top-28 h-64 w-64 bg-[var(--color-panel-glow)] opacity-55 animate-[pulse_10s_ease-in-out_infinite]",
+  "left-[44%] top-[420px] h-72 w-72 bg-[var(--color-soft)] opacity-75 animate-[pulse_12s_ease-in-out_infinite]",
 ];
 
 export default function CommunityPage() {
@@ -129,12 +135,15 @@ export default function CommunityPage() {
     <main className="theme-stage relative min-h-screen overflow-hidden bg-transparent text-[var(--color-ink)]">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[680px] bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.12),transparent_34%),radial-gradient(circle_at_85%_10%,rgba(245,158,11,0.14),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.8),transparent_72%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[760px] bg-[radial-gradient(circle_at_10%_8%,var(--color-brand-soft),transparent_32%),radial-gradient(circle_at_88%_14%,var(--color-panel-glow),transparent_30%),linear-gradient(180deg,var(--color-header),transparent_74%)] opacity-80"
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-[var(--color-brand-soft)]/70 blur-3xl"
-      />
+      {ambientOrbs.map((orb) => (
+        <div
+          key={orb}
+          aria-hidden="true"
+          className={`pointer-events-none absolute rounded-full blur-3xl motion-reduce:animate-none ${orb}`}
+        />
+      ))}
       <section className="border-b border-[var(--color-line)] bg-[var(--color-header)] backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-10">
           <div className="flex items-center gap-4">
@@ -187,138 +196,106 @@ export default function CommunityPage() {
       <section className="relative mx-auto max-w-6xl px-3 py-4 sm:px-6 lg:px-10">
         <div
           ref={heroRef}
-          className={`relative mb-5 overflow-hidden rounded-[36px] border border-[var(--color-line)] bg-[linear-gradient(145deg,rgba(255,255,255,0.92),rgba(255,247,237,0.82)_48%,rgba(248,250,252,0.96))] shadow-[0_28px_90px_rgba(15,23,42,0.1)] transition-[opacity,transform] duration-700 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 ${
+          className={`relative mb-5 overflow-hidden rounded-[36px] border border-[var(--color-line)] bg-[linear-gradient(145deg,var(--color-panel),var(--color-brand-soft)_54%,var(--color-panel))] shadow-[0_28px_90px_rgba(15,23,42,0.1)] transition-[opacity,transform] duration-700 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 ${
             revealedSections.hero ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_26%),radial-gradient(circle_at_20%_20%,rgba(245,158,11,0.14),transparent_24%),linear-gradient(180deg,transparent,rgba(255,255,255,0.38))]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--color-panel-glow),transparent_28%),radial-gradient(circle_at_18%_18%,var(--color-soft),transparent_24%),linear-gradient(180deg,transparent,var(--color-header))] opacity-70"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.9),transparent)]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,var(--color-panel),transparent)]"
           />
-          <div className="relative grid gap-6 px-5 py-6 sm:px-6 lg:grid-cols-[1.16fr_0.84fr] lg:px-8 lg:py-9">
-            <div>
+          <div className="relative grid gap-5 px-5 py-6 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:items-stretch lg:px-8 lg:py-9">
+            <div className="flex min-h-[420px] flex-col justify-between rounded-[28px] border border-[var(--color-line)] bg-[color-mix(in_srgb,var(--color-panel)_82%,transparent)] p-5 shadow-[0_18px_44px_rgba(15,23,42,0.07)] backdrop-blur">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border border-[rgba(15,23,42,0.08)] bg-white/80 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[var(--color-brand-deep)] shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
-                  Community Routing Desk
+                <span className="rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[var(--color-brand-deep)] shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
+                  Forum Gate
                 </span>
-                <span className="rounded-full border border-[var(--color-line)] bg-[rgba(255,255,255,0.68)] px-3 py-1 text-xs font-semibold text-[var(--color-muted)]">
-                  入口只保留 3 个
+                <span className="rounded-full border border-[var(--color-line)] bg-[var(--color-soft)] px-3 py-1 text-xs font-semibold text-[var(--color-muted)]">
+                  3 个入口
                 </span>
               </div>
-              <h1 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl lg:text-[3.4rem] lg:leading-[1.02]">
-                先分流，再协作。
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-muted)] sm:text-[15px] sm:leading-7">
-                站内处理短流，Discussions 承接长期主题，QQ 群只做急同步。
-              </p>
+              <div className="py-7">
+                <h1 className="max-w-xl text-3xl font-black tracking-tight sm:text-4xl lg:text-[3.6rem] lg:leading-[1.02]">
+                  先选入口，再开始讨论。
+                </h1>
+                <p className="mt-4 max-w-md text-sm leading-6 text-[var(--color-muted)] sm:text-[15px] sm:leading-7">
+                  站内接短反馈，Discussions 沉淀专题，QQ 群处理急同步。
+                </p>
+              </div>
 
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="flex flex-wrap gap-2">
                 {decisionRules.map((rule, index) => (
-                  <div
+                  <span
                     key={rule}
-                    className="rounded-[20px] border border-white/70 bg-white/72 px-4 py-3 shadow-[0_14px_34px_rgba(15,23,42,0.06)] backdrop-blur"
+                    className="rounded-full border border-[var(--color-line)] bg-[var(--color-soft)] px-3 py-2 text-xs font-black text-[var(--color-brand-deep)]"
                   >
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
-                      0{index + 1}
-                    </p>
-                    <p className="mt-2 text-sm font-bold text-[var(--color-ink)]">{rule}</p>
-                  </div>
+                    0{index + 1} / {rule}
+                  </span>
                 ))}
-              </div>
-
-              <div className="mt-6 grid gap-3 xl:grid-cols-[minmax(0,1.18fr)_minmax(260px,0.82fr)]">
-                <div className="grid gap-3">
-                  <Link
-                    className={`group flex min-h-[148px] flex-col justify-between rounded-[24px] border px-5 py-5 transition hover:-translate-y-1 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)] sm:flex-row sm:items-end ${feedbackCard.accent}`}
-                    href={feedbackCard.href}
-                  >
-                    <div className="max-w-xl">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-black tracking-[0.18em] ${feedbackCard.badge}`}
-                      >
-                        {feedbackCard.id}
-                      </span>
-                      <p className="mt-3 text-lg font-black sm:text-xl">{feedbackCard.title}</p>
-                      <p className="mt-2 text-sm leading-6 opacity-90">{feedbackCard.summary}</p>
-                    </div>
-                    <p className="mt-5 text-sm font-black sm:mt-0 sm:text-right">
-                      {feedbackCard.actionLabel} <span aria-hidden>→</span>
-                    </p>
-                  </Link>
-
-                  <a
-                    className={`group flex min-h-[148px] flex-col justify-between rounded-[24px] border px-5 py-5 transition hover:-translate-y-1 hover:border-[var(--color-brand)] hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)] sm:flex-row sm:items-end ${discussionsCard.accent}`}
-                    href={discussionsCard.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <div className="max-w-xl">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-black tracking-[0.18em] ${discussionsCard.badge}`}
-                      >
-                        {discussionsCard.id}
-                      </span>
-                      <p className="mt-3 text-lg font-black sm:text-xl">{discussionsCard.title}</p>
-                      <p className="mt-2 text-sm leading-6 opacity-85">{discussionsCard.summary}</p>
-                    </div>
-                    <p className="mt-5 text-sm font-black sm:mt-0 sm:text-right">
-                      {discussionsCard.actionLabel} <span aria-hidden>→</span>
-                    </p>
-                  </a>
-                </div>
-
-                <Link
-                  id="qq-group-entry"
-                  className={`group flex min-h-[188px] flex-col justify-between rounded-[24px] border px-5 py-5 transition hover:-translate-y-1 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)] xl:min-h-full ${qqCard.accent}`}
-                  href={qqCard.href}
-                >
-                  <div>
-                    <span
-                      className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-black tracking-[0.18em] ${qqCard.badge}`}
-                    >
-                      {qqCard.id}
-                    </span>
-                    <p className="mt-3 text-lg font-black sm:text-xl">{qqCard.title}</p>
-                    <p className="mt-2 text-sm leading-6 opacity-90">{qqCard.summary}</p>
-                  </div>
-                  <p className="mt-6 text-sm font-black">
-                    {qqCard.actionLabel} <span aria-hidden>→</span>
-                  </p>
-                </Link>
               </div>
             </div>
 
-            <div className="grid gap-3">
-              <div className="rounded-[28px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.8),rgba(255,247,237,0.76))] p-5 shadow-[0_18px_44px_rgba(15,23,42,0.08)] backdrop-blur">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                  协作节奏
-                </p>
-                <p className="mt-3 text-2xl font-black tracking-tight text-[var(--color-ink)]">
-                  先把短流接住，再决定沉淀去向。
-                </p>
-                <p className="mt-3 text-sm leading-6 text-[var(--color-muted)]">
-                  这个页面只负责判断入口和推进当下讨论，不在这里堆长期说明。
-                </p>
-                <div className="mt-5 rounded-[22px] border border-[var(--color-line)] bg-[rgba(255,255,255,0.72)] p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                    当前原则
-                  </p>
-                  <div className="mt-3 space-y-2">
-                    {decisionRules.map((rule) => (
-                      <div
-                        key={rule}
-                        className="rounded-[16px] border border-[var(--color-line)] bg-[var(--color-panel)] px-4 py-3 text-sm font-bold text-[var(--color-ink)]"
-                      >
-                        {rule}
-                      </div>
-                    ))}
-                  </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Link
+                className={`group flex min-h-[210px] flex-col justify-between rounded-[26px] border px-5 py-5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)] motion-reduce:hover:translate-y-0 sm:col-span-2 lg:min-h-0 ${feedbackCard.accent}`}
+                href={feedbackCard.href}
+              >
+                <div className="max-w-xl">
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-black tracking-[0.18em] ${feedbackCard.badge}`}
+                  >
+                    {feedbackCard.id}
+                  </span>
+                  <p className="mt-4 text-2xl font-black">{feedbackCard.title}</p>
+                  <p className="mt-2 text-sm leading-6 opacity-90">{feedbackCard.summary}</p>
                 </div>
-              </div>
+                <p className="mt-6 text-sm font-black">
+                  {feedbackCard.actionLabel} <span aria-hidden>→</span>
+                </p>
+              </Link>
+
+              <a
+                className={`group flex min-h-[188px] flex-col justify-between rounded-[26px] border px-5 py-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-brand)] hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)] motion-reduce:hover:translate-y-0 ${discussionsCard.accent}`}
+                href={discussionsCard.href}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <div>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-black tracking-[0.18em] ${discussionsCard.badge}`}
+                  >
+                    {discussionsCard.id}
+                  </span>
+                  <p className="mt-4 text-xl font-black">{discussionsCard.title}</p>
+                  <p className="mt-2 text-sm leading-6 opacity-85">{discussionsCard.summary}</p>
+                </div>
+                <p className="mt-6 text-sm font-black">
+                  {discussionsCard.actionLabel} <span aria-hidden>→</span>
+                </p>
+              </a>
+
+              <Link
+                id="qq-group-entry"
+                className={`group flex min-h-[188px] flex-col justify-between rounded-[26px] border px-5 py-5 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_44px_rgba(15,23,42,0.12)] motion-reduce:hover:translate-y-0 ${qqCard.accent}`}
+                href={qqCard.href}
+              >
+                <div>
+                  <span
+                    className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-black tracking-[0.18em] ${qqCard.badge}`}
+                  >
+                    {qqCard.id}
+                  </span>
+                  <p className="mt-4 text-xl font-black">{qqCard.title}</p>
+                  <p className="mt-2 text-sm leading-6 opacity-90">{qqCard.summary}</p>
+                </div>
+                <p className="mt-6 text-sm font-black">
+                  {qqCard.actionLabel} <span aria-hidden>→</span>
+                </p>
+              </Link>
             </div>
           </div>
         </div>

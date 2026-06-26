@@ -534,7 +534,11 @@ export function DiscussionFeed({
     }
 
     const node = sectionRef.current;
-    if (!node) return;
+    if (!node) {
+      // No ref yet, reveal immediately
+      setIsSectionRevealed(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -544,13 +548,19 @@ export function DiscussionFeed({
           observer.unobserve(entry.target);
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px -10% 0px" },
+      { threshold: 0.05, rootMargin: "0px 0px -2% 0px" },
     );
 
     observer.observe(node);
 
+    // Safety fallback: reveal after 800ms if observer doesn't fire
+    const fallbackTimer = setTimeout(() => {
+      setIsSectionRevealed(true);
+    }, 800);
+
     return () => {
       observer.disconnect();
+      clearTimeout(fallbackTimer);
     };
   }, []);
 

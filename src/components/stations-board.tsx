@@ -744,8 +744,8 @@ export function StationsBoard() {
   return (
     <>
       {/* ---- Hero + Filters ---- */}
-      <section className="mx-auto max-w-[1500px] px-6 py-8 lg:px-10">
-        <div className="border-b border-[var(--color-line)] pb-5">
+      <section className="mx-auto max-w-[1680px] px-5 py-6 lg:px-8">
+        <div className="border-b border-[var(--color-line)] pb-4">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-4xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-deep)]">
@@ -759,7 +759,7 @@ export function StationsBoard() {
               </p>
             </div>
 
-            <div className="grid min-w-[260px] grid-cols-3 gap-4 rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-4 text-sm shadow-[var(--shadow-card)]">
+            <div className="grid min-w-[280px] grid-cols-3 gap-3 rounded-[22px] border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-3.5 text-sm shadow-[var(--shadow-card)]">
               <div>
                 <p className="text-[var(--color-muted)]">站点</p>
                 <p className="mt-1 text-2xl font-black">{stations.length}</p>
@@ -776,9 +776,9 @@ export function StationsBoard() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-5 xl:grid-cols-[minmax(0,1.18fr)_320px]">
+        <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
           {featuredStations.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
               {featuredStations.map((station, index) => {
                 const stationHref = getSafeExternalHref(station.url);
                 const cardContent = (
@@ -795,9 +795,9 @@ export function StationsBoard() {
                       </span>
                     </div>
 
-                    <p className="mt-4 line-clamp-3 text-sm leading-7 text-[var(--color-muted)]">{station.note}</p>
+                    <p className="mt-3 line-clamp-2 text-sm leading-6 text-[var(--color-muted)]">{station.note}</p>
 
-                    <div className="mt-5 grid grid-cols-3 gap-3 border-t border-[var(--color-line)] pt-4 text-sm">
+                    <div className="mt-4 grid grid-cols-3 gap-2.5 border-t border-[var(--color-line)] pt-3.5 text-sm">
                       <div>
                         <p className="text-[var(--color-muted)]">价格</p>
                         <p className="mt-1 font-black">{station.price}</p>
@@ -812,7 +812,7 @@ export function StationsBoard() {
                       </div>
                     </div>
 
-                    <div className="mt-5 flex flex-wrap items-center gap-2">
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
                       {stationHref ? (
                         <div className="inline-flex items-center text-sm font-bold text-[var(--color-brand-deep)]">
                           打开站点入口
@@ -845,7 +845,7 @@ export function StationsBoard() {
                       href={stationHref}
                       rel="noopener noreferrer"
                       target="_blank"
-                      className="stagger-in card-lift group min-h-[232px] rounded-[22px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-[4px] hover:border-[var(--color-brand)] hover:shadow-[0_28px_72px_rgba(15,23,42,0.10)]"
+                      className="stagger-in card-lift group min-h-[202px] rounded-[22px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-5 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-[3px] hover:border-[var(--color-brand)] hover:shadow-[0_28px_72px_rgba(15,23,42,0.10)]"
                     >
                       {cardContent}
                     </a>
@@ -855,7 +855,7 @@ export function StationsBoard() {
                 return (
                   <div
                     key={`${station.id}-hero`}
-                    className="stagger-in card-lift group min-h-[232px] rounded-[22px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-[4px] hover:border-[var(--color-brand)] hover:shadow-[0_28px_72px_rgba(15,23,42,0.10)]"
+                    className="stagger-in card-lift group min-h-[202px] rounded-[22px] border border-[var(--color-line)] bg-[var(--surface-gradient)] p-5 shadow-[var(--shadow-card)] transition-all duration-300 hover:-translate-y-[3px] hover:border-[var(--color-brand)] hover:shadow-[0_28px_72px_rgba(15,23,42,0.10)]"
                   >
                     {cardContent}
                   </div>
@@ -866,7 +866,7 @@ export function StationsBoard() {
             <div />
           )}
 
-          <aside className="surface-in rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[var(--shadow-card)]">
+          <aside className="surface-in rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-4 shadow-[var(--shadow-card)]">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
               先这样看
             </p>
@@ -874,22 +874,22 @@ export function StationsBoard() {
               先筛，再看总表，最后回社区补风险。
             </p>
 
-            <div className="mt-4 grid gap-3">
-              <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
+            <div className="mt-4 grid gap-2.5">
+              <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-2.5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                   第一步
                 </p>
                 <p className="mt-2 text-sm font-black text-[var(--color-ink)]">先锁 2 到 3 个候选</p>
                 <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">先用价格、倍率和门槛缩小决策面。</p>
               </div>
-              <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
+              <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-2.5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                   第二步
                 </p>
                 <p className="mt-2 text-sm font-black text-[var(--color-ink)]">再看备注和更新</p>
                 <p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">把总表备注当摘要看，细节再进历史和讨论区。</p>
               </div>
-              <div className="rounded-[18px] bg-[var(--color-brand-soft)] px-4 py-3">
+              <div className="rounded-[18px] bg-[var(--color-brand-soft)] px-4 py-2.5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                   第三步
                 </p>
@@ -898,7 +898,7 @@ export function StationsBoard() {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-3 border-t border-[var(--color-line)] pt-5">
+            <div className="mt-4 grid grid-cols-2 gap-2.5 border-t border-[var(--color-line)] pt-4">
               <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">本周更新</p>
                 <p className="mt-2 text-lg font-black text-[var(--color-ink)]">{freshnessStats.updatedThisWeek}</p>
@@ -911,8 +911,8 @@ export function StationsBoard() {
           </aside>
         </div>
 
-        <div className="surface-in mt-6 rounded-[28px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[var(--shadow-card)] backdrop-blur">
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start">
+        <div className="surface-in mt-5 rounded-[26px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[var(--shadow-card)] backdrop-blur">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_260px] xl:items-start">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                 快速查找
@@ -948,7 +948,7 @@ export function StationsBoard() {
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
             <div className="relative min-w-[280px] flex-1">
               <input
                 id="station-search"
@@ -1017,7 +1017,7 @@ export function StationsBoard() {
               ))}
           </div>
 
-          <div className="mt-5 grid gap-3 border-t border-[var(--color-line)] pt-5 lg:grid-cols-4">
+          <div className="mt-4 grid gap-3 border-t border-[var(--color-line)] pt-4 lg:grid-cols-4">
             <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3.5">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">结果</p>
               <p className="mt-2 text-lg font-black text-[var(--color-ink)]">{filteredRows.length} 个站点</p>
@@ -1039,13 +1039,13 @@ export function StationsBoard() {
       </section>
 
       {/* ---- Table ---- */}
-      <section className="mx-auto max-w-[1500px] px-6 pb-14 lg:px-10">
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.62fr)_320px] xl:items-start">
-          <div className="surface-in overflow-hidden rounded-[28px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[var(--shadow-card)]">
+      <section className="mx-auto max-w-[1680px] px-5 pb-12 lg:px-8">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px] 2xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+          <div className="surface-in overflow-hidden rounded-[26px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[var(--shadow-card)]">
           {/* Table header */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-line)] px-6 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--color-line)] px-5 py-4">
             <div>
-              <h2 className="text-3xl font-black">中转站总表</h2>
+              <h2 className="text-2xl font-black">中转站总表</h2>
               <div className="mt-2 flex items-center gap-3">
                 <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-muted)]">
                   数据新鲜度
@@ -1257,9 +1257,9 @@ export function StationsBoard() {
           </div>
 
           <div className="hidden overflow-x-auto lg:block">
-            <div className="min-w-[1320px]">
+            <div className="min-w-[1220px]">
               {/* Column headers */}
-              <div className="grid grid-cols-[0.62fr_1.38fr_1.1fr_0.94fr_0.96fr_0.82fr_1fr] bg-[var(--color-soft)] px-6 py-4 text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+              <div className="grid grid-cols-[0.48fr_1.32fr_0.78fr_0.96fr_0.82fr_0.68fr_1.28fr] bg-[var(--color-soft)] px-5 py-3 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 <span>排序</span>
                 <span>站点</span>
                 <span>入口 / 地址</span>
@@ -1304,7 +1304,7 @@ export function StationsBoard() {
                 return (
                   <div key={station.id}>
                     <article
-                      className="grid grid-cols-[0.62fr_1.38fr_1.1fr_0.94fr_0.96fr_0.82fr_1fr] items-start border-l-2 border-l-transparent px-6 py-5 transition-all duration-300 hover:border-l-[var(--color-brand)] hover:bg-[var(--color-hover)]"
+                      className="grid grid-cols-[0.48fr_1.32fr_0.78fr_0.96fr_0.82fr_0.68fr_1.28fr] items-start gap-x-3 border-l-2 border-l-transparent px-5 py-4 transition-all duration-300 hover:border-l-[var(--color-brand)] hover:bg-[var(--color-hover)]"
                     >
                       {/* 排序 */}
                       <div className="font-bold text-[var(--color-muted)]">
@@ -1462,7 +1462,7 @@ export function StationsBoard() {
           </div>
 
           {/* Table footer */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--color-line)] px-6 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--color-line)] px-5 py-4">
             <p className="text-sm leading-7 text-[var(--color-muted)]">
               {filteredRows.length === 0
                 ? "没有匹配的站点，试试调整筛选条件。"
@@ -1482,14 +1482,14 @@ export function StationsBoard() {
           </div>
 
           <aside className="hidden xl:block">
-            <div className="surface-in sticky top-24 rounded-[28px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[var(--shadow-card)]">
+            <div className="surface-in sticky top-24 rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-4 shadow-[var(--shadow-card)]">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">右侧协作栏</p>
               <p className="mt-3 text-sm leading-6 text-[var(--color-muted)]">
                 这里只保留看表时最常用的辅助动作，不和总表抢视觉重心。
               </p>
 
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
+              <div className="mt-4 grid gap-2.5">
+                <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-2.5">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                     当前显示
                   </p>
@@ -1501,7 +1501,7 @@ export function StationsBoard() {
                   </p>
                 </div>
 
-                <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-3">
+                <div className="rounded-[18px] bg-[var(--color-soft)] px-4 py-2.5">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                     判断顺序
                   </p>
@@ -1512,7 +1512,7 @@ export function StationsBoard() {
                 </div>
               </div>
 
-              <div className="mt-5 space-y-3 border-t border-[var(--color-line)] pt-5">
+              <div className="mt-4 space-y-2.5 border-t border-[var(--color-line)] pt-4">
                 <Link
                   href="/community"
                   className="block rounded-full bg-[var(--color-brand)] px-5 py-3 text-center text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
@@ -1529,7 +1529,7 @@ export function StationsBoard() {
                 </a>
               </div>
 
-              <div className="mt-5 space-y-3 border-t border-[var(--color-line)] pt-5 text-sm">
+              <div className="mt-4 space-y-2.5 border-t border-[var(--color-line)] pt-4 text-sm">
                 <a
                   href="https://huhuai.xyz/register?aff=BCPA5AKW3KHX"
                   rel="noopener noreferrer"
@@ -1565,7 +1565,7 @@ export function StationsBoard() {
       </section>
 
       {/* ---- Submission ---- */}
-      <section className="mx-auto max-w-[1500px] px-6 pb-16 lg:px-10">
+      <section className="mx-auto max-w-[1680px] px-5 pb-16 lg:px-8">
         <SubmissionPanel />
       </section>
 
