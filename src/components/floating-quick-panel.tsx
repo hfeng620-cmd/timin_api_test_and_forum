@@ -254,7 +254,7 @@ export function FloatingQuickPanel() {
           <div className="flex items-start justify-between gap-4 border-b border-[var(--color-line)] px-5 py-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                主题面板
+                外观中心
               </p>
               <h2 id="appearance-dialog-title" className="mt-1 text-xl font-black text-[var(--color-ink)]">
                 {appearancePanel === "theme" ? "主题" : "配色"}
@@ -267,7 +267,7 @@ export function FloatingQuickPanel() {
               ref={closeButtonRef}
               type="button"
             >
-              ×
+              x
             </button>
           </div>
           <div className="max-h-[calc(82vh-74px)] overflow-y-auto px-5 py-5">

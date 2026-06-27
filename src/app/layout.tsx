@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AnnouncementModal } from "@/components/announcement-modal";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FloatingQuickPanel } from "@/components/floating-quick-panel";
+import { GlobalRelayCanvas } from "@/components/global-relay-canvas";
 import { RegisterCounter } from "@/components/register-counter";
 import { MobileDock } from "@/components/mobile-dock";
 import { MouseGlowLayer } from "@/components/mouse-glow-layer";
@@ -80,6 +81,7 @@ export default function RootLayout({
         <ForumAuthProvider>
           <ToastProvider>
             <MouseGlowLayer />
+            <GlobalRelayCanvas />
             <MobileDock />
             <main id="main-content" className="relative z-10 flex min-h-full flex-col">
               <ScrollRevealOrchestrator />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { stationComparisonRows, stationLinkMap } from "@/lib/site-data";
 import { StationDetailModal } from "@/components/station-detail-modal";
@@ -1635,11 +1636,11 @@ export function StationsBoard() {
         onClose={() => setDetailStation(null)}
       />
 
-      {/* ---- Station Discussion Modal ---- */}
-      {discussionStation && (
+      {/* ---- Station Discussion Modal (Portal to body) ---- */}
+      {discussionStation && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50"
-          style={{ backdropFilter: 'blur(4px)' }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4"
+          style={{ backdropFilter: 'blur(4px)', position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
           onClick={(e) => { if (e.target === e.currentTarget) setDiscussionStation(null); }}
         >
           <div className="relative flex h-[85vh] w-[95vw] max-w-4xl flex-col overflow-hidden rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
@@ -1680,7 +1681,8 @@ export function StationsBoard() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Quick action FAB — bottom-right */}

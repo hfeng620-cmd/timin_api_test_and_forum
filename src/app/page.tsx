@@ -137,43 +137,89 @@ export default function Home() {
           animation: ticker-slide 420ms 140ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
         }
         .home-reveal {
-          opacity: 0;
-          animation: section-rise 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+          --reveal-duration: 760ms;
         }
         .home-reveal-soft {
+          --reveal-duration: 640ms;
+        }
+        .home-delay-1 { --reveal-delay: 80ms; }
+        .home-delay-2 { --reveal-delay: 160ms; }
+        .home-delay-3 { --reveal-delay: 240ms; }
+        .reveal-ready .home-flow > *,
+        .reveal-ready.home-flow > *,
+        .reveal-ready .home-flow-tight > *,
+        .reveal-ready.home-flow-tight > *,
+        .reveal-ready .stagger-in {
+          animation: none;
           opacity: 0;
+          transform: translate3d(0, 12px, 0);
+        }
+        .reveal-visible .home-flow > *,
+        .reveal-visible.home-flow > *,
+        .reveal-visible .home-flow-tight > *,
+        .reveal-visible.home-flow-tight > *,
+        .reveal-visible .stagger-in {
           animation: section-fade 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
         }
-        .home-delay-1 { animation-delay: 80ms; }
-        .home-delay-2 { animation-delay: 160ms; }
-        .home-delay-3 { animation-delay: 240ms; }
-        .home-flow > * {
-          opacity: 0;
-          animation: section-fade 620ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        .reveal-visible .home-flow-tight > *,
+        .reveal-visible.home-flow-tight > * {
+          animation-duration: 560ms;
         }
-        .home-flow > :nth-child(1) { animation-delay: 80ms; }
-        .home-flow > :nth-child(2) { animation-delay: 150ms; }
-        .home-flow > :nth-child(3) { animation-delay: 220ms; }
-        .home-flow > :nth-child(4) { animation-delay: 290ms; }
-        .home-flow > :nth-child(5) { animation-delay: 360ms; }
-        .home-flow > :nth-child(6) { animation-delay: 430ms; }
-        .home-flow-tight > * {
-          opacity: 0;
-          animation: section-fade 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-        }
-        .home-flow-tight > :nth-child(1) { animation-delay: 60ms; }
-        .home-flow-tight > :nth-child(2) { animation-delay: 110ms; }
-        .home-flow-tight > :nth-child(3) { animation-delay: 160ms; }
+        .reveal-visible .home-flow > :nth-child(1),
+        .reveal-visible.home-flow > :nth-child(1) { animation-delay: 80ms; }
+        .reveal-visible .home-flow > :nth-child(2),
+        .reveal-visible.home-flow > :nth-child(2) { animation-delay: 150ms; }
+        .reveal-visible .home-flow > :nth-child(3),
+        .reveal-visible.home-flow > :nth-child(3) { animation-delay: 220ms; }
+        .reveal-visible .home-flow > :nth-child(4),
+        .reveal-visible.home-flow > :nth-child(4) { animation-delay: 290ms; }
+        .reveal-visible .home-flow > :nth-child(5),
+        .reveal-visible.home-flow > :nth-child(5) { animation-delay: 360ms; }
+        .reveal-visible .home-flow > :nth-child(6),
+        .reveal-visible.home-flow > :nth-child(6) { animation-delay: 430ms; }
+        .reveal-visible .home-flow-tight > :nth-child(1),
+        .reveal-visible.home-flow-tight > :nth-child(1) { animation-delay: 60ms; }
+        .reveal-visible .home-flow-tight > :nth-child(2),
+        .reveal-visible.home-flow-tight > :nth-child(2) { animation-delay: 110ms; }
+        .reveal-visible .home-flow-tight > :nth-child(3),
+        .reveal-visible.home-flow-tight > :nth-child(3) { animation-delay: 160ms; }
         .home-ambient {
           animation: ambient-drift 12s ease-in-out infinite;
         }
         .home-ambient-fast {
           animation: ambient-drift 8.5s ease-in-out infinite reverse;
         }
-        .stagger-in:nth-child(5) { animation-delay: 160ms; }
-        .stagger-in:nth-child(6) { animation-delay: 200ms; }
-        .stagger-in:nth-child(7) { animation-delay: 240ms; }
-        .stagger-in:nth-child(8) { animation-delay: 280ms; }
+        .reveal-visible .stagger-in:nth-child(5) { animation-delay: 160ms; }
+        .reveal-visible .stagger-in:nth-child(6) { animation-delay: 200ms; }
+        .reveal-visible .stagger-in:nth-child(7) { animation-delay: 240ms; }
+        .reveal-visible .stagger-in:nth-child(8) { animation-delay: 280ms; }
+        .home-hero-title {
+          text-wrap: balance;
+        }
+        .home-glass-edge {
+          position: relative;
+        }
+        .home-glass-edge::before {
+          content: "";
+          position: absolute;
+          inset: 1px;
+          pointer-events: none;
+          border-radius: inherit;
+          background:
+            linear-gradient(135deg, rgba(255,255,255,0.52), transparent 34%),
+            radial-gradient(circle at 82% 12%, rgba(var(--theme-glow-rgb),0.18), transparent 34%);
+          opacity: 0.82;
+        }
+        @media (max-width: 640px) {
+          .home-mobile-actions > * {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+          }
+          .home-mobile-balance {
+            text-wrap: balance;
+          }
+        }
         @media (prefers-reduced-motion: reduce) {
           .logo-pulse,
           .ticker-enter,
@@ -181,19 +227,24 @@ export default function Home() {
           .home-reveal-soft,
           .home-ambient,
           .home-ambient-fast,
+          .reveal-ready .home-flow > *,
+          .reveal-ready.home-flow > *,
+          .reveal-ready .home-flow-tight > *,
+          .reveal-ready.home-flow-tight > *,
+          .reveal-ready .stagger-in,
           .home-flow > *,
           .home-flow-tight > * { animation: none; opacity: 1; transform: none; }
         }
       `}</style>
-      <section className="sticky top-0 z-30 border-b border-[var(--color-line)] bg-[var(--color-header)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
-          <div className="flex items-center gap-4">
-            <div className="logo-pulse flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-brand)] text-xl font-black text-[var(--color-on-brand)]">
+      <section data-route-reveal="off" className="sticky top-0 z-30 border-b border-[var(--color-line)] bg-[var(--color-header)] backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4 lg:px-10">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <div className="logo-pulse flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-brand)] text-lg font-black text-[var(--color-on-brand)] sm:h-11 sm:w-11 sm:text-xl">
               T
             </div>
-            <div>
-              <p className="text-2xl font-black tracking-tight">Timix观察站</p>
-              <p className="text-sm text-[var(--color-muted)]">
+            <div className="min-w-0">
+              <p className="truncate text-xl font-black tracking-tight sm:text-2xl">Timix观察站</p>
+              <p className="hidden text-sm text-[var(--color-muted)] sm:block">
                 先看榜单，再决定长期用谁。
               </p>
             </div>
@@ -202,7 +253,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
             <nav className="hidden items-center gap-8 text-sm font-semibold text-[var(--color-muted)] lg:flex">
               <span className="text-[var(--color-ink)]">首页</span>
               <Link className="link-underline transition hover:text-[var(--color-ink)]" href="/stations">
@@ -263,28 +314,29 @@ export default function Home() {
       <section className="relative overflow-hidden border-b border-[var(--color-line)]">
         <RelayNetworkCanvas className="opacity-90" />
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.72),rgba(244,247,251,0.28)_55%,rgba(219,234,254,0.62))]" />
-        <div className="relative mx-auto max-w-7xl px-6 py-9 lg:px-10 lg:py-12">
-          <div className="grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
+        <div className="absolute inset-x-6 top-8 h-px bg-[linear-gradient(90deg,transparent,rgba(var(--theme-glow-rgb),0.34),transparent)] lg:inset-x-10" />
+        <div className="relative mx-auto max-w-7xl px-5 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-14">
+          <div className="grid gap-6 lg:grid-cols-[1.12fr_0.88fr] lg:items-end xl:gap-10">
             <div className="home-reveal max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[var(--color-brand-deep)]">
+              <p className="inline-flex rounded-full border border-white/70 bg-white/72 px-3 py-1 text-[11px] font-black uppercase tracking-[0.24em] text-[var(--color-brand-deep)] shadow-[0_12px_30px_rgba(15,23,42,0.05)] backdrop-blur sm:text-xs">
                 Relay Signal Desk
               </p>
-              <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-[var(--color-ink)] sm:text-5xl">
+              <h1 className="home-hero-title mt-5 max-w-4xl text-[2.65rem] font-black leading-[0.98] tracking-tight text-[var(--color-ink)] sm:text-6xl lg:text-[4.75rem]">
                 把中转站从“能用”，筛到“值得长期用”。
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--color-muted)] sm:text-lg">
-                先看成本，再补反馈，最后决定长期用谁。
+              <p className="home-mobile-balance mt-5 max-w-2xl text-base leading-8 text-[var(--color-muted)] sm:text-lg">
+                首页先把价格、倍率、试用和反馈压到同一个判断面，帮你更快决定先试谁、避开什么。
               </p>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="home-mobile-actions mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/stations"
-                  className="rounded-full bg-[var(--color-brand)] px-6 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_14px_34px_var(--color-panel-glow)] transition hover:scale-105 hover:bg-[var(--color-brand-deep)]"
+                  className="inline-flex rounded-full bg-[var(--color-brand)] px-6 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_14px_34px_var(--color-panel-glow)] transition hover:scale-105 hover:bg-[var(--color-brand-deep)]"
                 >
                   直接看榜单
                 </Link>
                 <Link
                   href="/community"
-                  className="rounded-full border border-[var(--color-line)] bg-white/80 px-6 py-3 text-sm font-bold text-[var(--color-ink)] backdrop-blur transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
+                  className="inline-flex rounded-full border border-[var(--color-line)] bg-white/80 px-6 py-3 text-sm font-bold text-[var(--color-ink)] backdrop-blur transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
                 >
                   去看实时反馈
                 </Link>
@@ -328,7 +380,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="home-reveal home-delay-2 relative overflow-hidden rounded-[28px] border border-white/70 bg-white/78 p-6 shadow-[0_22px_64px_rgba(15,23,42,0.08)] backdrop-blur">
+            <div className="home-reveal home-delay-2 home-glass-edge relative overflow-hidden rounded-[30px] border border-white/70 bg-white/78 p-5 shadow-[0_24px_74px_rgba(15,23,42,0.10)] backdrop-blur sm:p-6">
               <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.16),transparent_70%)]" />
               <div className="relative">
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-brand-deep)]">
@@ -407,23 +459,25 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-b border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-rgb),0.14),rgba(var(--theme-glow-rgb),0.045))]">
+      <section data-reveal className="relative overflow-hidden border-b border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-rgb),0.14),rgba(var(--theme-glow-rgb),0.045))]">
         <div className="home-ambient pointer-events-none absolute -left-24 top-12 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(var(--theme-glow-rgb),0.14),transparent_68%)] blur-2xl" />
         <div className="home-ambient-fast pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(var(--theme-secondary-rgb),0.14),transparent_70%)] blur-2xl" />
-        <div className="relative mx-auto max-w-7xl px-6 py-9 lg:px-10 lg:py-11">
+        <div className="relative mx-auto max-w-7xl px-5 py-8 sm:px-6 sm:py-9 lg:px-10 lg:py-11">
           <div className="grid gap-6 xl:grid-cols-[1.04fr_0.96fr]">
-            <div className="home-reveal relative overflow-hidden rounded-[30px] border border-[var(--color-line)] bg-[linear-gradient(135deg,rgba(var(--theme-surface-rgb),0.96),rgba(var(--theme-glow-rgb),0.07))] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.06)] lg:p-7">
+            <div className="home-reveal home-glass-edge relative overflow-hidden rounded-[30px] border border-[var(--color-line)] bg-[linear-gradient(135deg,rgba(var(--theme-surface-rgb),0.96),rgba(var(--theme-glow-rgb),0.07))] p-5 shadow-[0_22px_60px_rgba(15,23,42,0.06)] sm:p-6 lg:p-7">
               <div className="pointer-events-none absolute right-0 top-0 h-32 w-48 rounded-bl-full bg-[radial-gradient(circle_at_top_right,rgba(var(--theme-glow-rgb),0.16),transparent_70%)]" />
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-brand-deep)]">
-                产品路径
-              </p>
-              <h2 className="mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
-                先筛候选，再进深一层验证。
-              </h2>
-              <p className="mt-4 max-w-3xl text-base leading-8 text-[var(--color-muted)]">
-                首页先帮你定顺序，不让动作断在半路。
-              </p>
-              <div className="home-flow mt-6 grid gap-4 lg:grid-cols-3">
+              <div className="relative">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-brand-deep)]">
+                  产品路径
+                </p>
+                <h2 className="home-mobile-balance mt-4 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
+                  先筛候选，再进深一层验证。
+                </h2>
+                <p className="mt-4 max-w-3xl text-base leading-8 text-[var(--color-muted)]">
+                  首页先帮你定顺序，不让动作断在半路。
+                </p>
+              </div>
+              <div className="home-flow relative mt-6 grid gap-4 lg:grid-cols-3">
                 {productLayers.map((layer, index) => (
                   <article
                     key={layer.title}
@@ -447,7 +501,7 @@ export default function Home() {
               </div>
             </div>
 
-            <aside className="home-reveal home-delay-2 relative overflow-hidden rounded-[30px] border border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(var(--theme-glow-rgb),0.08),rgba(var(--theme-surface-rgb),0.94))] p-6 shadow-[0_22px_60px_rgba(37,99,235,0.08)] lg:p-7">
+            <aside className="home-reveal home-delay-2 relative overflow-hidden rounded-[30px] border border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(var(--theme-glow-rgb),0.08),rgba(var(--theme-surface-rgb),0.94))] p-5 shadow-[0_22px_60px_rgba(37,99,235,0.08)] sm:p-6 lg:p-7">
               <div className="pointer-events-none absolute -right-16 top-12 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(var(--theme-glow-rgb),0.18),transparent_70%)] blur-xl" />
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-[var(--color-brand-deep)]">
@@ -503,22 +557,22 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-b border-[var(--color-line)]">
+      <section data-reveal className="relative overflow-hidden border-b border-[var(--color-line)]">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(var(--theme-glow-rgb),0.055),transparent)]" />
-        <div className="surface-in relative mx-auto max-w-7xl px-6 py-8 lg:px-10 lg:py-10">
-          <div className="home-reveal mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div className="surface-in relative mx-auto max-w-7xl px-5 py-8 sm:px-6 lg:px-10 lg:py-10">
+          <div className="home-reveal mb-6 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-end">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-deep)]">
                 建立判断基准
               </p>
-              <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
+              <h2 className="home-mobile-balance mt-4 text-3xl font-black tracking-tight sm:text-4xl">
                 先从代表性站点看出差异
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--color-muted)]">
                 这一屏不是给你看完全部信息，而是帮你快速建立价格、倍率和站点口径的参考面。
               </p>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="home-mobile-actions flex w-full flex-wrap gap-3 lg:w-auto">
               <Link
                 href="/stations"
                 className="rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_12px_28px_var(--color-panel-glow)] transition hover:scale-105 hover:bg-[var(--color-brand-deep)]"
@@ -537,7 +591,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="home-reveal home-delay-1 surface-in overflow-hidden rounded-[20px] border border-[var(--color-line)] bg-[var(--surface-gradient)] shadow-[var(--shadow-card)]">
+          <div data-reveal className="home-reveal home-delay-1 surface-in overflow-hidden rounded-[24px] border border-[var(--color-line)] bg-[var(--surface-gradient)] shadow-[var(--shadow-card)]">
             <div className="grid gap-0 lg:grid-cols-[1.35fr_0.65fr]">
               <div className="px-6 py-6 lg:px-8 lg:py-7">
                 <div className="hidden grid-cols-[0.55fr_1fr_0.95fr_0.75fr_1.35fr] border-b border-[var(--color-line)] pb-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)] md:grid">
@@ -653,16 +707,16 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-t border-[var(--color-line)]">
-        <div className="home-reveal-soft mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-9">
+      <section data-reveal className="border-t border-[var(--color-line)]">
+        <div className="home-reveal-soft mx-auto max-w-7xl px-5 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-9">
           <AiNewsPanel />
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-t border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-rgb),0),rgba(var(--theme-glow-rgb),0.055))]">
+      <section data-reveal className="relative overflow-hidden border-t border-[var(--color-line)] bg-[linear-gradient(180deg,rgba(var(--theme-surface-rgb),0),rgba(var(--theme-glow-rgb),0.055))]">
         <div className="home-ambient pointer-events-none absolute -right-24 top-20 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(var(--theme-glow-rgb),0.13),transparent_70%)] blur-2xl" />
-        <div className="relative mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-12">
-          <div className="home-reveal flex items-end justify-between gap-6 border-b border-[var(--color-line)] pb-4">
+        <div className="relative mx-auto max-w-7xl px-5 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
+          <div className="home-reveal flex flex-col items-start justify-between gap-4 border-b border-[var(--color-line)] pb-4 sm:flex-row sm:items-end sm:gap-6">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
                 更多中转站
@@ -674,12 +728,12 @@ export default function Home() {
             </div>
             <Link
               href="/stations"
-              className="inline-flex items-center text-sm font-bold text-[var(--color-brand-deep)]"
+              className="inline-flex items-center rounded-full border border-[var(--color-line)] bg-white/70 px-4 py-2 text-sm font-bold text-[var(--color-brand-deep)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]"
             >
               完整榜单 →
             </Link>
           </div>
-          <div className="mt-5 overflow-hidden rounded-[26px] border border-[var(--color-line)] bg-[var(--surface-gradient)] px-5 shadow-[0_18px_46px_rgba(15,23,42,0.055)]">
+          <div data-reveal className="mt-5 overflow-hidden rounded-[26px] border border-[var(--color-line)] bg-[var(--surface-gradient)] px-4 shadow-[0_18px_46px_rgba(15,23,42,0.055)] sm:px-5">
             {moreRows.map((row, index) => {
               const url = stationLinkMap[row.name];
               const baseClasses =
@@ -728,29 +782,29 @@ export default function Home() {
               );
             })}
           </div>
-          <div className="home-reveal home-delay-2 mt-8 rounded-[28px] border border-[var(--color-line)] bg-[linear-gradient(135deg,rgba(239,246,255,0.96),rgba(255,255,255,0.92))] px-6 py-6 shadow-[0_18px_44px_rgba(37,99,235,0.08)]">
+          <div data-reveal className="home-reveal home-delay-2 mt-8 rounded-[28px] border border-[var(--color-line)] bg-[linear-gradient(135deg,rgba(239,246,255,0.96),rgba(255,255,255,0.92))] px-5 py-6 shadow-[0_18px_44px_rgba(37,99,235,0.08)] sm:px-6">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-deep)]">
                   下一步动作
                 </p>
-                <h2 className="mt-3 text-2xl font-black tracking-tight sm:text-3xl">
+                <h2 className="home-mobile-balance mt-3 text-2xl font-black tracking-tight sm:text-3xl">
                   看完榜单，继续收口。
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--color-muted)]">
                   已有候选就去社区补风险，模型未定就回模型页。
                 </p>
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="home-mobile-actions flex flex-wrap gap-3">
                 <Link
                   href="/community"
-                  className="rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_12px_30px_var(--color-panel-glow)] transition hover:scale-105 hover:bg-[var(--color-brand-deep)]"
+                  className="inline-flex rounded-full bg-[var(--color-brand)] px-5 py-3 text-sm font-black text-[var(--color-on-brand)] shadow-[0_12px_30px_var(--color-panel-glow)] transition hover:scale-105 hover:bg-[var(--color-brand-deep)]"
                 >
                   去社区补风险
                 </Link>
                 <Link
                   href="/models"
-                  className="rounded-full border border-[var(--color-line)] bg-white/88 px-5 py-3 text-sm font-bold text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
+                  className="inline-flex rounded-full border border-[var(--color-line)] bg-white/88 px-5 py-3 text-sm font-bold text-[var(--color-ink)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
                 >
                   继续定模型方向
                 </Link>
