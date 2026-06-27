@@ -167,7 +167,7 @@ export function UserProfileCard({ userId, position, onClose }: UserProfileCardPr
       try {
         const { data } = await getSupabaseClient()
           .from("forum_profiles")
-          .select("display_name, avatar_url, bio, tags, personality_tags, created_at")
+          .select("display_name, avatar_url, bio, tags, created_at")
           .eq("id", userId)
           .single();
         if (!cancelled && data) {

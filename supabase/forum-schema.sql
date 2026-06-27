@@ -106,6 +106,57 @@ as $$
   );
 $$;
 
+create or replace function public.prevent_forum_post_privilege_escalation()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if public.is_forum_admin() then
+    return new;
+  end if;
+
+  if new.author_id is distinct from old.author_id
+    or new.is_hidden is distinct from old.is_hidden
+    or new.is_pinned is distinct from old.is_pinned then
+    raise exception 'Only forum admins can change post moderation fields.';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists prevent_forum_post_privilege_escalation on public.forum_posts;
+create trigger prevent_forum_post_privilege_escalation
+before update on public.forum_posts
+for each row execute function public.prevent_forum_post_privilege_escalation();
+
+create or replace function public.prevent_forum_reply_privilege_escalation()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if public.is_forum_admin() then
+    return new;
+  end if;
+
+  if new.author_id is distinct from old.author_id
+    or new.is_hidden is distinct from old.is_hidden then
+    raise exception 'Only forum admins can change reply moderation fields.';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists prevent_forum_reply_privilege_escalation on public.forum_replies;
+create trigger prevent_forum_reply_privilege_escalation
+before update on public.forum_replies
+for each row execute function public.prevent_forum_reply_privilege_escalation();
+
 alter table public.forum_profiles enable row level security;
 alter table public.forum_admins enable row level security;
 alter table public.forum_posts enable row level security;
@@ -258,4 +309,3 @@ for each row execute function public.handle_new_user();
 -- insert into public.forum_admins (user_id)
 -- select id from auth.users where lower(email) = lower('admin@example.com')
 -- on conflict (user_id) do nothing;
-

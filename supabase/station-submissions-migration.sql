@@ -31,15 +31,17 @@ drop policy if exists "Anyone can submit" on public.station_submissions;
 create policy "Anyone can submit" on public.station_submissions
   for insert with check (true);
 
--- 登录用户可以查看所有提交（管理员审核用）
+-- 只有管理员/站主可以查看提交，避免联系方式被所有登录用户读到。
 drop policy if exists "Authenticated can view submissions" on public.station_submissions;
-create policy "Authenticated can view submissions" on public.station_submissions
-  for select using (auth.role() = 'authenticated');
+drop policy if exists "Admins can view submissions" on public.station_submissions;
+create policy "Admins can view submissions" on public.station_submissions
+  for select using (public.is_forum_admin());
 
 -- 管理员可以更新提交状态
 drop policy if exists "Admins can update submissions" on public.station_submissions;
 create policy "Admins can update submissions" on public.station_submissions
-  for update using (public.is_forum_admin());
+  for update using (public.is_forum_admin())
+  with check (public.is_forum_admin());
 
 -- 4. 权限
 grant insert on public.station_submissions to anon, authenticated;

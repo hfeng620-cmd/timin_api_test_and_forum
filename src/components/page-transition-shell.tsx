@@ -44,7 +44,7 @@ export function PageTransitionShell({ children }: PageTransitionShellProps) {
           {exitingStage}
         </div>
       ) : null}
-      <div key={pathname} className="route-stage page-enter route-stage--enter">
+      <div key={pathname} className="route-stage route-stage--enter">
         {children}
       </div>
     </div>

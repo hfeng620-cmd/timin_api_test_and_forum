@@ -299,16 +299,35 @@ export default function ProfilePage() {
     if (!isConnected || !user) return;
     (async () => {
       try {
-        const { data } = await getSupabaseClient()
+        // Load avatar separately to avoid one failing column breaking everything
+        const { data: profileData, error: profileError } = await getSupabaseClient()
           .from("forum_profiles")
-          .select("avatar_url, bio, tags")
+          .select("avatar_url, bio")
           .eq("id", user.id)
           .single();
-        if (data?.avatar_url) setAvatarUrl(data.avatar_url);
-        if (data?.bio) setBio(data.bio);
-        if (Array.isArray(data?.tags)) setTags(normalizeTagList(data.tags));
-      } catch {
-        // ignore
+
+        if (profileError) {
+          console.error("[Profile] Load avatar/bio error:", profileError.message);
+        } else if (profileData) {
+          if (profileData.avatar_url) setAvatarUrl(profileData.avatar_url);
+          if (profileData.bio) setBio(profileData.bio);
+        }
+
+        // Try loading tags separately (column may not exist if migration not run)
+        try {
+          const { data: tagsData } = await getSupabaseClient()
+            .from("forum_profiles")
+            .select("tags")
+            .eq("id", user.id)
+            .single();
+          if (tagsData && Array.isArray(tagsData.tags)) {
+            setTags(normalizeTagList(tagsData.tags));
+          }
+        } catch (tagsErr) {
+          console.warn("[Profile] Tags column may not exist:", tagsErr);
+        }
+      } catch (err) {
+        console.error("[Profile] Load profile error:", err);
       }
     })();
   }, [isConnected, user]);
@@ -1009,20 +1028,51 @@ export default function ProfilePage() {
                             if (!newName.trim()) return;
                             setNameSaving(true);
                             const nextTags = normalizeTagList(newTags);
+                            let saveSuccess = true;
+
                             if (newName !== name) {
                               await setDisplayName(newName.trim());
                             }
+
+                            // Save bio first (always works)
                             try {
-                              await getSupabaseClient()
+                              const { error: bioError } = await getSupabaseClient()
                                 .from("forum_profiles")
                                 .upsert(
-                                  { id: user!.id, bio: newBio.trim(), tags: nextTags },
+                                  { id: user!.id, bio: newBio.trim() },
                                   { onConflict: "id" },
                                 );
+                              if (bioError) {
+                                console.error("[Profile] Save bio error:", bioError.message);
+                                saveSuccess = false;
+                              }
+                            } catch (err) {
+                              console.error("[Profile] Save bio exception:", err);
+                              saveSuccess = false;
+                            }
+
+                            // Try saving tags separately (column may not exist)
+                            if (nextTags.length > 0) {
+                              try {
+                                const { error: tagsError } = await getSupabaseClient()
+                                  .from("forum_profiles")
+                                  .upsert(
+                                    { id: user!.id, tags: nextTags },
+                                    { onConflict: "id" },
+                                  );
+                                if (tagsError) {
+                                  console.warn("[Profile] Tags save failed (column may not exist):", tagsError.message);
+                                }
+                              } catch (tagsErr) {
+                                console.warn("[Profile] Tags column may not exist:", tagsErr);
+                              }
+                            }
+
+                            if (saveSuccess) {
                               setBio(newBio.trim());
                               setTags(nextTags);
-                            } catch {
-                              // ignore
+                            } else {
+                              alert("保存失败，请检查网络后重试。");
                             }
                             setNameSaving(false);
                             setEditingName(false);

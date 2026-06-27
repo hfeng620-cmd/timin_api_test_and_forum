@@ -190,9 +190,9 @@ export function saveStationSubmissions(submissions: StationSubmission[]) {
   }
 }
 
-export function createSubmission(
+export async function createSubmission(
   input: StationSubmissionInput,
-) {
+): Promise<StationSubmission> {
   // Try Supabase first
   if (isSupabaseConfigured()) {
     return createSubmissionSupabase(input);
@@ -206,22 +206,8 @@ async function createSubmissionSupabase(
 ): Promise<StationSubmission> {
   const supabase = getSupabaseClient();
 
-  // Check for recent duplicate
-  const fiveMinutesAgo = new Date(Date.now() - RECENT_DUPLICATE_WINDOW_MS).toISOString();
-  const { data: existing } = await supabase
-    .from("station_submissions")
-    .select("id")
-    .eq("station_name", input.stationName)
-    .eq("note", input.note)
-    .eq("status", "pending")
-    .gte("submitted_at", fiveMinutesAgo)
-    .limit(1);
-
-  if (existing && existing.length > 0) {
-    throw new Error("相同内容已在最近 5 分钟内提交，无需重复提交。");
-  }
-
-  const { data, error } = await supabase
+  const submittedAt = new Date().toISOString();
+  const { error } = await supabase
     .from("station_submissions")
     .insert({
       kind: input.kind,
@@ -230,24 +216,17 @@ async function createSubmissionSupabase(
       price_or_rate: input.priceOrRate,
       note: input.note,
       contact: input.contact,
-    })
-    .select()
-    .single();
+      submitted_at: submittedAt,
+    });
 
   if (error) throw new Error("提交失败，请稍后重试。");
 
   return {
-    id: data.id,
-    kind: data.kind,
-    stationName: data.station_name,
-    url: data.url,
-    priceOrRate: data.price_or_rate,
-    note: data.note,
-    contact: data.contact,
-    status: data.status,
-    adminNote: data.admin_note,
-    submittedAt: data.submitted_at,
-    reviewedAt: data.reviewed_at,
+    ...input,
+    id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    status: "pending",
+    adminNote: "",
+    submittedAt,
   };
 }
 

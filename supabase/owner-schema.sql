@@ -72,11 +72,17 @@ returns table (
   display_name text,
   created_at timestamptz
 )
-language sql
+language plpgsql
 stable
 security definer
 set search_path = public
 as $$
+begin
+  if not public.is_site_owner() then
+    return;
+  end if;
+
+  return query
   select
     fa.user_id,
     u.email,
@@ -86,7 +92,11 @@ as $$
   join auth.users u on u.id = fa.user_id
   left join public.forum_profiles fp on fp.id = fa.user_id
   order by fa.created_at asc;
+end;
 $$;
+
+revoke execute on function public.get_admin_list() from public, anon;
+grant execute on function public.get_admin_list() to authenticated;
 
 -- 6. RPC: add an admin by email (site-owner only)
 create or replace function public.add_admin_by_email(target_email text)

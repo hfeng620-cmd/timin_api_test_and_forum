@@ -25,7 +25,7 @@ export function SubmissionPanel() {
   const STATUS_NEUTRAL_CLASS = "text-[var(--color-muted)]";
   const [statusTone, setStatusTone] = useState<"neutral" | "error">("neutral");
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (isSubmitting) {
       return;
     }
@@ -88,7 +88,7 @@ export function SubmissionPanel() {
     setStatusTone("neutral");
 
     try {
-      createSubmission({
+      await createSubmission({
         kind,
         stationName: trimmedStationName,
         url: normalizedUrl,
