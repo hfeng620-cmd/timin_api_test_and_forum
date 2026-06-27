@@ -269,14 +269,17 @@ export async function updateStation(
       .eq("id", id)
       .single();
 
-    if (fetchError) throw fetchError;
+    if (fetchError) {
+      console.error("[updateStation] Fetch error:", fetchError);
+      throw new Error(`获取站点信息失败: ${fetchError.message}`);
+    }
 
     const currentRow = current as Record<string, unknown>;
 
     // Get editor id
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) {
-      throw new Error("Please sign in first.");
+      throw new Error("请先登录后再修改站点。");
     }
     const editorId = userData.user.id;
 
@@ -288,7 +291,10 @@ export async function updateStation(
         .update(updateRow)
         .eq("id", id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error("[updateStation] Update error:", updateError);
+        throw new Error(`更新站点失败: ${updateError.message}`);
+      }
     }
 
     // Record edits for each changed field
@@ -333,9 +339,13 @@ export async function updateStation(
         .from("station_edits")
         .insert(editInserts);
 
-      if (editError) throw editError;
+      if (editError) {
+        console.error("[updateStation] Edit insert error:", editError);
+        throw new Error(`记录编辑历史失败: ${editError.message}`);
+      }
     }
   } catch (e) {
+    console.error("[updateStation] Exception:", e);
     throw e instanceof Error ? e : new Error("更新站点失败，请稍后重试。");
   }
 }
