@@ -370,6 +370,17 @@ export default function AdminPage() {
     void refreshForumHistory();
   }, [isConnected, adminOk, refreshForumHistory]);
 
+  useEffect(() => {
+    if (!announceConfirmOpen) return;
+    function handleDialogKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setAnnounceConfirmOpen(false);
+      }
+    }
+    window.addEventListener("keydown", handleDialogKeyDown);
+    return () => window.removeEventListener("keydown", handleDialogKeyDown);
+  }, [announceConfirmOpen]);
+
   // ---- Load pending news ----
   const refreshPendingNews = useCallback(async () => {
     if (!adminOk) return;
@@ -842,8 +853,8 @@ export default function AdminPage() {
   // ---- Permission gate ----
   if (!isConnected && adminChecked) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] text-[var(--color-ink)]">
-        <div className="rounded-[34px] border border-[var(--color-line)] bg-white p-10 text-center shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+      <main className="theme-stage flex min-h-screen items-center justify-center bg-transparent text-[var(--color-ink)]">
+        <div className="rounded-[34px] border border-[var(--color-line)] bg-[var(--color-panel)] p-10 text-center shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
           <p className="text-2xl font-black">需要管理员权限</p>
           <p className="mt-3 text-sm text-[var(--color-muted)]">
             请先登录管理员邮箱。
@@ -862,8 +873,8 @@ export default function AdminPage() {
 
   if (!adminOk && adminChecked) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] text-[var(--color-ink)]">
-        <div className="rounded-[34px] border border-[var(--color-line)] bg-white p-10 text-center shadow-[0_18px_60px_rgba(13,25,48,0.07)] max-w-lg">
+      <main className="theme-stage flex min-h-screen items-center justify-center bg-transparent text-[var(--color-ink)]">
+        <div className="rounded-[34px] border border-[var(--color-line)] bg-[var(--color-panel)] p-10 text-center shadow-[0_18px_60px_rgba(13,25,48,0.07)] max-w-lg">
           <p className="text-2xl font-black">需要管理员权限</p>
           <p className="mt-3 text-sm text-[var(--color-muted)]">
             当前邮箱 {email ?? "未设置"} 暂无管理员权限。
@@ -884,7 +895,7 @@ export default function AdminPage() {
 
   if (adminLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--color-bg)]">
+      <main className="theme-stage flex min-h-screen items-center justify-center bg-transparent">
         <p className="text-sm text-[var(--color-muted)]">验证管理员权限中...</p>
       </main>
     );
@@ -892,7 +903,7 @@ export default function AdminPage() {
 
   // ---- Full admin dashboard ----
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] text-[var(--color-ink)]">
+    <main className="theme-stage min-h-screen bg-transparent text-[var(--color-ink)]">
       {/* ---- Top bar with admin branding ---- */}
       <header className="border-b border-[var(--color-line)] bg-[var(--color-header)] backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-10">
@@ -930,7 +941,7 @@ export default function AdminPage() {
       <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
         {/* ---- Dashboard stats ---- */}
         <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
+          <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)]">
               待审核帖子
             </p>
@@ -938,7 +949,7 @@ export default function AdminPage() {
               {statsLoading ? "..." : stats?.pending_posts ?? 0}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
+          <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)]">
               已发布帖子
             </p>
@@ -946,7 +957,7 @@ export default function AdminPage() {
               {statsLoading ? "..." : stats?.visible_posts ?? 0}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
+          <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)]">
               活跃用户
             </p>
@@ -954,7 +965,7 @@ export default function AdminPage() {
               {statsLoading ? "..." : stats?.active_authors ?? 0}
             </p>
           </div>
-          <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
+          <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-5 shadow-[0_8px_30px_rgba(13,25,48,0.05)]">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-muted)]">
               收录站点
             </p>
@@ -997,7 +1008,7 @@ export default function AdminPage() {
               <GithubIssueReviewPanel />
 
               {/* Announcement publisher */}
-              <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                   发布公告
                 </p>
@@ -1005,7 +1016,8 @@ export default function AdminPage() {
                 <label className="mt-4 block space-y-2">
                   <span className="text-sm font-semibold text-[var(--color-muted)]">关联站点 (可选)</span>
                   <input
-                    className="w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    className="w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    maxLength={ANNOUNCEMENT_LIMITS.station}
                     onChange={(e) => setAnnounceStation(e.target.value)}
                     placeholder="例如：虎虎"
                     value={announceStation}
@@ -1014,7 +1026,8 @@ export default function AdminPage() {
                 <label className="mt-4 block space-y-2">
                   <span className="text-sm font-semibold text-[var(--color-muted)]">公告内容</span>
                   <textarea
-                    className="min-h-28 w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    className="min-h-28 w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    maxLength={ANNOUNCEMENT_LIMITS.body}
                     onChange={(e) => setAnnounceBody(e.target.value)}
                     placeholder="输入公告正文..."
                     value={announceBody}
@@ -1039,7 +1052,7 @@ export default function AdminPage() {
             {/* Right: approved posts + audit log */}
             <div className="space-y-6">
               {/* Approved posts with delete */}
-              <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                     已审核论坛帖子
@@ -1089,7 +1102,7 @@ export default function AdminPage() {
                           <p className="flex items-center gap-2 text-xs text-[var(--color-muted)]">
                             <span className="font-mono">{item.id}</span>
                             <button
-                              className="rounded-full border border-[var(--color-line)] bg-white px-2 py-0.5 text-[10px] font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
+                              className="rounded-full border border-[var(--color-line)] bg-[var(--color-input)] px-2 py-0.5 text-[10px] font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
                               onClick={() => {
                                 void navigator.clipboard.writeText(item.id);
                               }}
@@ -1124,7 +1137,7 @@ export default function AdminPage() {
               </div>
 
               {/* Audit log */}
-              <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                   操作日志
                 </p>
@@ -1148,7 +1161,7 @@ export default function AdminPage() {
                 {auditLog.length > 0 && (
                   <div className="mt-4">
                     <button
-                      className="rounded-full border border-[var(--color-line)] bg-white px-4 py-2 text-xs font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
+                      className="rounded-full border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-2 text-xs font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
                       onClick={() => {
                         if (window.confirm("确定要清空所有操作日志吗？")) {
                           setAuditLog([]);
@@ -1171,7 +1184,7 @@ export default function AdminPage() {
             {/* Left: pending news review + publish form */}
             <div className="space-y-6">
               {/* Pending news review */}
-              <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
@@ -1210,7 +1223,7 @@ export default function AdminPage() {
                           {item.summary}
                         </p>
                         {item.body && (
-                          <p className="mt-2 rounded-2xl bg-white p-3 text-sm leading-6 text-[var(--color-muted)]">
+                          <p className="mt-2 rounded-2xl bg-[var(--color-input)] p-3 text-sm leading-6 text-[var(--color-muted)]">
                             {item.body.length > 200 ? item.body.slice(0, 200) + "..." : item.body}
                           </p>
                         )}
@@ -1248,7 +1261,7 @@ export default function AdminPage() {
               </div>
 
               {/* Publish news form */}
-              <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                   发布新闻
                 </p>
@@ -1256,7 +1269,8 @@ export default function AdminPage() {
                 <label className="mt-4 block space-y-2">
                   <span className="text-sm font-semibold text-[var(--color-muted)]">标题 *</span>
                   <input
-                    className="w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    className="w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    maxLength={NEWS_LIMITS.title}
                     onChange={(e) => setNewsForm((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="新闻标题"
                     value={newsForm.title}
@@ -1265,7 +1279,8 @@ export default function AdminPage() {
                 <label className="mt-4 block space-y-2">
                   <span className="text-sm font-semibold text-[var(--color-muted)]">摘要 *</span>
                   <textarea
-                    className="min-h-20 w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    className="min-h-20 w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    maxLength={NEWS_LIMITS.summary}
                     onChange={(e) => setNewsForm((prev) => ({ ...prev, summary: e.target.value }))}
                     placeholder="新闻摘要"
                     value={newsForm.summary}
@@ -1275,7 +1290,8 @@ export default function AdminPage() {
                   <label className="space-y-2">
                     <span className="text-sm font-semibold text-[var(--color-muted)]">来源</span>
                     <input
-                      className="w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                      className="w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                      maxLength={NEWS_LIMITS.source}
                       onChange={(e) => setNewsForm((prev) => ({ ...prev, source: e.target.value }))}
                       placeholder="例如：TechCrunch"
                       value={newsForm.source}
@@ -1284,7 +1300,8 @@ export default function AdminPage() {
                   <label className="space-y-2">
                     <span className="text-sm font-semibold text-[var(--color-muted)]">作者</span>
                     <input
-                      className="w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                      className="w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                      maxLength={NEWS_LIMITS.author}
                       onChange={(e) => setNewsForm((prev) => ({ ...prev, author: e.target.value }))}
                       placeholder="作者名"
                       value={newsForm.author}
@@ -1294,7 +1311,8 @@ export default function AdminPage() {
                 <label className="mt-4 block space-y-2">
                   <span className="text-sm font-semibold text-[var(--color-muted)]">正文 (可选)</span>
                   <textarea
-                    className="min-h-32 w-full rounded-2xl border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    className="min-h-32 w-full rounded-2xl border border-[var(--color-line)] bg-[var(--color-input)] px-4 py-3 outline-none transition focus:border-[var(--color-brand)]"
+                    maxLength={NEWS_LIMITS.body}
                     onChange={(e) => setNewsForm((prev) => ({ ...prev, body: e.target.value }))}
                     placeholder="新闻正文内容..."
                     value={newsForm.body}
@@ -1318,7 +1336,7 @@ export default function AdminPage() {
 
             {/* Right: approved news list */}
             <div className="space-y-6">
-              <div className="rounded-[24px] border border-[var(--color-line)] bg-white p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
+              <div className="rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] p-6 shadow-[0_18px_60px_rgba(13,25,48,0.07)]">
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
                   已审核新闻
                 </p>
@@ -1847,9 +1865,14 @@ export default function AdminPage() {
       {/* ── Announcement confirmation dialog ── */}
       {announceConfirmOpen && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-md overflow-hidden rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[0_24px_80px_rgba(15,23,42,0.18)]">
+          <div
+            aria-labelledby="announcement-confirm-title"
+            aria-modal="true"
+            className="w-full max-w-md overflow-hidden rounded-[24px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[0_24px_80px_rgba(15,23,42,0.18)]"
+            role="dialog"
+          >
             <div className="border-b border-[var(--color-line)] px-6 py-4">
-              <h2 className="text-lg font-bold text-[var(--color-ink)]">发布此公告？</h2>
+              <h2 id="announcement-confirm-title" className="text-lg font-bold text-[var(--color-ink)]">发布此公告？</h2>
             </div>
             <div className="px-6 py-5">
               <p className="text-sm leading-7 text-[var(--color-muted)]">
@@ -1872,7 +1895,7 @@ export default function AdminPage() {
             </div>
             <div className="border-t border-[var(--color-line)] px-6 py-4 flex justify-end gap-3">
               <button
-                className="rounded-full border border-[var(--color-line)] bg-white px-5 py-2.5 text-sm font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
+                className="rounded-full border border-[var(--color-line)] bg-[var(--color-input)] px-5 py-2.5 text-sm font-bold text-[var(--color-muted)] transition hover:bg-[var(--color-soft)] hover:text-[var(--color-ink)]"
                 onClick={() => setAnnounceConfirmOpen(false)}
                 type="button"
               >

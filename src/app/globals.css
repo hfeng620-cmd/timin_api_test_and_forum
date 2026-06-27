@@ -655,11 +655,15 @@ main#main-content .route-stage > main.theme-stage {
 :root[data-theme="ember"] main#main-content > .theme-stage,
 :root[data-theme="pearl"] main#main-content > .theme-stage,
 :root[data-theme="sage"] main#main-content > .theme-stage,
+:root[data-theme="ceramic"] main#main-content > .theme-stage,
+:root[data-theme="lime"] main#main-content > .theme-stage,
 :root[data-theme="stone"] main#main-content .route-stage > main.theme-stage,
 :root[data-theme="sand"] main#main-content .route-stage > main.theme-stage,
 :root[data-theme="ember"] main#main-content .route-stage > main.theme-stage,
 :root[data-theme="pearl"] main#main-content .route-stage > main.theme-stage,
-:root[data-theme="sage"] main#main-content .route-stage > main.theme-stage {
+:root[data-theme="sage"] main#main-content .route-stage > main.theme-stage,
+:root[data-theme="ceramic"] main#main-content .route-stage > main.theme-stage,
+:root[data-theme="lime"] main#main-content .route-stage > main.theme-stage {
   background:
     radial-gradient(circle at 50% -8%, rgba(255,255,255,0.24), transparent 36%),
     linear-gradient(180deg, rgba(var(--theme-glow-rgb), 0.028), rgba(var(--theme-glow-rgb), 0) 24%, rgba(var(--theme-secondary-rgb), 0.038) 100%);
@@ -678,8 +682,10 @@ main#main-content .route-stage > main.theme-stage {
 
 :root[data-theme="midnight"] main#main-content > .theme-stage,
 :root[data-theme="cyber"] main#main-content > .theme-stage,
+:root[data-theme="ink"] main#main-content > .theme-stage,
 :root[data-theme="midnight"] main#main-content .route-stage > main.theme-stage,
-:root[data-theme="cyber"] main#main-content .route-stage > main.theme-stage {
+:root[data-theme="cyber"] main#main-content .route-stage > main.theme-stage,
+:root[data-theme="ink"] main#main-content .route-stage > main.theme-stage {
   background:
     radial-gradient(circle at 50% -10%, rgba(255,255,255,0.08), transparent 32%),
     linear-gradient(180deg, rgba(var(--theme-glow-rgb), 0.06), rgba(var(--theme-glow-rgb), 0) 22%, rgba(var(--theme-secondary-rgb), 0.045) 100%);
@@ -891,6 +897,76 @@ main#main-content .route-stage > main.theme-stage::after {
     radial-gradient(circle at 50% 18%, rgba(var(--theme-surface-rgb), 0.34), transparent 14%),
     radial-gradient(circle at 50% 78%, rgba(0,0,0,0.18), transparent 34%);
   filter: blur(18px);
+}
+
+:root[data-theme-mode="prism"] main#main-content > .theme-stage::before,
+:root[data-theme-mode="prism"] main#main-content .route-stage > main.theme-stage::before {
+  opacity: 0.98;
+  background:
+    linear-gradient(118deg, transparent 0 12%, rgba(var(--theme-surface-rgb), 0.38) 12.4% 13.2%, transparent 13.6% 36%, rgba(var(--theme-glow-rgb), 0.18) 36.4% 37.2%, transparent 37.6%),
+    linear-gradient(48deg, transparent 0 18%, rgba(var(--theme-secondary-rgb), 0.14) 18.4% 19.4%, transparent 19.8% 58%, rgba(var(--theme-surface-rgb), 0.26) 58.4% 59.2%, transparent 59.6%),
+    conic-gradient(from 128deg at 70% 26%, rgba(var(--theme-surface-rgb), 0.56), rgba(var(--theme-glow-rgb), 0.14), rgba(var(--theme-secondary-rgb), 0.12), rgba(var(--theme-surface-rgb), 0.3));
+  filter: saturate(1.12);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.76), rgba(0,0,0,0.18) 64%, transparent 100%);
+  animation: prism-shift 20s ease-in-out infinite;
+}
+
+:root[data-theme-mode="prism"] main#main-content > .theme-stage::after,
+:root[data-theme-mode="prism"] main#main-content .route-stage > main.theme-stage::after {
+  opacity: 0.74;
+  background:
+    radial-gradient(circle at 22% 24%, rgba(var(--theme-surface-rgb), 0.5), transparent 13%),
+    radial-gradient(circle at 78% 66%, rgba(var(--theme-glow-rgb), 0.12), transparent 18%),
+    linear-gradient(136deg, rgba(var(--theme-secondary-rgb), 0.1), transparent 48%);
+  filter: blur(10px);
+  animation: ambient-float 24s ease-in-out infinite;
+}
+
+:root[data-theme-mode="mesh"] main#main-content > .theme-stage::before,
+:root[data-theme-mode="mesh"] main#main-content .route-stage > main.theme-stage::before {
+  opacity: 0.96;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(var(--theme-surface-rgb), 0.58), transparent 18%),
+    radial-gradient(circle at 80% 22%, rgba(var(--theme-glow-rgb), 0.13), transparent 24%),
+    radial-gradient(circle at 68% 76%, rgba(var(--theme-secondary-rgb), 0.12), transparent 22%),
+    linear-gradient(115deg, rgba(var(--theme-glow-rgb), 0.06) 1px, transparent 1px),
+    linear-gradient(35deg, rgba(var(--theme-secondary-rgb), 0.055) 1px, transparent 1px);
+  background-size: auto, auto, auto, 58px 58px, 58px 58px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.72), rgba(0,0,0,0.16) 66%, transparent 100%);
+  animation: mesh-drift 26s ease-in-out infinite;
+}
+
+:root[data-theme-mode="mesh"] main#main-content > .theme-stage::after,
+:root[data-theme-mode="mesh"] main#main-content .route-stage > main.theme-stage::after {
+  opacity: 0.76;
+  background:
+    radial-gradient(circle at 28% 68%, rgba(var(--theme-glow-rgb), 0.1), transparent 18%),
+    radial-gradient(circle at 76% 40%, rgba(var(--theme-surface-rgb), 0.38), transparent 14%);
+  filter: blur(16px);
+}
+
+:root[data-theme-mode="rain"] main#main-content > .theme-stage::before,
+:root[data-theme-mode="rain"] main#main-content .route-stage > main.theme-stage::before {
+  opacity: 0.92;
+  background:
+    linear-gradient(180deg, rgba(var(--theme-surface-rgb), 0.18), rgba(var(--theme-surface-rgb), 0)),
+    repeating-linear-gradient(102deg, rgba(var(--theme-surface-rgb), 0.28) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(96deg, rgba(var(--theme-glow-rgb), 0.12) 0 1px, transparent 1px 20px),
+    radial-gradient(circle at 72% 18%, rgba(var(--theme-secondary-rgb), 0.12), transparent 20%);
+  background-size: auto, 120px 180px, 160px 220px, auto;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.76), rgba(0,0,0,0.18) 68%, transparent 100%);
+  animation: rain-fall 18s linear infinite;
+}
+
+:root[data-theme-mode="rain"] main#main-content > .theme-stage::after,
+:root[data-theme-mode="rain"] main#main-content .route-stage > main.theme-stage::after {
+  opacity: 0.72;
+  background:
+    radial-gradient(circle at 22% 22%, rgba(var(--theme-surface-rgb), 0.42), transparent 14%),
+    radial-gradient(circle at 78% 74%, rgba(var(--theme-glow-rgb), 0.12), transparent 18%),
+    linear-gradient(180deg, rgba(var(--theme-surface-rgb), 0.14), transparent 44%);
+  filter: blur(14px);
+  animation: rain-mist 24s ease-in-out infinite;
 }
 
 :root[data-theme-mode="night"] main#main-content::before {
@@ -1378,6 +1454,49 @@ button[aria-label="Open Next.js Dev Tools"] {
   }
 }
 
+@keyframes prism-shift {
+  0%,
+  100% {
+    transform: translate3d(-1%, 0, 0) scale(1.02);
+    filter: saturate(1.08) hue-rotate(0deg);
+  }
+  50% {
+    transform: translate3d(1.4%, -1%, 0) scale(1.045);
+    filter: saturate(1.18) hue-rotate(8deg);
+  }
+}
+
+@keyframes mesh-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    background-position: center, center, center, 0 0, 0 0;
+  }
+  50% {
+    transform: translate3d(1.5%, -1.2%, 0) scale(1.025);
+    background-position: center, center, center, 18px 12px, -12px 18px;
+  }
+}
+
+@keyframes rain-fall {
+  0% {
+    background-position: 0 0, 0 -180px, 0 -220px, center;
+  }
+  100% {
+    background-position: 0 0, 0 180px, 0 220px, center;
+  }
+}
+
+@keyframes rain-mist {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -1.4%, 0) scale(1.018);
+  }
+}
+
 /* ── Theme hint pulse (first-visit indicator) ── */
 @keyframes theme-hint-pulse {
   0%,
@@ -1400,7 +1519,9 @@ button[aria-label="Open Next.js Dev Tools"] {
 
 :root[data-theme-mode="starfield"] .card-lift:hover,
 :root[data-theme-mode="orbit"] .card-lift:hover,
-:root[data-theme-mode="aurora"] .card-lift:hover {
+:root[data-theme-mode="aurora"] .card-lift:hover,
+:root[data-theme-mode="prism"] .card-lift:hover,
+:root[data-theme-mode="mesh"] .card-lift:hover {
   transform: translateY(-5px);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.16);
 }
@@ -1426,12 +1547,23 @@ button[aria-label="Open Next.js Dev Tools"] {
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
 }
 
+:root[data-theme-mode="rain"] .card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.13);
+}
+
 :root[data-theme-mode="starfield"] .surface-in,
 :root[data-theme-mode="starfield"] .stagger-in,
 :root[data-theme-mode="starfield"] .page-enter,
 :root[data-theme-mode="aurora"] .surface-in,
 :root[data-theme-mode="aurora"] .stagger-in,
-:root[data-theme-mode="aurora"] .page-enter {
+:root[data-theme-mode="aurora"] .page-enter,
+:root[data-theme-mode="prism"] .surface-in,
+:root[data-theme-mode="prism"] .stagger-in,
+:root[data-theme-mode="prism"] .page-enter,
+:root[data-theme-mode="mesh"] .surface-in,
+:root[data-theme-mode="mesh"] .stagger-in,
+:root[data-theme-mode="mesh"] .page-enter {
   animation-duration: 600ms;
 }
 
@@ -1459,6 +1591,12 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme-mode="velvet"] .stagger-in,
 :root[data-theme-mode="velvet"] .page-enter {
   animation-duration: 640ms;
+}
+
+:root[data-theme-mode="rain"] .surface-in,
+:root[data-theme-mode="rain"] .stagger-in,
+:root[data-theme-mode="rain"] .page-enter {
+  animation-duration: 620ms;
 }
 
 /* ── Premium micro-interactions ── */
@@ -1679,7 +1817,8 @@ button[aria-label="Open Next.js Dev Tools"] {
 }
 
 :root[data-theme="cyber"] body::selection,
-:root[data-theme="midnight"] body::selection {
+:root[data-theme="midnight"] body::selection,
+:root[data-theme="ink"] body::selection {
   color: var(--color-ink);
 }
 
@@ -1705,6 +1844,17 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme="midnight"] .bg-white\/95,
 :root[data-theme="midnight"] .bg-white\/96,
 :root[data-theme="midnight"] .bg-white\/98,
+:root[data-theme="ink"] .bg-white,
+:root[data-theme="ink"] .bg-white\/70,
+:root[data-theme="ink"] .bg-white\/72,
+:root[data-theme="ink"] .bg-white\/80,
+:root[data-theme="ink"] .bg-white\/82,
+:root[data-theme="ink"] .bg-white\/90,
+:root[data-theme="ink"] .bg-white\/92,
+:root[data-theme="ink"] .bg-white\/94,
+:root[data-theme="ink"] .bg-white\/95,
+:root[data-theme="ink"] .bg-white\/96,
+:root[data-theme="ink"] .bg-white\/98,
 :root[data-theme-mode="night"] .bg-white,
 :root[data-theme-mode="night"] .bg-white\/70,
 :root[data-theme-mode="night"] .bg-white\/72,
@@ -1737,7 +1887,18 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme-mode="velvet"] .bg-white\/94,
 :root[data-theme-mode="velvet"] .bg-white\/95,
 :root[data-theme-mode="velvet"] .bg-white\/96,
-:root[data-theme-mode="velvet"] .bg-white\/98 {
+:root[data-theme-mode="velvet"] .bg-white\/98,
+:root[data-theme-mode="rain"] .bg-white,
+:root[data-theme-mode="rain"] .bg-white\/70,
+:root[data-theme-mode="rain"] .bg-white\/72,
+:root[data-theme-mode="rain"] .bg-white\/80,
+:root[data-theme-mode="rain"] .bg-white\/82,
+:root[data-theme-mode="rain"] .bg-white\/90,
+:root[data-theme-mode="rain"] .bg-white\/92,
+:root[data-theme-mode="rain"] .bg-white\/94,
+:root[data-theme-mode="rain"] .bg-white\/95,
+:root[data-theme-mode="rain"] .bg-white\/96,
+:root[data-theme-mode="rain"] .bg-white\/98 {
   background-color: var(--color-panel) !important;
 }
 
@@ -1745,12 +1906,16 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme="cyber"] [class*="bg-\\[rgba(255,_255,_255"],
 :root[data-theme="midnight"] [class*="bg-\\[rgba(255,255,255"],
 :root[data-theme="midnight"] [class*="bg-\\[rgba(255,_255,_255"],
+:root[data-theme="ink"] [class*="bg-\\[rgba(255,255,255"],
+:root[data-theme="ink"] [class*="bg-\\[rgba(255,_255,_255"],
 :root[data-theme-mode="night"] [class*="bg-\\[rgba(255,255,255"],
 :root[data-theme-mode="night"] [class*="bg-\\[rgba(255,_255,_255"],
 :root[data-theme-mode="starfield"] [class*="bg-\\[rgba(255,255,255"],
 :root[data-theme-mode="starfield"] [class*="bg-\\[rgba(255,_255,_255"],
 :root[data-theme-mode="velvet"] [class*="bg-\\[rgba(255,255,255"],
-:root[data-theme-mode="velvet"] [class*="bg-\\[rgba(255,_255,_255"] {
+:root[data-theme-mode="velvet"] [class*="bg-\\[rgba(255,_255,_255"],
+:root[data-theme-mode="rain"] [class*="bg-\\[rgba(255,255,255"],
+:root[data-theme-mode="rain"] [class*="bg-\\[rgba(255,_255,_255"] {
   background-color: var(--color-panel) !important;
 }
 
@@ -1760,6 +1925,9 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme="midnight"] [class*="bg-gradient-to-"][class*="from-white"],
 :root[data-theme="midnight"] [class*="bg-gradient-to-"][class*="via-white"],
 :root[data-theme="midnight"] [class*="bg-gradient-to-"][class*="to-white"],
+:root[data-theme="ink"] [class*="bg-gradient-to-"][class*="from-white"],
+:root[data-theme="ink"] [class*="bg-gradient-to-"][class*="via-white"],
+:root[data-theme="ink"] [class*="bg-gradient-to-"][class*="to-white"],
 :root[data-theme-mode="night"] [class*="bg-gradient-to-"][class*="from-white"],
 :root[data-theme-mode="night"] [class*="bg-gradient-to-"][class*="via-white"],
 :root[data-theme-mode="night"] [class*="bg-gradient-to-"][class*="to-white"],
@@ -1768,16 +1936,21 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme-mode="starfield"] [class*="bg-gradient-to-"][class*="to-white"],
 :root[data-theme-mode="velvet"] [class*="bg-gradient-to-"][class*="from-white"],
 :root[data-theme-mode="velvet"] [class*="bg-gradient-to-"][class*="via-white"],
-:root[data-theme-mode="velvet"] [class*="bg-gradient-to-"][class*="to-white"] {
+:root[data-theme-mode="velvet"] [class*="bg-gradient-to-"][class*="to-white"],
+:root[data-theme-mode="rain"] [class*="bg-gradient-to-"][class*="from-white"],
+:root[data-theme-mode="rain"] [class*="bg-gradient-to-"][class*="via-white"],
+:root[data-theme-mode="rain"] [class*="bg-gradient-to-"][class*="to-white"] {
   background-color: var(--color-panel) !important;
   background-image: var(--surface-gradient) !important;
 }
 
 :root[data-theme="cyber"] .selection-comment-pop::after,
 :root[data-theme="midnight"] .selection-comment-pop::after,
+:root[data-theme="ink"] .selection-comment-pop::after,
 :root[data-theme-mode="night"] .selection-comment-pop::after,
 :root[data-theme-mode="starfield"] .selection-comment-pop::after,
-:root[data-theme-mode="velvet"] .selection-comment-pop::after {
+:root[data-theme-mode="velvet"] .selection-comment-pop::after,
+:root[data-theme-mode="rain"] .selection-comment-pop::after {
   background: var(--color-panel-strong);
 }
 
@@ -1786,18 +1959,23 @@ button[aria-label="Open Next.js Dev Tools"] {
 :root[data-theme="cyber"] select,
 :root[data-theme="midnight"] input,
 :root[data-theme="midnight"] textarea,
-:root[data-theme="midnight"] select {
+:root[data-theme="midnight"] select,
+:root[data-theme="ink"] input,
+:root[data-theme="ink"] textarea,
+:root[data-theme="ink"] select {
   background-color: var(--color-input) !important;
   color: var(--color-ink);
 }
 
 :root[data-theme="cyber"] img,
-:root[data-theme="midnight"] img {
+:root[data-theme="midnight"] img,
+:root[data-theme="ink"] img {
   filter: saturate(0.95);
 }
 
 :root[data-theme="cyber"] .shadow-\[var\(--shadow-card\)\],
-:root[data-theme="midnight"] .shadow-\[var\(--shadow-card\)\] {
+:root[data-theme="midnight"] .shadow-\[var\(--shadow-card\)\],
+:root[data-theme="ink"] .shadow-\[var\(--shadow-card\)\] {
   box-shadow: var(--shadow-card) !important;
 }
 
