@@ -128,6 +128,7 @@ export async function submitGuide(input: CreateGuideInput): Promise<void> {
       body: input.body.trim(),
       category: input.category,
       tags: input.tags ?? [],
+      status: "approved",
     });
 
   if (error) {

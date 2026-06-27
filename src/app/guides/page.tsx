@@ -90,7 +90,7 @@ export default function GuidesPage() {
     setSubmitStatus("");
     try {
       await submitGuide(form);
-      setSubmitStatus("投稿成功！管理员审核通过后会显示在指南列表中。");
+      setSubmitStatus("投稿成功！指南已立即发布。");
       setForm({ title: "", summary: "", body: "", category: "入门指南", tags: [] });
       setShowSubmitForm(false);
     } catch (err) {
@@ -455,7 +455,7 @@ export default function GuidesPage() {
                       onClick={handleSubmit}
                       type="button"
                     >
-                      {submitting ? "提交中..." : "提交审核"}
+                      {submitting ? "发布中..." : "发布指南"}
                     </button>
                     {submitStatus && (
                       <span className="text-sm text-[var(--color-muted)]">{submitStatus}</span>
