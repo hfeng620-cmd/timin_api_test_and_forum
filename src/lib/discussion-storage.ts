@@ -759,9 +759,31 @@ export async function likeDiscussionPost(
   return getDiscussionPostLikeCount(postId, currentLikes + 1);
 }
 
-export async function likeReply(replyId: string): Promise<number> {
+export async function likeReply(replyId: string): Promise<{ liked: boolean; count: number }> {
   const authorId = await ensureProfile();
   const supabase = getSupabaseClient();
+
+  // Check if already liked
+  const { data: existing } = await supabase
+    .from("forum_likes")
+    .select("id")
+    .eq("reply_id", replyId)
+    .eq("user_id", authorId)
+    .maybeSingle();
+
+  if (existing) {
+    // Unlike: delete the existing like
+    await supabase
+      .from("forum_likes")
+      .delete()
+      .eq("reply_id", replyId)
+      .eq("user_id", authorId);
+
+    const count = await getDiscussionReplyLikeCount(replyId, 0);
+    return { liked: false, count };
+  }
+
+  // Like: insert new like
   const { error } = await supabase.from("forum_likes").insert({
     reply_id: replyId,
     user_id: authorId,
@@ -769,12 +791,15 @@ export async function likeReply(replyId: string): Promise<number> {
 
   if (error) {
     if (error.code === "23505") {
-      return getDiscussionReplyLikeCount(replyId, 0);
+      // Duplicate - already liked
+      const count = await getDiscussionReplyLikeCount(replyId, 0);
+      return { liked: true, count };
     }
     throw error;
   }
 
-  return getDiscussionReplyLikeCount(replyId, 1);
+  const count = await getDiscussionReplyLikeCount(replyId, 1);
+  return { liked: true, count };
 }
 
 export async function loadPendingDiscussionPosts(): Promise<DiscussionPost[]> {

@@ -262,7 +262,7 @@ export function DiscussionFeed({
   const [pinSaving, setPinSaving] = useState(false);
   const [activeProfileCard, setActiveProfileCard] = useState<{ userId: string; position: { x: number; y: number } } | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
-  const [isSectionRevealed, setIsSectionRevealed] = useState(false);
+  const [isSectionRevealed, setIsSectionRevealed] = useState(true);
 
   // ── Server-side search + pagination state ──
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
@@ -813,7 +813,7 @@ export function DiscussionFeed({
     <section
       ref={sectionRef}
       className={`card-lift overflow-hidden rounded-[28px] border border-[var(--color-line)] bg-[var(--color-panel)] shadow-[0_20px_60px_rgba(15,23,42,0.08)] transition-[opacity,transform,box-shadow] duration-700 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 ${
-        isSectionRevealed ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+        isSectionRevealed ? "translate-y-0 opacity-100" : "translate-y-2 opacity-70"
       }`}
       data-selection-comments="off"
     >
@@ -1413,6 +1413,7 @@ export function DiscussionFeed({
                                   onClick={async () => {
                                     if (!isConnected) { showAuthModal(); return; }
                                     const alreadyLiked = likedReplies.has(reply.id);
+                                    // Optimistic toggle
                                     setLikedReplies((prev) => {
                                       const next = new Set(prev);
                                       if (alreadyLiked) next.delete(reply.id);
@@ -1420,11 +1421,18 @@ export function DiscussionFeed({
                                       return next;
                                     });
                                     try {
-                                      const newLikes = await likeReply(reply.id);
+                                      const result = await likeReply(reply.id);
+                                      // Update with server response
+                                      setLikedReplies((prev) => {
+                                        const next = new Set(prev);
+                                        if (result.liked) next.add(reply.id);
+                                        else next.delete(reply.id);
+                                        return next;
+                                      });
                                       setCommentsMap((prev) => ({
                                         ...prev,
                                         [post.issueNumber]: (prev[post.issueNumber] ?? []).map((r) =>
-                                          r.id === reply.id ? { ...r, likes: newLikes } : r
+                                          r.id === reply.id ? { ...r, likes: result.count } : r
                                         ),
                                       }));
                                     } catch {

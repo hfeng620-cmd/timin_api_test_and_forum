@@ -23,6 +23,7 @@ export function ScrollRevealOrchestrator() {
     const visibleTargets = new WeakSet<HTMLElement>();
     let currentTargets: HTMLElement[] = [];
     let scanFrame = 0;
+    let hydrationPasses = 2;
 
     const revealImmediately = (element: HTMLElement) => {
       element.classList.remove("reveal-hidden");
@@ -75,17 +76,23 @@ export function ScrollRevealOrchestrator() {
 
       const reduceMotion = motionQuery.matches;
       const isFullscreen = document.fullscreenElement !== null;
+      const isHydratingRoute = document.documentElement.dataset.routeHydrating === "true";
 
       currentTargets.forEach((element, index) => {
         if (reduceMotion || isFullscreen) {
           revealImmediately(element);
+          visibleTargets.add(element);
           return;
         }
 
         element.style.setProperty("--reveal-delay", `${Math.min(index, 10) * 60}ms`);
         element.classList.add("reveal-ready");
 
-        if (isInInitialViewport(element)) {
+        const shouldKeepRouteEntranceVisible =
+          (isHydratingRoute || hydrationPasses > 0) &&
+          (index < 3 || isInInitialViewport(element));
+
+        if (shouldKeepRouteEntranceVisible || isInInitialViewport(element)) {
           element.classList.remove("reveal-hidden");
           element.classList.add("reveal-visible");
           visibleTargets.add(element);
@@ -97,6 +104,10 @@ export function ScrollRevealOrchestrator() {
         observer.observe(element);
         observedTargets.add(element);
       });
+
+      if (hydrationPasses > 0) {
+        hydrationPasses -= 1;
+      }
     };
 
     const schedulePrepare = () => {

@@ -1369,6 +1369,17 @@ button[aria-label="Open Next.js Dev Tools"] {
   animation: route-stage-enter 680ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+:root[data-route-hydrating="true"] .route-stage--enter,
+:root[data-route-hydrating="true"] .route-stage--enter .reveal-ready,
+:root[data-route-hydrating="true"] .route-stage--enter .reveal-hidden,
+:root[data-route-hydrating="true"] .route-stage--enter .reveal-visible {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  transition: none !important;
+}
+
 .stagger-in {
   animation: surface-in 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }

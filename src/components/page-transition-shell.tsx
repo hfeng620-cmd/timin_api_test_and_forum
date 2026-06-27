@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type PageTransitionShellProps = {
   children: React.ReactNode;
@@ -13,6 +13,36 @@ export function PageTransitionShell({ children }: PageTransitionShellProps) {
   const currentChildrenRef = useRef(children);
   const [exitingStage, setExitingStage] = useState<React.ReactNode | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    const previousScrollRestoration = window.history.scrollRestoration;
+    const scrollTop = () => window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    root.dataset.routeHydrating = "true";
+    root.style.scrollBehavior = "auto";
+    window.history.scrollRestoration = "manual";
+    scrollTop();
+
+    const scrollFrame = window.requestAnimationFrame(scrollTop);
+    const scrollSettleTimer = window.setTimeout(scrollTop, 120);
+
+    const clearHydrationFlag = window.setTimeout(() => {
+      delete root.dataset.routeHydrating;
+      root.style.scrollBehavior = previousScrollBehavior;
+      window.history.scrollRestoration = previousScrollRestoration;
+    }, 900);
+
+    return () => {
+      window.cancelAnimationFrame(scrollFrame);
+      window.clearTimeout(scrollSettleTimer);
+      window.clearTimeout(clearHydrationFlag);
+      delete root.dataset.routeHydrating;
+      root.style.scrollBehavior = previousScrollBehavior;
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (previousPathnameRef.current === pathname) {
