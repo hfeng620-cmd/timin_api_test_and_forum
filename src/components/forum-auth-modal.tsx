@@ -43,11 +43,8 @@ function getDisplayNameValidationError(name: string) {
 }
 
 function getPasswordValidationError(password: string) {
-  if (password.length < PASSWORD_MIN_LENGTH) {
-    return `密码至少需要 ${PASSWORD_MIN_LENGTH} 位。`;
-  }
-  if (!PASSWORD_UPPERCASE_PATTERN.test(password) || !PASSWORD_NUMBER_PATTERN.test(password)) {
-    return "密码至少需要包含 1 个大写字母和 1 个数字。";
+  if (password.length < 1) {
+    return "请输入密码。";
   }
   return null;
 }
@@ -583,7 +580,7 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
                     setPasswordValue(event.target.value);
                     setError("");
                   }}
-                  placeholder="设置密码，8位以上，含大写字母和数字"
+                  placeholder="设置密码"
                   type="password"
                   value={password}
                 />
@@ -830,7 +827,7 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
                           setPasswordValue(event.target.value);
                           setError("");
                         }}
-                        placeholder="设置密码，8位以上，含大写字母和数字"
+                        placeholder="设置密码"
                         type="password"
                         value={password}
                       />
