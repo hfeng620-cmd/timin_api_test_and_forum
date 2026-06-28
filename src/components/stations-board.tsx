@@ -648,7 +648,9 @@ export function StationsBoard() {
               ? "保存中..."
               : isStaticStationId(editingId)
                 ? "保存为正式站点"
-                : "保存修改"}
+                : isAdmin || isOwner
+                  ? "保存修改（直接生效）"
+                  : "提交审核"}
           </button>
           <button
             className="rounded-full border border-[var(--color-line)] bg-[var(--color-panel)] px-5 py-2.5 text-sm font-bold text-[var(--color-muted)] transition hover:border-[var(--color-brand)] hover:text-[var(--color-brand-deep)]"
@@ -1660,7 +1662,7 @@ export function StationsBoard() {
                   编辑口径
                 </p>
                 <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-                  登录后可直接补站和修改字段；当前人少，改动会直接保存到正式榜单。
+                  登录后可提交修改，管理员审核通过后生效。管理员和站主可直接修改。
                 </p>
               </div>
 
