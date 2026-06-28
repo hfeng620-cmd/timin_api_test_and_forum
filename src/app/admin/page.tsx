@@ -16,6 +16,8 @@ import { homeFeaturedStations, type HomeFeaturedStation } from "@/lib/site-data"
 import {
   loadStationSubmissions,
   saveStationSubmissions,
+  loadAllSubmissions,
+  updateSubmissionReviewSupabase,
   type StationSubmission,
   updateSubmissionReview,
 } from "@/lib/submission-storage";
@@ -118,9 +120,7 @@ export default function AdminPage() {
     JSON.stringify(loadFeaturedStationDrafts() ?? homeFeaturedStations, null, 2),
   );
   const [status, setStatus] = useState("管理员面板就绪。可在此审核帖子、管理站点数据和导入导出配置。");
-  const [submissions, setSubmissions] = useState<StationSubmission[]>(() =>
-    loadStationSubmissions(),
-  );
+  const [submissions, setSubmissions] = useState<StationSubmission[]>([]);
   const [forumHistory, setForumHistory] = useState<
     { id: string; body: string; status: "approved" | "rejected"; time: string }[]
   >([]);
@@ -632,6 +632,23 @@ export default function AdminPage() {
     }
   }
 
+  // ---- Load submissions from Supabase ----
+  const refreshSubmissions = useCallback(async () => {
+    if (!adminOk) return;
+    try {
+      const data = await loadAllSubmissions();
+      setSubmissions(data);
+    } catch {
+      // Fallback to localStorage
+      setSubmissions(loadStationSubmissions());
+    }
+  }, [adminOk]);
+
+  useEffect(() => {
+    if (!adminOk) return;
+    void refreshSubmissions();
+  }, [adminOk, refreshSubmissions]);
+
   function addAudit(action: string, target: string) {
     setAuditLog((prev) => [
       {
@@ -694,29 +711,37 @@ export default function AdminPage() {
     );
   }
 
-  function reviewSubmission(
+  async function reviewSubmission(
     id: string,
     statusValue: StationSubmission["status"],
     mode: "direct" | "edited" = "direct",
   ) {
-    saveStationSubmissions(submissions);
     const target = submissions.find((item) => item.id === id);
-    const next = updateSubmissionReview(id, {
-      status: statusValue,
-      adminNote: target?.adminNote ?? "",
-    });
-    setSubmissions(next);
-    setStatus(
-      statusValue === "approved"
-        ? mode === "edited"
-          ? "已保存你改过的内容，并通过这条提交。"
-          : "已直接通过这条提交。"
-        : "已驳回这条提交。",
-    );
-    addAudit(
-      statusValue === "approved" ? "通过站点提交" : "驳回站点提交",
-      target?.stationName ?? id,
-    );
+    try {
+      await updateSubmissionReviewSupabase(id, {
+        status: statusValue,
+        adminNote: target?.adminNote ?? "",
+      });
+      // Also update local state
+      const next = updateSubmissionReview(id, {
+        status: statusValue,
+        adminNote: target?.adminNote ?? "",
+      });
+      setSubmissions(next);
+      setStatus(
+        statusValue === "approved"
+          ? mode === "edited"
+            ? "已保存你改过的内容，并通过这条提交。"
+            : "已直接通过这条提交。"
+          : "已驳回这条提交。",
+      );
+      addAudit(
+        statusValue === "approved" ? "通过站点提交" : "驳回站点提交",
+        target?.stationName ?? id,
+      );
+    } catch (error) {
+      setStatus(`审核失败: ${getErrorMessage(error, "请稍后重试。")}`);
+    }
   }
 
   // ---- New: delete approved post ----
