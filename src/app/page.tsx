@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { AiNewsPanel } from "@/components/ai-news-panel";
 import { AuthButton } from "@/components/auth-button";
+import { VerseRotator } from "@/components/verse-rotator";
 import { OnlineIndicator } from "@/components/online-indicator";
 import { NotificationBell } from "@/components/notification-bell";
 import { QqGroupModalButton } from "@/components/qq-group-modal-button";
@@ -101,6 +102,83 @@ const homeVerseLines = [
   {
     line: "向使当初身便死，一生真伪复谁知？",
     source: "白居易《放言五首·其三》",
+  },
+  {
+    line: "看似寻常最奇崛，成如容易却艰辛。",
+    source: "王安石《题张司业诗》",
+  },
+  {
+    line: "不畏浮云遮望眼，自缘身在最高层。",
+    source: "王安石《登飞来峰》",
+    note: "不要被低价和噪音遮住判断，站高一点看全局。",
+  },
+  {
+    line: "纸上得来终觉浅，绝知此事要躬行。",
+    source: "陆游《冬夜读书示子聿》",
+  },
+  {
+    line: "山重水复疑无路，柳暗花明又一村。",
+    source: "陆游《游山西村》",
+    note: "选站选到这里就对了，前方豁然开朗。",
+  },
+  {
+    line: "问渠那得清如许？为有源头活水来。",
+    source: "朱熹《观书有感》",
+    note: "好的信息源就像源头活水，持续更新才有价值。",
+  },
+  {
+    line: "居高声自远，非是藉秋风。",
+    source: "虞世南《蝉》",
+  },
+  {
+    line: "长风破浪会有时，直挂云帆济沧海。",
+    source: "李白《行路难》",
+    note: "找到对的中转站，就像找到顺风。",
+  },
+  {
+    line: "大鹏一日同风起，扶摇直上九万里。",
+    source: "李白《上李邕》",
+  },
+  {
+    line: "千淘万漉虽辛苦，吹尽狂沙始到金。",
+    source: "刘禹锡《浪淘沙》",
+    note: "筛选中转站的过程，本就像淘金。",
+  },
+  {
+    line: "不识庐山真面目，只缘身在此山中。",
+    source: "苏轼《题西林壁》",
+    note: "跳出来比较，才能看清每个站的优劣。",
+  },
+  {
+    line: "竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。",
+    source: "苏轼《定风波》",
+  },
+  {
+    line: "博观而约取，厚积而薄发。",
+    source: "苏轼《稼说送张琥》",
+  },
+  {
+    line: "会当凌绝顶，一览众山小。",
+    source: "杜甫《望岳》",
+    note: "把全局看完，再做选择。",
+  },
+  {
+    line: "海内存知己，天涯若比邻。",
+    source: "王勃《送杜少府之任蜀州》",
+  },
+  {
+    line: "沉舟侧畔千帆过，病树前头万木春。",
+    source: "刘禹锡《酬乐天扬州初逢席上见赠》",
+    note: "旧站倒下，新站起来，信息流动永不停。",
+  },
+  {
+    line: "试玉要烧三日满，辨材须待七年期。",
+    source: "白居易《放言五首·其三》",
+    note: "判断一个站点，需要时间和对比。",
+  },
+  {
+    line: "江山代有才人出，各领风骚数百年。",
+    source: "赵翼《论诗五首·其二》",
   },
 ];
 
@@ -507,25 +585,7 @@ export default function Home() {
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--color-brand-deep)]">
                   当前主观察面
                 </p>
-                <div className="my-7 max-w-md">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-muted)]">
-                    文脉题记 / {homeVerseLines[0].source}
-                  </p>
-                  <p className="home-quote-line mt-3 text-2xl font-black leading-snug text-[var(--color-ink)] sm:text-3xl">
-                    {homeVerseLines[0].line}
-                  </p>
-                  <p className="mt-3 max-w-sm text-sm leading-7 text-[var(--color-muted)]">
-                    {homeVerseLines[0].note}
-                  </p>
-                  <div className="mt-4 border-l border-[rgba(var(--theme-glow-rgb),0.28)] pl-3">
-                    <p className="text-sm font-semibold leading-7 text-[var(--color-ink)]">
-                      {homeVerseLines[1].line}
-                    </p>
-                    <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-muted)]">
-                      {homeVerseLines[1].source}
-                    </p>
-                  </div>
-                </div>
+                <VerseRotator verses={homeVerseLines} />
                 <LiveFeaturedLead />
                 <div className="home-flow-tight mt-5 grid gap-3 sm:grid-cols-2">
                   <div className="home-info-tile rounded-[18px] border px-4 py-4">
