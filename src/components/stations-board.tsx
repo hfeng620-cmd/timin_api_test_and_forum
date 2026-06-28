@@ -13,6 +13,7 @@ import { getSafeExternalHref } from "@/lib/url-safety";
 import {
   createStation,
   deleteStation,
+  isTemporaryStationId,
   loadStationEditHistory,
   loadStations,
   notifyStationsChanged,
@@ -207,7 +208,7 @@ function fieldLabel(snakeName: string): string {
 }
 
 function isStaticStationId(id: string | null | undefined) {
-  return Boolean(id?.startsWith("static-"));
+  return isTemporaryStationId(id);
 }
 
 function stationFormToCreateInput(form: Partial<Station>) {
@@ -331,7 +332,11 @@ export function StationsBoard() {
 
   // ---- Edit history loading -----------------------------------------------
   useEffect(() => {
-    if (!historyStationId) return;
+    if (!historyStationId || isStaticStationId(historyStationId)) {
+      setEditHistory([]);
+      setHistoryLoading(false);
+      return;
+    }
     let cancelled = false;
     loadStationEditHistory(historyStationId)
       .then((records) => {
@@ -1650,7 +1655,7 @@ export function StationsBoard() {
                   编辑口径
                 </p>
                 <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">
-                  登录后可提交补站和字段修改；当前改动会进入巡查队列，确认后沉淀到榜单。
+                  登录后可直接补站和修改字段；当前人少，改动会直接保存到正式榜单。
                 </p>
               </div>
 

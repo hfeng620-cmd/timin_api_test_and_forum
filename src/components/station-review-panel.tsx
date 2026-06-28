@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/discussion-storage";
 import { useForumAuth } from "@/lib/forum-auth";
+import { isOfficialStationId } from "@/lib/station-storage";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -68,6 +69,7 @@ function StarIcon({ filled }: { filled: boolean }) {
 
 export function StationReviewPanel({ stationId }: StationReviewPanelProps) {
   const { isConnected, showAuthModal } = useForumAuth();
+  const canUseReviews = isOfficialStationId(stationId);
 
   // ---- data ---------------------------------------------------------------
   const [reviews, setReviews] = useState<StationReview[]>([]);
@@ -89,7 +91,8 @@ export function StationReviewPanel({ stationId }: StationReviewPanelProps) {
   // =========================================================================
 
   const loadReviews = useCallback(async () => {
-    if (!isSupabaseConfigured()) {
+    if (!canUseReviews || !isSupabaseConfigured()) {
+      setReviews([]);
       setLoading(false);
       return;
     }
@@ -107,7 +110,7 @@ export function StationReviewPanel({ stationId }: StationReviewPanelProps) {
     } finally {
       setLoading(false);
     }
-  }, [stationId]);
+  }, [canUseReviews, stationId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,6 +128,11 @@ export function StationReviewPanel({ stationId }: StationReviewPanelProps) {
   async function handleSubmit() {
     if (!isConnected) {
       showAuthModal();
+      return;
+    }
+
+    if (!canUseReviews) {
+      setStatus("这条站点还没有进入正式榜单，先保存为正式站点后再评价。");
       return;
     }
 
@@ -234,7 +242,12 @@ export function StationReviewPanel({ stationId }: StationReviewPanelProps) {
           <button
             type="button"
             className="rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-bold text-[var(--color-on-brand)] transition hover:bg-[var(--color-brand-deep)]"
+            disabled={!canUseReviews}
             onClick={() => {
+              if (!canUseReviews) {
+                setStatus("这条站点还没有进入正式榜单，先保存为正式站点后再评价。");
+                return;
+              }
               if (!isConnected) {
                 showAuthModal();
                 return;

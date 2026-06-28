@@ -161,8 +161,15 @@ function normalizeStationUrl(url?: string) {
   return normalizeEditableExternalHref(url);
 }
 
-function isUuidLike(value: string) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+export function isOfficialStationId(value: string | null | undefined) {
+  return Boolean(
+    value &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value),
+  );
+}
+
+export function isTemporaryStationId(value: string | null | undefined) {
+  return Boolean(value?.startsWith("static-"));
 }
 
 function isPermissionError(error: { code?: string; message?: string }) {
@@ -199,6 +206,7 @@ export async function loadStations(): Promise<Station[]> {
 /** Get a single station by id (from the view). */
 export async function getStation(id: string): Promise<Station | null> {
   if (!isSupabaseConfigured()) return null;
+  if (!isOfficialStationId(id)) return null;
   try {
     const { data, error } = await getSupabaseClient()
       .from("stations_with_editor")
@@ -311,7 +319,7 @@ export async function updateStation(
   const supabase = getSupabaseClient();
 
   try {
-    if (!isUuidLike(id)) {
+    if (!isOfficialStationId(id)) {
       throw new Error("这条站点还没有进入正式榜单，请先保存为正式站点后再修改。");
     }
 
@@ -533,6 +541,9 @@ export async function deleteStation(id: string): Promise<void> {
   if (!isSupabaseConfigured()) {
     throw new Error("Supabase 未配置，无法删除站点。请先配置 Supabase 环境变量。");
   }
+  if (!isOfficialStationId(id)) {
+    throw new Error("这条站点还没有进入正式榜单，不能按正式站点删除。");
+  }
   try {
     const { error } = await getSupabaseClient()
       .from("stations")
@@ -550,6 +561,7 @@ export async function loadStationEditHistory(
   stationId: string,
 ): Promise<StationEditRecord[]> {
   if (!isSupabaseConfigured()) return [];
+  if (!isOfficialStationId(stationId)) return [];
   try {
     const { data, error } = await getSupabaseClient()
       .from("station_edits")

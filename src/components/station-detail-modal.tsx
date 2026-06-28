@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import type { Station } from "@/lib/station-storage";
+import { isOfficialStationId, type Station } from "@/lib/station-storage";
 import { StationReviewPanel } from "@/components/station-review-panel";
 import { getSafeExternalHref } from "@/lib/url-safety";
 
@@ -53,6 +53,7 @@ export function StationDetailModal({ station, open, onClose }: StationDetailModa
 
   if (!open || !station) return null;
   const stationHref = getSafeExternalHref(station.url);
+  const isOfficialStation = isOfficialStationId(station.id);
 
   return (
     <div
@@ -211,7 +212,18 @@ export function StationDetailModal({ station, open, onClose }: StationDetailModa
 
         {/* ── Station reviews ── */}
         <div className="mt-5">
-          <StationReviewPanel stationId={station.id} />
+          {isOfficialStation ? (
+            <StationReviewPanel stationId={station.id} />
+          ) : (
+            <div className="rounded-[20px] border border-[var(--color-line)] bg-[var(--color-soft)] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                社区评价
+              </p>
+              <p className="mt-2 text-sm leading-7 text-[var(--color-muted)]">
+                这条还是本地兜底数据，先保存为正式站点后再写评价或查看历史。
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
