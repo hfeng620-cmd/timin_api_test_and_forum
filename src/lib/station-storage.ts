@@ -188,11 +188,11 @@ function stationWritePermissionMessage(action: string) {
 // Public API
 // ---------------------------------------------------------------------------
 
-/** Load all approved stations (from the view), ordered by sort_order. */
+/** Load all approved stations, ordered by sort_order. */
 export async function loadStations(): Promise<Station[]> {
   if (!isSupabaseConfigured()) return [];
   const { data, error } = await getSupabaseClient()
-    .from("stations_with_editor")
+    .from("stations")
     .select("*")
     .order("sort_order", { ascending: true });
 
@@ -203,13 +203,13 @@ export async function loadStations(): Promise<Station[]> {
   return ((data ?? []) as Record<string, unknown>[]).map(stationFromRow);
 }
 
-/** Get a single station by id (from the view). */
+/** Get a single station by id. */
 export async function getStation(id: string): Promise<Station | null> {
   if (!isSupabaseConfigured()) return null;
   if (!isOfficialStationId(id)) return null;
   try {
     const { data, error } = await getSupabaseClient()
-      .from("stations_with_editor")
+      .from("stations")
       .select("*")
       .eq("id", id)
       .maybeSingle();
