@@ -20,6 +20,11 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
 
+      // Environment variables
+      env: {
+        DEPLOY_TARGET: "server",
+        NODE_ENV: "production",
+      },
       // Load environment variables from .env.local
       env_file: ".env.local",
 
