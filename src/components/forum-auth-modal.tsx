@@ -781,6 +781,12 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
                       setPasswordValue(event.target.value);
                       setError("");
                     }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" && !loading && normalizedEmail && password) {
+                        event.preventDefault();
+                        handlePasswordLogin();
+                      }
+                    }}
                     placeholder="输入密码"
                     type="password"
                     value={password}
@@ -827,6 +833,12 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
                           setPasswordValue(event.target.value);
                           setError("");
                         }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" && !loading && normalizedEmail && displayNameInput.trim() && password && confirmPassword && !registrationPasswordError) {
+                            event.preventDefault();
+                            handleSendCode();
+                          }
+                        }}
                         placeholder="设置密码"
                         type="password"
                         value={password}
@@ -840,6 +852,12 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
                         onChange={(event) => {
                           setConfirmPassword(event.target.value);
                           setError("");
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" && !loading && normalizedEmail && displayNameInput.trim() && password && confirmPassword && !registrationPasswordError) {
+                            event.preventDefault();
+                            handleSendCode();
+                          }
                         }}
                         placeholder="再次输入密码"
                         type="password"
@@ -912,6 +930,20 @@ export function ForumAuthModal({ open, onClose }: ForumAuthModalProps) {
             {error ? <p className="text-sm font-semibold text-red-500" id="auth-error" role="alert">{error}</p> : null}
             {notice ? (
               <p className="text-sm font-semibold text-emerald-600" id="auth-notice" role="status">{notice}</p>
+            ) : null}
+
+            {/* 缺项提示 */}
+            {mode === "register" && !otpSent && !error ? (
+              <div className="flex flex-wrap gap-1.5 text-xs text-[var(--color-muted)]">
+                {!normalizedEmail ? <span>◌ 请输入邮箱</span> : null}
+                {!displayNameInput.trim() ? <span>◌ 请输入昵称</span> : null}
+                {!password ? <span>◌ 请设置密码</span> : null}
+                {password && !confirmPassword ? <span>◌ 请确认密码</span> : null}
+                {password && confirmPassword && password !== confirmPassword ? <span>◌ 两次密码不一致</span> : null}
+                {normalizedEmail && displayNameInput.trim() && password && confirmPassword && password === confirmPassword ? (
+                  <span className="text-emerald-600">✓ 信息已齐全，点击发送验证码</span>
+                ) : null}
+              </div>
             ) : null}
 
             <div className="flex items-center justify-end gap-3">
